@@ -6,8 +6,6 @@
     <title>Login | KOIN NU - LAZISNU Cabang Lamongan</title>
     <link rel="icon" type="image/png" href="{{ asset('logo_lazisnu_lmg.png') }}">
     <link rel="shortcut icon" type="image/png" href="{{ asset('logo_lazisnu_lmg.png') }}">
-
-    <!-- Google Font: Plus Jakarta Sans & Source Sans Pro -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
