@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 680" width="100%" height="100%" style="background:#ffffff; font-family:'Plus Jakarta Sans', Arial, sans-serif;">
+  <defs>
+    <linearGradient id="qrisHeader" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#cf152d"/>
+      <stop offset="100%" stop-color="#9a0e20"/>
+    </linearGradient>
+    <linearGradient id="briGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00529c"/>
+      <stop offset="100%" stop-color="#002d62"/>
+    </linearGradient>
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Card Frame -->
+  <rect x="15" y="15" width="470" height="650" rx="18" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" filter="url(#cardShadow)"/>
+
+  <!-- Top Header QRIS -->
+  <rect x="15" y="15" width="470" height="70" rx="18" fill="url(#qrisHeader)"/>
+  <rect x="15" y="65" width="470" height="20" fill="url(#qrisHeader)"/>
+  
+  <!-- QRIS Header Text / Logo -->
+  <text x="250" y="52" fill="#ffffff" font-size="28" font-weight="900" text-anchor="middle" letter-spacing="3">QRIS</text>
+  <text x="250" y="74" fill="#ffccd2" font-size="10" font-weight="700" text-anchor="middle" letter-spacing="1">QUICK RESPONSE CODE INDONESIAN STANDARD</text>
+
+  <!-- Bank BRI Badge -->
+  <rect x="35" y="95" width="140" height="34" rx="6" fill="url(#briGrad)"/>
+  <text x="105" y="118" fill="#ffffff" font-size="15" font-weight="800" text-anchor="middle" letter-spacing="1">BANK BRI</text>
+
+  <!-- GPN / Interoperability Badge -->
+  <rect x="375" y="95" width="90" height="34" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="420" y="117" fill="#0f172a" font-size="14" font-weight="800" text-anchor="middle">GPN</text>
+
+  <!-- Merchant Identity -->
+  <text x="250" y="160" fill="#0f172a" font-size="18" font-weight="800" text-anchor="middle">LAZISNU PCNU LAMONGAN</text>
+  <text x="250" y="180" fill="#64748b" font-size="12" font-weight="600" text-anchor="middle">NMID : ID1024358899192</text>
+  <text x="250" y="196" fill="#0a6b38" font-size="11" font-weight="700" text-anchor="middle">Infaq, Shadaqah &amp; Koin Kemandirian Umat</text>
+
+  <!-- QR Box Wrapper -->
+  <rect x="65" y="210" width="370" height="370" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+
+  <!-- QR Code Matrix Graphic -->
+  <!-- Top Left Corner Finder -->
+  <rect x="95" y="240" width="80" height="80" fill="#0f172a" rx="10"/>
+  <rect x="107" y="252" width="56" height="56" fill="#ffffff" rx="6"/>
+  <rect x="119" y="264" width="32" height="32" fill="#0f172a" rx="4"/>
+
+  <!-- Top Right Corner Finder -->
+  <rect x="325" y="240" width="80" height="80" fill="#0f172a" rx="10"/>
+  <rect x="337" y="252" width="56" height="56" fill="#ffffff" rx="6"/>
+  <rect x="349" y="264" width="32" height="32" fill="#0f172a" rx="4"/>
+
+  <!-- Bottom Left Corner Finder -->
+  <rect x="95" y="470" width="80" height="80" fill="#0f172a" rx="10"/>
+  <rect x="107" y="482" width="56" height="56" fill="#ffffff" rx="6"/>
+  <rect x="119" y="494" width="32" height="32" fill="#0f172a" rx="4"/>
+
+  <!-- Alignment Pattern -->
+  <rect x="335" y="480" width="40" height="40" fill="#0f172a" rx="6"/>
+  <rect x="343" y="488" width="24" height="24" fill="#ffffff" rx="3"/>
+  <rect x="351" y="496" width="8" height="8" fill="#0f172a"/>
+
+  <!-- Data Modules (Sample Representative QR Matrix Pattern) -->
+  <g fill="#0f172a">
+    <!-- Top & Middle Data Blocks -->
+    <rect x="190" y="245" width="12" height="12"/>
+    <rect x="206" y="245" width="12" height="12"/>
+    <rect x="238" y="245" width="24" height="12"/>
+    <rect x="278" y="245" width="12" height="12"/>
+    <rect x="294" y="245" width="12" height="12"/>
+
+    <rect x="190" y="265" width="28" height="12"/>
+    <rect x="234" y="265" width="12" height="12"/>
+    <rect x="262" y="265" width="28" height="12"/>
+
+    <rect x="190" y="285" width="12" height="24"/>
+    <rect x="218" y="285" width="12" height="12"/>
+    <rect x="246" y="285" width="30" height="12"/>
+    <rect x="290" y="285" width="16" height="24"/>
+
+    <rect x="206" y="315" width="24" height="12"/>
+    <rect x="250" y="315" width="16" height="12"/>
+    <rect x="282" y="315" width="24" height="12"/>
+
+    <!-- Left & Center Random Pattern Modules -->
+    <rect x="95" y="335" width="14" height="14"/>
+    <rect x="125" y="335" width="24" height="14"/>
+    <rect x="165" y="335" width="14" height="28"/>
+    <rect x="195" y="335" width="28" height="14"/>
+    <rect x="235" y="335" width="14" height="14"/>
+    <rect x="265" y="335" width="14" height="14"/>
+    <rect x="295" y="335" width="28" height="14"/>
+    <rect x="340" y="335" width="14" height="14"/>
+    <rect x="370" y="335" width="35" height="14"/>
+
+    <rect x="95" y="365" width="28" height="14"/>
+    <rect x="140" y="365" width="14" height="14"/>
+    <rect x="195" y="365" width="14" height="28"/>
+    <rect x="225" y="365" width="24" height="14"/>
+    <rect x="265" y="365" width="24" height="14"/>
+    <rect x="305" y="365" width="14" height="28"/>
+    <rect x="335" y="365" width="28" height="14"/>
+    <rect x="380" y="365" width="25" height="14"/>
+
+    <!-- Center Center Modules -->
+    <rect x="95" y="395" width="14" height="28"/>
+    <rect x="125" y="395" width="24" height="14"/>
+    <rect x="165" y="395" width="14" height="14"/>
+    <rect x="225" y="395" width="14" height="28"/>
+    <rect x="255" y="395" width="24" height="14"/>
+    <rect x="335" y="395" width="14" height="28"/>
+    <rect x="365" y="395" width="40" height="14"/>
+
+    <rect x="125" y="425" width="14" height="14"/>
+    <rect x="155" y="425" width="24" height="14"/>
+    <rect x="195" y="425" width="14" height="14"/>
+    <rect x="255" y="425" width="14" height="14"/>
+    <rect x="285" y="425" width="28" height="14"/>
+    <rect x="365" y="425" width="14" height="28"/>
+
+    <!-- Bottom Data Modules -->
+    <rect x="190" y="455" width="28" height="14"/>
+    <rect x="235" y="455" width="14" height="14"/>
+    <rect x="265" y="455" width="28" height="14"/>
+    <rect x="310" y="455" width="14" height="28"/>
+    <rect x="390" y="455" width="15" height="14"/>
+
+    <rect x="190" y="485" width="14" height="28"/>
+    <rect x="220" y="485" width="28" height="14"/>
+    <rect x="265" y="485" width="14" height="14"/>
+    <rect x="295" y="485" width="24" height="28"/>
+    <rect x="390" y="485" width="15" height="28"/>
+
+    <rect x="190" y="525" width="28" height="14"/>
+    <rect x="235" y="525" width="44" height="14"/>
+    <rect x="335" y="525" width="24" height="14"/>
+    <rect x="375" y="525" width="30" height="14"/>
+  </g>
+
+  <!-- Center QRIS Badge in the middle of QR Code -->
+  <rect x="220" y="365" width="60" height="60" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <rect x="226" y="371" width="48" height="48" rx="6" fill="#00529c"/>
+  <text x="250" y="401" fill="#ffffff" font-size="14" font-weight="900" text-anchor="middle" letter-spacing="0.5">BRI</text>
+
+  <!-- Footer Info in Card -->
+  <text x="250" y="605" fill="#1e293b" font-size="12" font-weight="800" text-anchor="middle">KOMPATIBEL DENGAN SEMUA METODE PEMBAYARAN</text>
+  <text x="250" y="623" fill="#64748b" font-size="10.5" font-weight="600" text-anchor="middle">BCA • Mandiri • BRImo • BSI Mobile • GoPay • OVO • DANA • ShopeePay • LinkAja</text>
+  <text x="250" y="642" fill="#0a6b38" font-size="10" font-weight="700" text-anchor="middle">Dicetak Resmi oleh LAZISNU PCNU Lamongan &amp; Bank BRI</text>
+</svg>

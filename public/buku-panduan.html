@@ -1,0 +1,1554 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buku Panduan Operasional Sistem & Aplikasi KOIN NU - LAZISNU Lamongan</title>
+    <link rel="icon" type="image/png" href="logo_lazisnu_lmg.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Amiri:wght@700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #0a6b38;
+            --primary-dark: #064d27;
+            --primary-light: #e8f5ee;
+            --primary-border: #a7f3d0;
+            --gold: #cba052;
+            --gold-light: #fef9ed;
+            --gold-border: #fde68a;
+            --text-main: #1f2937;
+            --text-muted: #4b5563;
+            --border-color: #e5e7eb;
+            --bg-page: #f8fafc;
+            --font-mono: 'JetBrains Mono', Consolas, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            font-size: 14px;
+        }
+
+        /* Top Action Bar (Screen Only) */
+        .action-bar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .action-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            font-size: 15px;
+        }
+
+        .action-title img {
+            height: 38px;
+        }
+
+        .action-btn-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-action {
+            text-decoration: none;
+            border: none;
+            padding: 9px 18px;
+            font-size: 13.5px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-print {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 10px rgba(10, 107, 56, 0.25);
+        }
+
+        .btn-print:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(10, 107, 56, 0.35);
+            color: white;
+        }
+
+        .btn-dashboard {
+            background: #ffffff;
+            color: var(--primary-dark);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-dashboard:hover {
+            background: #f1f5f9;
+        }
+
+        /* Container Document */
+        .document-container {
+            max-width: 960px;
+            margin: 30px auto;
+            background: white;
+            padding: 50px 65px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border-color);
+        }
+
+        /* COVER PAGE */
+        .cover-page {
+            text-align: center;
+            padding: 40px 20px 60px;
+            border-bottom: 2px dashed var(--border-color);
+            margin-bottom: 50px;
+            page-break-after: always;
+        }
+
+        .cover-logo {
+            max-height: 115px;
+            margin-bottom: 25px;
+        }
+
+        .cover-subtitle-top {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .cover-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            line-height: 1.3;
+            margin-bottom: 16px;
+        }
+
+        .cover-app-name {
+            display: inline-block;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 8px 22px;
+            border-radius: 30px;
+            font-size: 14.5px;
+            font-weight: 700;
+            border: 1px solid var(--primary-border);
+            margin-bottom: 26px;
+        }
+
+        .cover-desc {
+            max-width: 680px;
+            margin: 0 auto;
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .cover-meta {
+            margin-top: 45px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .cover-meta div strong {
+            display: block;
+            color: var(--text-muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .cover-meta div span {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* TYPOGRAPHY & HEADINGS */
+        h1.section-title {
+            color: var(--primary-dark);
+            font-size: 21px;
+            font-weight: 800;
+            border-left: 5px solid var(--primary);
+            padding-left: 14px;
+            margin: 45px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h2.subsection-title {
+            color: var(--primary);
+            font-size: 16.5px;
+            font-weight: 700;
+            margin: 30px 0 14px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h3.subsubsection-title {
+            color: var(--text-main);
+            font-size: 14.5px;
+            font-weight: 700;
+            margin: 20px 0 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        p, ul, ol {
+            margin-bottom: 14px;
+            color: var(--text-main);
+        }
+
+        ul, ol {
+            padding-left: 24px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        /* TABLE OF CONTENTS */
+        .toc-box {
+            background: #fafaf9;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 26px 32px;
+            margin-bottom: 45px;
+        }
+
+        .toc-header {
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 16px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 10px;
+        }
+
+        .toc-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .toc-list li {
+            padding: 7px 0;
+            border-bottom: 1px dotted #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13.5px;
+        }
+
+        .toc-list li.sub {
+            padding-left: 20px;
+            font-size: 13px;
+        }
+
+        .toc-list li a {
+            text-decoration: none;
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .toc-list li a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        .toc-list li span.badge-toc {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: #edf2f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* BADGES */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .badge-success { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+        .badge-warning { background: #fef9c3; color: #a16207; border: 1px solid #fde047; }
+        .badge-danger { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+        .badge-info { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+        .badge-primary { background: #e8f5ee; color: #0a6b38; border: 1px solid #a7f3d0; }
+        .badge-secondary { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+
+        /* CALLOUT BOXES */
+        .callout {
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin: 18px 0;
+            font-size: 13px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .callout-icon {
+            font-size: 18px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .callout-content {
+            flex-grow: 1;
+        }
+
+        .callout-content strong {
+            display: block;
+            margin-bottom: 3px;
+            font-weight: 700;
+        }
+
+        .callout-tip {
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            color: #166534;
+        }
+
+        .callout-note {
+            background: #f0f9ff;
+            border-left: 4px solid #0284c7;
+            color: #075985;
+        }
+
+        .callout-warning {
+            background: #fefce8;
+            border-left: 4px solid #ca8a04;
+            color: #854d0e;
+        }
+
+        .callout-danger {
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            color: #991b1b;
+        }
+
+        /* FORMULA BOX */
+        .formula-box {
+            background: #fdfbf7;
+            border: 1px solid #e2d9c8;
+            border-left: 5px solid var(--gold);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 18px 0;
+            font-size: 13.5px;
+        }
+
+        .formula-box .formula-title {
+            font-weight: 800;
+            color: #78350f;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .formula-box code {
+            background: #f5eedc;
+            color: #92400e;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-family: var(--font-mono);
+            font-size: 13px;
+        }
+
+        .formula-detail {
+            margin-top: 10px;
+            font-size: 12.5px;
+            color: #57534e;
+            line-height: 1.6;
+        }
+
+        /* ROLE GRID */
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .role-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 18px;
+            border-top: 4px solid var(--primary);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .role-card.gold-border {
+            border-top-color: var(--gold);
+        }
+
+        .role-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .role-card-title {
+            font-weight: 800;
+            font-size: 14.5px;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .role-card-desc {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.55;
+            margin-bottom: 10px;
+        }
+
+        .role-card-caps {
+            font-size: 11.5px;
+            background: var(--bg-page);
+            padding: 8px 10px;
+            border-radius: 6px;
+            color: var(--text-main);
+        }
+
+        /* T-ACCOUNT DEMO */
+        .t-account-demo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 22px 0;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .t-account-col {
+            padding: 16px;
+        }
+
+        .t-account-col.left {
+            background: #f0fdf4;
+            border-right: 2px dashed #86efac;
+        }
+
+        .t-account-col.right {
+            background: #fef2f2;
+        }
+
+        .t-account-head {
+            font-weight: 800;
+            font-size: 13.5px;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            border-bottom: 2px solid currentColor;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .t-account-col.left .t-account-head { color: #166534; }
+        .t-account-col.right .t-account-head { color: #991b1b; }
+
+        .t-account-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            padding: 6px 0;
+            border-bottom: 1px dotted rgba(0,0,0,0.1);
+        }
+
+        .t-account-item.total-row {
+            border-top: 2px solid currentColor;
+            border-bottom: 2px double currentColor;
+            font-weight: 800;
+            margin-top: 10px;
+            padding-top: 8px;
+        }
+
+        /* TABLES */
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 12.5px;
+        }
+
+        .styled-table th {
+            background: var(--primary-dark);
+            color: white;
+            font-weight: 700;
+            text-align: left;
+            padding: 10px 14px;
+            border: 1px solid var(--primary-dark);
+        }
+
+        .styled-table td {
+            padding: 9px 14px;
+            border: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+
+        .styled-table tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+
+        /* WORKFLOW DIAGRAM BOX */
+        .workflow-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 18px 0;
+            text-align: center;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .workflow-step {
+            background: white;
+            border: 1px solid #94a3b8;
+            padding: 6px 12px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .workflow-step.highlight {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        .workflow-arrow {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* SCREENSHOT PLACEHOLDER BOX */
+        .screenshot-placeholder {
+            background: #f8fafc;
+            border: 2px dashed #94a3b8;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 18px 0 24px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .screenshot-placeholder .icon {
+            font-size: 28px;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .screenshot-placeholder .title {
+            font-weight: 700;
+            color: var(--primary-dark);
+            font-size: 13.5px;
+            margin-bottom: 4px;
+        }
+
+        .screenshot-placeholder .instruction {
+            font-size: 12px;
+            color: #dc2626;
+            font-style: italic;
+            background: #fef2f2;
+            padding: 4px 10px;
+            display: inline-block;
+            border-radius: 4px;
+            margin-top: 6px;
+        }
+
+        /* STEP BADGES */
+        .step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+            margin-right: 6px;
+            flex-shrink: 0;
+        }
+
+        /* FOOTER DOC */
+        .doc-footer {
+            margin-top: 50px;
+            padding-top: 25px;
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            body {
+                background: white;
+                font-size: 11pt;
+                color: black;
+            }
+
+            .action-bar {
+                display: none !important;
+            }
+
+            .document-container {
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+                border: none;
+                box-shadow: none;
+            }
+
+            @page {
+                size: A4 portrait;
+                margin: 15mm 15mm 20mm 15mm;
+            }
+
+            .page-break {
+                page-break-before: always;
+            }
+
+            .cover-page {
+                min-height: 90vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                border-bottom: none;
+                margin-bottom: 0;
+            }
+
+            h1.section-title {
+                page-break-before: always;
+            }
+
+            .screenshot-placeholder {
+                border: 1px solid #64748b;
+                page-break-inside: avoid;
+            }
+
+            .styled-table, .formula-box, .t-account-demo, .role-card, .callout {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ACTION BAR -->
+    <div class="action-bar">
+        <div class="action-title">
+            <img src="logo_lazisnu_lmg.png" alt="Logo LAZISNU Lamongan">
+            <span>Buku Panduan Operasional Sistem & Aplikasi KOIN NU (Versi 2.5)</span>
+        </div>
+        <div class="action-btn-group">
+            <a href="dashboard" class="btn-action btn-dashboard">
+                <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+            </a>
+            <button class="btn-action btn-print" onclick="window.print()">
+                <i class="fas fa-print"></i> Cetak / Simpan PDF (Ctrl + P)
+            </button>
+        </div>
+    </div>
+
+    <!-- DOCUMENT CONTAINER -->
+    <div class="document-container">
+
+        <!-- COVER PAGE -->
+        <div class="cover-page">
+            <img src="logo_lazisnu_lmg.png" alt="Logo LAZISNU" class="cover-logo">
+            <div class="cover-subtitle-top">PENGURUS CABANG NAHDLATUL ULAMA LAMONGAN</div>
+            <h1 class="cover-title">BUKU PANDUAN OPERASIONAL SISTEM & APLIKASI</h1>
+            <div class="cover-app-name">Sistem Manajemen KOIN NU, Pentasyarufan 5 Pilar & Buku Kas Umum (BKU)</div>
+            <p class="cover-desc">
+                Pedoman Baku Operasional (Standard Operating Procedure) bagi Pengunjung, Donatur, Petugas Lapangan Koin (PLK), Pengurus Ranting, Pengurus MWC, serta Jajaran Administrator Cabang (Ketua, Sekretaris, Bendahara, Admin KOIN, dan Admin Online) NU Care - LAZISNU Kabupaten Lamongan.
+            </p>
+
+            <div class="cover-meta">
+                <div>
+                    <strong>Penerbit:</strong>
+                    <span>NU Care - LAZISNU Lamongan</span>
+                </div>
+                <div>
+                    <strong>Versi Dokumen:</strong>
+                    <span>2.5.0 (Edisi Pembaruan 2026)</span>
+                </div>
+                <div>
+                    <strong>Status Dokumen:</strong>
+                    <span>Resmi &amp; Terverifikasi</span>
+                </div>
+                <div>
+                    <strong>Hotline Bantuan:</strong>
+                    <span>0851 8899 1926</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- DAFTAR ISI -->
+        <div class="toc-box">
+            <div class="toc-header">
+                <i class="fas fa-list-ul text-success"></i> SISTEMATIKA & DAFTAR ISI BUKU PANDUAN
+            </div>
+            <ul class="toc-list">
+                <li><a href="#pendahuluan">1. INFORMASI DOKUMEN &amp; PENDAHULUAN</a> <span class="badge-toc">Bab 1</span></li>
+                <li><a href="#peran-pengguna">2. STRUKTUR PENGGUNA &amp; RBAC 5 TINGKAT PC</a> <span class="badge-toc">Bab 2</span></li>
+                <li><a href="#dynamic-permissions">3. MANAJEMEN PENGGUNA &amp; HAK AKSES MENU DINAMIS</a> <span class="badge-toc">Bab 3</span></li>
+                <li><a href="#workflow-operasional">4. MODUL OPERASIONAL KOIN NU &amp; SETORAN BERJENJANG</a> <span class="badge-toc">Bab 4</span></li>
+                <li class="sub"><a href="#workflow-donatur">4.1 Modul Donatur &amp; Layanan QRIS Digital</a> <span class="badge-toc">4.1</span></li>
+                <li class="sub"><a href="#workflow-plk">4.2 Modul Petugas Lapangan Koin (PLK) / Tingkat Ranting</a> <span class="badge-toc">4.2</span></li>
+                <li class="sub"><a href="#workflow-mwc">4.3 Modul Pengurus MWC / Koordinator Kecamatan</a> <span class="badge-toc">4.3</span></li>
+                <li class="sub"><a href="#workflow-pc">4.4 Modul Administrator Cabang &amp; Periodisasi Penthong</a> <span class="badge-toc">4.4</span></li>
+                <li><a href="#modul-pentasyarufan">5. MODUL PENTASYARUFAN (PENGELUARAN 5 PILAR &amp; PROKER)</a> <span class="badge-toc">Bab 5</span></li>
+                <li class="sub"><a href="#pilar-program">5.1 Master 5 Pilar NU Care &amp; Penetapan Target Persentase</a> <span class="badge-toc">5.1</span></li>
+                <li class="sub"><a href="#isolasi-saldo">5.2 Logika Pembukuan: Isolasi Penthong &amp; Potongan Hak Amil 20%</a> <span class="badge-toc">5.2</span></li>
+                <li class="sub"><a href="#alur-proker">5.3 Alur Program Kerja (Proker) Berjenjang (Draft - Approve - Reject)</a> <span class="badge-toc">5.3</span></li>
+                <li class="sub"><a href="#realisasi-spj">5.4 Realisasi Pencairan Saldo Siap Salur &amp; Verifikasi SPJ</a> <span class="badge-toc">5.4</span></li>
+                <li><a href="#modul-bku">6. MODUL BUKU KAS UMUM (BKU) KOIN NU - FORMAT T-ACCOUNT</a> <span class="badge-toc">Bab 6</span></li>
+                <li class="sub"><a href="#konsep-bku">6.1 Standar Akuntansi T-Account &amp; Chart of Accounts (COA)</a> <span class="badge-toc">6.1</span></li>
+                <li class="sub"><a href="#cetak-bku">6.2 Cetak Lembar BKU Resmi &amp; Ekspor Microsoft Excel</a> <span class="badge-toc">6.2</span></li>
+                <li><a href="#keamanan-sistem">7. KEAMANAN SISTEM, PROTEKSI RUTE &amp; SESSION TIMEOUT</a> <span class="badge-toc">Bab 7</span></li>
+                <li><a href="#troubleshooting">8. TROUBLESHOOTING &amp; FAQ (TANYA JAWAB KENDALA TEKNIS)</a> <span class="badge-toc">Bab 8</span></li>
+                <li><a href="#kontak">9. KONTAK BANTUAN &amp; SEKRETARIAT RESMI</a> <span class="badge-toc">Bab 9</span></li>
+            </ul>
+        </div>
+
+        <!-- 1. INFORMASI DOKUMEN & PENDAHULUAN -->
+        <h1 class="section-title" id="pendahuluan"><i class="fas fa-book"></i> 1. INFORMASI DOKUMEN &amp; PENDAHULUAN</h1>
+
+        <h2 class="subsection-title">1.1 Tujuan &amp; Filosofi Pengembangan Sistem</h2>
+        <p>Buku Panduan Operasional ini disusun sebagai standar operasional prosedur (SOP) baku dalam mengoperasikan <strong>Sistem Informasi Manajemen KOIN NU dan Portal Digital NU Care - LAZISNU PCNU Lamongan</strong>. Sistem ini mengintegrasikan seluruh rantai nilai filantropi Islam Nahdlatul Ulama secara *end-to-end*:</p>
+        <ul>
+            <li><strong>Penghimpunan (Inflow):</strong> Penarikan koin kaleng receh di rumah-rumah warga Nahdliyin oleh Petugas Lapangan Koin (PLK), donasi transfer bank syariah/konvensional, serta pembayaran instan melalui QRIS Nasional.</li>
+            <li><strong>Distribusi &amp; Alokasi Lembaga:</strong> Skema bagi hasil resmi Penthong (80% Ranting, 12% MWC, 6% PC, 1.5% PW, 0.5% PB) yang dihitung secara otomatis dan transparan.</li>
+            <li><strong>Pentasyarufan (Outflow):</strong> Pengendalian pengeluaran berbasis 5 Pilar Program NU Care dan usulan Program Kerja (Proker) berjenjang dengan pembatasan pagu anggaran virtual (*virtual balance*).</li>
+            <li><strong>Akuntabilitas &amp; Buku Besar (Ledger):</strong> Pencatatan Buku Kas Umum (BKU) dengan format standar akuntansi *T-Account* (pemasukan di sisi kiri, pengeluaran di sisi kanan) siap cetak dan ekspor Excel.</li>
+        </ul>
+        
+        <div class="callout callout-tip">
+            <div class="callout-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="callout-content">
+                <strong>Prinsip Utama: MANTAP (Modern, Akuntabel, Transparan, Amanah, Profesional)</strong>
+                Sistem dirancang dengan arsitektur ketat agar setiap rupiah infaq warga dapat diaudit riwayatnya secara presisi hingga tingkat satuan rupiah (Zero-Leakage Guarantee).
+            </div>
+        </div>
+
+        <h2 class="subsection-title">1.2 Ketentuan Hak Akses &amp; Integritas Data</h2>
+        <ol>
+            <li><strong>Kerahasiaan Kredensial:</strong> Setiap pengurus dan relawan wajib merahasiakan username dan kata sandi akunnya. Segala transaksi dan pengubahan data tercatat dalam rekaman jejak audit (*system audit trail*).</li>
+            <li><strong>Pemberlakuan Multi-Peran (RBAC):</strong> Sistem membatasi visibilitas data sesuai batas teritorial dan struktural masing-masing pengguna. Akun Ranting hanya dapat memproses data di desanya, MWC mengawasi se-kecamatan, dan PC mengelola tingkat kabupaten.</li>
+            <li><strong>Bukti Fisik &amp; Kepatuhan Syariah:</strong> Seluruh pencatatan kas keluar wajib disertai bukti Surat Pertanggungjawaban (SPJ) berupa nota, kwitansi bertandatangan, atau dokumentasi foto penyerahan manfaat.</li>
+        </ol>
+
+        <h2 class="subsection-title">1.3 Petunjuk Simbol &amp; Ikon Panduan</h2>
+        <div class="callout callout-tip">
+            <div class="callout-icon"><i class="fas fa-lightbulb"></i></div>
+            <div class="callout-content">
+                <strong>💡 [TIPS / REKOMENDASI]</strong>
+                Menunjukkan jalan pintas (*shortcut*), efisiensi kerja, atau praktik terbaik dalam menggunakan fitur.
+            </div>
+        </div>
+        <div class="callout callout-note">
+            <div class="callout-icon"><i class="fas fa-info-circle"></i></div>
+            <div class="callout-content">
+                <strong>📌 [CATATAN PENTING]</strong>
+                Menandakan ketentuan administratif, kebijakan syariah zakat-infaq, atau aturan operasional baku yang wajib dipatuhi.
+            </div>
+        </div>
+        <div class="callout callout-warning">
+            <div class="callout-icon"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="callout-content">
+                <strong>⚠️ [PERINGATAN OPERASIONAL]</strong>
+                Menandakan konsekuensi penting seperti penguncian periode transaksi atau status non-aktif wilayah.
+            </div>
+        </div>
+        <div class="callout callout-danger">
+            <div class="callout-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="callout-content">
+                <strong>🛑 [TINDAKAN KRITIKAL / DEFISIT]</strong>
+                Menandakan tindakan yang dilarang sistem seperti penolakan pencairan karena overbudget atau pelanggaran batas otorisasi.
+            </div>
+        </div>
+
+        <!-- 2. IDENTIFIKASI PERAN PENGGUNA -->
+        <h1 class="section-title page-break" id="peran-pengguna"><i class="fas fa-users-cog"></i> 2. STRUKTUR PENGGUNA &amp; RBAC 5 TINGKAT PC</h1>
+        <p>Untuk menunjang tata kelola organisasi yang profesional dan pemisahan tugas (*segregation of duties*), sistem membagi wewenang ke dalam 5 tingkatan peran di level Pengurus Cabang (PC), serta peran Koordinator Kecamatan (MWC) dan Pengurus Desa (Ranting/PLK):</p>
+        
+        <div class="role-grid">
+            <div class="role-card">
+                <div>
+                    <div class="role-card-header">
+                        <span class="badge badge-danger">Tingkat PC</span>
+                        <i class="fas fa-user-shield text-danger"></i>
+                    </div>
+                    <div class="role-card-title">Super Admin PC</div>
+                    <div class="role-card-desc">Pengendali teknis tertinggi sistem. Mengatur seluruh master data, konfigurasi hak akses menu dinamis per user, master wilayah, dan pemeliharaan basis data.</div>
+                </div>
+                <div class="role-card-caps">
+                    <strong>Wewenang:</strong> Manajemen User &amp; Menu Permissions, Master MWC/Ranting, Setting Persentase Hak Amil &amp; Pilar.
+                </div>
+            </div>
+
+            <div class="role-card gold-border">
+                <div>
+                    <div class="role-card-header">
+                        <span class="badge badge-warning">Tingkat PC</span>
+                        <i class="fas fa-crown text-warning"></i>
+                    </div>
+                    <div class="role-card-title">Ketua PC LAZISNU</div>
+                    <div class="role-card-desc">Pimpinan eksekutif tertinggi lembaga. Mengawasi performa penghimpunan agregat kabupaten, menyetujui program kerja strategis, dan memantau transparansi pelaporan.</div>
+                </div>
+                <div class="role-card-caps">
+                    <strong>Wewenang:</strong> Dashboard Eksekutif Agregat, Approval Program Kerja (RAB), Monitoring Audit WTP &amp; Rekap Resmi.
+                </div>
+            </div>
+
+            <div class="role-card">
+                <div>
+                    <div class="role-card-header">
+                        <span class="badge badge-info">Tingkat PC</span>
+                        <i class="fas fa-file-signature text-info"></i>
+                    </div>
+                    <div class="role-card-title">Sekretaris PC</div>
+                    <div class="role-card-desc">Penanggung jawab administrasi, legalitas, korespondensi, dan tata kelola program kerja lembaga antar-tingkatan.</div>
+                </div>
+                <div class="role-card-caps">
+                    <strong>Wewenang:</strong> Validasi usulan Program Kerja (Proker), pengawasan keaktifan wilayah MWC/Ranting, agenda organisasi &amp; arsip.
+                </div>
+            </div>
+
+            <div class="role-card">
+                <div>
+                    <div class="role-card-header">
+                        <span class="badge badge-success">Tingkat PC</span>
+                        <i class="fas fa-wallet text-success"></i>
+                    </div>
+                    <div class="role-card-title">Bendahara PC</div>
+                    <div class="role-card-desc">Pengelola arus kas dan otorisator pencairan dana. Menjalankan pembukuan Buku Kas Umum (BKU), realisasi pentasyarufan, dan verifikasi dokumen SPJ.</div>
+                </div>
+                <div class="role-card-caps">
+                    <strong>Wewenang:</strong> Realisasi Pencairan Pentasyarufan, Verifikasi SPJ, Buku Kas Umum (BKU), Tutup/Kunci Periode Penthong.
+                </div>
+            </div>
+
+            <div class="role-card">
+                <div>
+                    <div class="role-card-header">
+                        <span class="badge badge-primary">Tingkat PC</span>
+                        <i class="fas fa-coins text-success"></i>
+                    </div>
+                    <div class="role-card-title">Admin KOIN NU PC</div>
+                    <div class="role-card-desc">Operator khusus yang menangani penarikan koin kaleng se-Kabupaten. Membina koordinator lapangan dan memverifikasi setoran fisik.</div>
+                </div>
+                <div class="role-card-caps">
+                    <strong>Wewenang:</strong> Rekapitulasi Koin Bulanan, Verifikasi Setoran Ranting, Manajemen Donatur Kaleng se-Cabang.
+                </div>
+            </div>
+
+            <div class="role-card">
+                <div>
+                    <div class="role-card-header">
+                        <span class="badge badge-secondary">Tingkat PC</span>
+                        <i class="fas fa-globe text-primary"></i>
+                    </div>
+                    <div class="role-card-title">Admin Online PC</div>
+                    <div class="role-card-desc">Pengelola kanal digital, portal crowdfunding publik, berita kegiatan pentasyarufan, dan mutasi donasi online (transfer &amp; QRIS).</div>
+                </div>
+                <div class="role-card-caps">
+                    <strong>Wewenang:</strong> CMS Website Publik, Verifikasi Donasi Online, Banner Hero Slider, Artikel Berita.
+                </div>
+            </div>
+
+            <div class="role-card">
+                <div>
+                    <div class="role-card-header">
+                        <span class="badge badge-info">Tingkat MWC</span>
+                        <i class="fas fa-landmark text-info"></i>
+                    </div>
+                    <div class="role-card-title">Pengurus MWC (Kecamatan)</div>
+                    <div class="role-card-desc">Koordinator wilayah kecamatan yang memantau perolehan koin seluruh ranting di bawah naungannya dan mengelola dana bagi hasil MWC (12%).</div>
+                </div>
+                <div class="role-card-caps">
+                    <strong>Wewenang:</strong> Dashboard Wilayah Kecamatan, Monitoring Ranting, Pengajuan Proker MWC, Laporan Bagi Hasil 12%.
+                </div>
+            </div>
+
+            <div class="role-card">
+                <div>
+                    <div class="role-card-header">
+                        <span class="badge badge-success">Tingkat Ranting</span>
+                        <i class="fas fa-hand-holding-usd text-success"></i>
+                    </div>
+                    <div class="role-card-title">Pengurus Ranting / PLK</div>
+                    <div class="role-card-desc">Garda terdepan di desa/kelurahan yang meregistrasikan kaleng warga, menjemput koin, menginput setoran, dan mencairkan dana bagi hasil desa (80%).</div>
+                </div>
+                <div class="role-card-caps">
+                    <strong>Wewenang:</strong> Registrasi Donatur &amp; Kaleng, Input Setoran Penthong, Pengajuan Proker Desa, Cetak Struk Digital.
+                </div>
+            </div>
+        </div>
+
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th style="width: 20%;">Peran Pengguna</th>
+                    <th style="width: 25%;">Akses Operasional Koin</th>
+                    <th style="width: 30%;">Akses Pentasyarufan &amp; BKU</th>
+                    <th style="width: 25%;">Akses Portal Publik &amp; User</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Super Admin PC</strong></td>
+                    <td>Akses penuh (Semua Wilayah)</td>
+                    <td>Setting Pilar, Validasi, Realisasi, BKU &amp; Laporan</td>
+                    <td>Manajemen User, Menu Permissions, CMS</td>
+                </tr>
+                <tr>
+                    <td><strong>Ketua PC</strong></td>
+                    <td>Monitoring Agregat &amp; Audit</td>
+                    <td>Approval Program Kerja, BKU &amp; Rekapitulasi</td>
+                    <td>Monitoring Konten Publik</td>
+                </tr>
+                <tr>
+                    <td><strong>Sekretaris PC</strong></td>
+                    <td>Monitoring Wilayah &amp; Keaktifan</td>
+                    <td>Verifikasi Usulan Proker Berjenjang</td>
+                    <td>Arsip &amp; Dokumentasi</td>
+                </tr>
+                <tr>
+                    <td><strong>Bendahara PC</strong></td>
+                    <td>Kunci Penthong &amp; Bagi Hasil</td>
+                    <td>Realisasi Pencairan, Verifikasi SPJ, BKU</td>
+                    <td>Laporan Keuangan Publik</td>
+                </tr>
+                <tr>
+                    <td><strong>Admin KOIN NU</strong></td>
+                    <td>Input, Verifikasi Setoran, Donatur</td>
+                    <td>Lihat Laporan Penyaluran Koin</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td><strong>Admin Online</strong></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>Kelola Kampanye, Berita, Donasi QRIS</td>
+                </tr>
+                <tr>
+                    <td><strong>Pengurus MWC</strong></td>
+                    <td>Monitoring 1 Kecamatan</td>
+                    <td>Proker MWC, Realisasi Pagu MWC (12%)</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td><strong>Pengurus Ranting / PLK</strong></td>
+                    <td>Input Setoran &amp; Donatur Desa</td>
+                    <td>Proker Desa, Realisasi Pagu Desa (80%)</td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 3. DYNAMIC MENU PERMISSIONS -->
+        <h1 class="section-title page-break" id="dynamic-permissions"><i class="fas fa-toggle-on"></i> 3. MANAJEMEN PENGGUNA &amp; HAK AKSES MENU DINAMIS</h1>
+        
+        <h2 class="subsection-title">3.1 Konsep Kontrol Akses Granular (Dynamic Menu Permissions)</h2>
+        <p>Sistem dilengkapi dengan fitur <strong>Dynamic Menu Permissions</strong> yang memungkinkan Administrator menyesuaikan menu apa saja yang boleh dilihat dan dioperasikan oleh setiap akun individu. Meskipun dua pengguna memiliki tingkatan peran yang sama, Super Admin dapat memberikan izin tambahan (misalnya: memberikan staf admin akses khusus ke Buku Kas Umum tanpa mengubah perannya menjadi Bendahara).</p>
+
+        <div class="callout callout-note">
+            <div class="callout-icon"><i class="fas fa-shield-alt"></i></div>
+            <div class="callout-content">
+                <strong>Prinsip Pertahanan Berlapis (Two-Layer Security):</strong>
+                Pengaturan menu dinamis tidak hanya menyembunyikan ikon di menu bar samping (sidebar), tetapi juga ditegakkan secara absolut di sisi server melalui middleware <code>CheckMenuAccess</code>. Jika user mengetikkan URL menu yang tidak diizinkan secara sengaja, sistem akan langsung menolak akses dengan respons <code>403 Forbidden</code>.
+            </div>
+        </div>
+
+        <h2 class="subsection-title">3.2 Cara Mengatur Hak Akses Menu Pengguna</h2>
+        <p><span class="step-num">1</span> Login sebagai <strong>Super Admin PC</strong>.</p>
+        <p><span class="step-num">2</span> Pada bilah navigasi samping, buka menu <strong>Master Data</strong> $\rightarrow$ pilih <strong>Pengguna (Users)</strong>.</p>
+        <p><span class="step-num">3</span> Temukan nama pengguna yang ingin diatur hak aksesnya, kemudian klik tombol kuning <strong>Edit Akun</strong> (<i class="fas fa-edit"></i>).</p>
+        <p><span class="step-num">4</span> Gulir ke bagian bawah formulir hingga menemukan kartu <strong>"Hak Akses Menu Dinamis (Permissions Matrix)"</strong>.</p>
+        <p><span class="step-num">5</span> Menu-menu dikelompokkan ke dalam kategori:</p>
+        <ul>
+            <li><strong>Dashboard &amp; Analitik:</strong> Dashboard Utama.</li>
+            <li><strong>Operasional KOIN NU:</strong> Donatur Kaleng, Petugas Lapangan (PLK), Input Setoran Koin, Riwayat Transaksi, Periode Penthong.</li>
+            <li><strong>Pentasyarufan &amp; Penyaluran:</strong> 5 Pilar &amp; Pagu Anggaran, Program Kerja (RAB), Penyaluran &amp; SPJ, Laporan Penyaluran, Buku Kas Umum (BKU).</li>
+            <li><strong>Portal Website &amp; Crowdfunding:</strong> Kategori Pilar Donasi, Kampanye Donasi Online, Berita Penyaluran, Hero Slider, Mutasi Donasi Online Masuk, Pengaturan Situs.</li>
+            <li><strong>Master Data Wilayah &amp; Akun:</strong> Manajemen Akun Pengguna, Master MWC Kecamatan, Master Ranting Desa.</li>
+            <li><strong>Laporan &amp; Cetak Rekapitulasi:</strong> Rekap Transaksi Koin, Bagi Hasil Penthong, Laporan Audit WTP, Dokumen Buku Panduan.</li>
+        </ul>
+        <p><span class="step-num">6</span> Klik saklar switch toggle (hijau = aktif, abu-abu = non-aktif) sesuai kebutuhan penugasan.</p>
+        <p><span class="step-num">7</span> Klik tombol hijau <strong>Simpan Perubahan Pengguna</strong> di bagian bawah.</p>
+
+        <div class="screenshot-placeholder">
+            <div class="icon"><i class="fas fa-camera"></i></div>
+            <div class="title">[GAMBAR: Tampilan Matriks Saklar Switch Toggle Hak Akses Menu Dinamis pada Form Edit User]</div>
+            <div class="instruction">Tandai/lingkari merah: Saklar toggle hijau untuk menu 'Buku Kas Umum (BKU)' dan tombol 'Simpan Perubahan Pengguna'.</div>
+        </div>
+
+        <!-- 4. MODUL OPERASIONAL KOIN NU & SETORAN BERJENJANG -->
+        <h1 class="section-title page-break" id="workflow-operasional"><i class="fas fa-coins"></i> 4. MODUL OPERASIONAL KOIN NU &amp; SETORAN BERJENJANG</h1>
+        
+        <!-- 4.1 DONATUR & QRIS -->
+        <h2 class="subsection-title" id="workflow-donatur">4.1 Modul Donatur &amp; Layanan QRIS Digital</h2>
+        <div class="workflow-box">
+            <span class="workflow-step">Akses Portal Website</span>
+            <span class="workflow-arrow"><i class="fas fa-arrow-right"></i></span>
+            <span class="workflow-step">Pilih Program / Rekening</span>
+            <span class="workflow-arrow"><i class="fas fa-arrow-right"></i></span>
+            <span class="workflow-step">Scan QRIS / Transfer Bank</span>
+            <span class="workflow-arrow"><i class="fas fa-arrow-right"></i></span>
+            <span class="workflow-step">Konfirmasi WhatsApp</span>
+            <span class="workflow-arrow"><i class="fas fa-arrow-right"></i></span>
+            <span class="workflow-step">Terima Bukti Donasi Digital</span>
+        </div>
+
+        <p>Masyarakat luas dan kaum aghniya dapat berpartisipasi menyalurkan infaq, sedekah, dan zakat melalui portal resmi <strong>https://lazispcnulamongan.com</strong> tanpa harus memiliki akun login:</p>
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th>Kategori Dana</th>
+                    <th>Bank Penerima</th>
+                    <th>Nomor Rekening</th>
+                    <th>Atas Nama Resmi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Khusus Zakat</strong> (Mal, Fitrah, Profesi)</td>
+                    <td>Bank Syariah Indonesia (BSI)</td>
+                    <td><strong>2026070708</strong></td>
+                    <td>Lazisnu Lamongan</td>
+                </tr>
+                <tr>
+                    <td><strong>Selain Zakat</strong> (Infaq, Shadaqah, Koin)</td>
+                    <td>Bank Rakyat Indonesia (BRI)</td>
+                    <td><strong>00411001448562</strong></td>
+                    <td>LAZISNU LAMONGAN</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- 4.2 PLK / RANTING -->
+        <h2 class="subsection-title" id="workflow-plk">4.2 Modul Petugas Lapangan Koin (PLK) / Tingkat Ranting</h2>
+        <div class="workflow-box">
+            <span class="workflow-step">Login Akun Ranting</span>
+            <span class="workflow-arrow"><i class="fas fa-arrow-right"></i></span>
+            <span class="workflow-step">Registrasi Donatur &amp; Kaleng</span>
+            <span class="workflow-arrow"><i class="fas fa-arrow-right"></i></span>
+            <span class="workflow-step">Penarikan Kaleng (Penthong)</span>
+            <span class="workflow-arrow"><i class="fas fa-arrow-right"></i></span>
+            <span class="workflow-step">Input Nominal Setoran</span>
+            <span class="workflow-arrow"><i class="fas fa-arrow-right"></i></span>
+            <span class="workflow-step">Cetak Struk Digital</span>
+        </div>
+
+        <h3 class="subsubsection-title">A. Registrasi Donatur &amp; Penomoran Kaleng Otomatis</h3>
+        <p>Setiap kaleng yang diserahkan ke rumah warga wajib diregistrasikan ke dalam database by-name by-address:</p>
+        <p><span class="step-num">1</span> Buka menu <strong>Master Data</strong> $\rightarrow$ klik <strong>Donatur</strong>.</p>
+        <p><span class="step-num">2</span> Klik tombol biru <strong>+ Tambah Donatur Baru</strong> di pojok kanan atas.</p>
+        <p><span class="step-num">3</span> Lengkapi data warga: Nama Lengkap, Nomor HP/WhatsApp, Alamat (RT/RW/Dusun), dan pilih Petugas PLK Pembina.</p>
+        <p><span class="step-num">4</span> <strong>Sistem Menghasilkan Nomor Kaleng Otomatis:</strong> Kode kaleng dibuat secara terstruktur dengan formula: <code>KLG-[MWC]-[RANTING]-[NOMOR_URUT]</code> (contoh: <code>KLG-M09-R03-0042</code>).</p>
+        <p><span class="step-num">5</span> Klik <strong>Simpan Donatur</strong> dan tempelkan nomor tersebut pada stiker kaleng fisik warga.</p>
+
+        <h3 class="subsubsection-title">B. Pencatatan Penarikan Infak Kaleng Bulanan (Penthong)</h3>
+        <p><span class="step-num">1</span> Pada menu kiri, klik <strong>Operasional KOIN NU</strong> $\rightarrow$ pilih <strong>Input Setoran</strong>.</p>
+        <p><span class="step-num">2</span> Pilih <strong>Nama Relawan (PLK)</strong> yang menyetorkan hasil penarikan.</p>
+        <p><span class="step-num">3</span> Pilih <strong>Periode Penthong</strong> yang sedang aktif (contoh: <em>Penthong 10 - Oktober 2026</em>).</p>
+        <p><span class="step-num">4</span> Masukkan <strong>Nominal Perolehan (Rp)</strong>. Sistem otomatis memformat pemisah ribuan titik (misal: <code>Rp 1.750.000</code>).</p>
+        <p><span class="step-num">5</span> Unggah foto bukti penghitungan kaleng atau kwitansi fisik (maksimal 2MB, format JPG/PNG).</p>
+        <p><span class="step-num">6</span> Klik tombol hijau <strong>Simpan &amp; Konfirmasi Setoran</strong>.</p>
+
+        <div class="callout callout-danger">
+            <div class="callout-icon"><i class="fas fa-ban"></i></div>
+            <div class="callout-content">
+                <strong>⚠️ Peringatan untuk Ranting Berstatus Non-Aktif (Suspended):</strong>
+                Jika Ranting dinonaktifkan oleh PC Lazisnu akibat keterlambatan laporan berkala, akses formulir setoran akan diblokir dengan pesan: <em>"Akses input dinonaktifkan oleh PC Lazisnu. Silakan selesaikan urusan administrasi Anda."</em> Pengurus Ranting wajib menghubungi MWC untuk rekonsiliasi.
+            </div>
+        </div>
+
+        <h3 class="subsubsection-title">C. Cetak &amp; Kirim Bukti Tanda Terima Digital</h3>
+        <p>Buka menu <strong>Riwayat Transaksi</strong> $\rightarrow$ klik tombol <strong>Lihat / Cetak Struk</strong>. Petugas dapat mencetak struk bertanda tangan elektronik dan QR Code ke printer thermal, atau mengklik tombol hijau <strong>Kirim via WhatsApp</strong> untuk mengirimkan tanda terima digital langsung ke nomor WhatsApp donatur.</p>
+
+        <!-- 4.3 MWC -->
+        <h2 class="subsection-title" id="workflow-mwc">4.3 Modul Pengurus MWC / Koordinator Wilayah (Kecamatan)</h2>
+        <p>Pengurus MWC mengemban tugas supervisi atas perolehan seluruh ranting di kecamatannya:</p>
+        <ol>
+            <li><strong>Dashboard Monitoring Kecamatan:</strong> Menampilkan total kaleng beredar, grafik perolehan koin bulanan, dan perbandingan perolehan antar-desa se-kecamatan.</li>
+            <li><strong>Pengawasan Status Ranting:</strong> Mengingatkan ranting yang terlambat menyetorkan koin atau berstatus merah non-aktif.</li>
+            <li><strong>Bagi Hasil Tingkat MWC (12%):</strong> Memantau porsi hak bagi hasil MWC sebesar 12% dari dana bersih pasca-pemotongan operasional untuk kas program kerja tingkat kecamatan.</li>
+        </ol>
+
+        <!-- 4.4 PC & PERIODISASI -->
+        <h2 class="subsection-title" id="workflow-pc">4.4 Modul Administrator Cabang &amp; Periodisasi Penthong</h2>
+        <div class="formula-box">
+            <div class="formula-title"><i class="fas fa-calculator"></i> Skema Baku Pembagian Hasil KOIN NU (DistributionService)</div>
+            <div><code>Dana Bruto Koin = SUM(Setoran Terkonfirmasi Periode Penthong)</code></div>
+            <div style="margin-top: 6px;"><code>Potongan Hak Amil / Operasional = Dana Bruto × 20%</code></div>
+            <div style="margin-top: 6px;"><code>Dana Bersih (Netto Siap Distribusi) = Dana Bruto - 20%</code></div>
+            <div class="formula-detail">
+                Porsi Alokasi dari Dana Bersih (100%):
+                <ul style="margin-top: 4px; padding-left: 20px;">
+                    <li><strong>Tingkat Ranting (Desa):</strong> <strong>80%</strong> (Didistribusikan langsung ke kas ranting pengumpul)</li>
+                    <li><strong>Tingkat MWC (Kecamatan):</strong> <strong>12%</strong> (Didistribusikan ke kas operasional MWC)</li>
+                    <li><strong>Tingkat PC (Kabupaten):</strong> <strong>6%</strong> (Kas pentasyarufan program strategis cabang)</li>
+                    <li><strong>Tingkat PW (Jawa Timur):</strong> <strong>1.5%</strong> (Kontribusi teritorial wilayah)</li>
+                    <li><strong>Tingkat PB (Pusat):</strong> <strong>0.5%</strong> (Kontribusi nasional PBNU)</li>
+                </ul>
+            </div>
+        </div>
+
+        <p><strong>Prosedur Penutupan &amp; Penguncian Penthong (Bendahara / Super Admin PC):</strong></p>
+        <p><span class="step-num">1</span> Buka menu <strong>Operasional KOIN NU</strong> $\rightarrow$ pilih <strong>Periode Penthong</strong>.</p>
+        <p><span class="step-num">2</span> Pilih periode penthong yang akan diakhiri pembukuannya.</p>
+        <p><span class="step-num">3</span> Periksa rekapitulasi nominal setoran fisik dan pastikan seluruh mutasi telah terverifikasi.</p>
+        <p><span class="step-num">4</span> Klik tombol merah <strong>Tutup &amp; Kunci Penthong</strong>. Sistem akan mengunci mutasi setoran secara permanen dan membukukan angka bagi hasil ke laporan keuangan resmi.</p>
+
+        <!-- 5. MODUL PENTASYARUFAN -->
+        <h1 class="section-title page-break" id="modul-pentasyarufan"><i class="fas fa-hand-holding-heart"></i> 5. MODUL PENTASYARUFAN (PENGELUARAN 5 PILAR &amp; PROKER)</h1>
+        
+        <h2 class="subsection-title" id="pilar-program">5.1 Master 5 Pilar NU Care &amp; Penetapan Target Persentase</h2>
+        <p>Pentasyarufan LAZISNU Lamongan wajib berpedoman pada 5 pilar program utama NU Care. Administrator menetapkan target persentase pagu untuk masing-masing pilar program melalui menu <strong>Pentasyarufan</strong> $\rightarrow$ <strong>5 Pilar &amp; Pagu</strong>:</p>
+
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th style="width: 15%;">Kode COA</th>
+                    <th style="width: 25%;">Pilar Program</th>
+                    <th style="width: 20%;">Standar Alokasi</th>
+                    <th style="width: 40%;">Fokus Bidang Pentasyarufan</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="badge badge-info">NU Cerdas</span></td>
+                    <td><strong>Pendidikan</strong></td>
+                    <td>20.00%</td>
+                    <td>Beasiswa santri dhuafa, renovasi madrasah/TPQ, seragam &amp; kitab gratis.</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-success">NU Berdaya</span></td>
+                    <td><strong>Ekonomi</strong></td>
+                    <td>25.00%</td>
+                    <td>Permodalan usaha mikro mustahiq, pelatihan UMKM warga, bantuan alat kerja.</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-danger">NU Sehat</span></td>
+                    <td><strong>Kesehatan</strong></td>
+                    <td>15.00%</td>
+                    <td>Operasional ambulans gratis, bantuan biaya berobat dhuafa, khitanan massal.</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-warning">NU Damai</span></td>
+                    <td><strong>Sosial &amp; Kebencanaan</strong></td>
+                    <td>20.00%</td>
+                    <td>Santunan yatim &amp; janda tua, tanggap darurat banjir/bencana, bedah rumah dhuafa.</td>
+                </tr>
+                <tr>
+                    <td><span class="badge badge-primary">NU Hijau</span></td>
+                    <td><strong>Dakwah &amp; Lingkungan</strong></td>
+                    <td>20.00%</td>
+                    <td>Bisyaroh guru ngaji, pembinaan muallaf, penanaman pohon &amp; sanitasi pesantren.</td>
+                </tr>
+                <tr style="font-weight: bold; background: #e8f5ee;">
+                    <td colspan="2" style="text-align: right;">TOTAL ALOKASI PAGU:</td>
+                    <td>100.00%</td>
+                    <td>Total akumulasi persentase wajib tepat 100%.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="subsection-title" id="isolasi-saldo">5.2 Logika Pembukuan: Isolasi Penthong &amp; Potongan Hak Amil (20%)</h2>
+        <p>Untuk mencegah kekacauan akuntansi akibat dana bercampur secara global, sistem menerapkan <strong>Isolasi Saldo Berbasis Periode Penthong</strong>. Setiap kali pengurus mengajukan pentasyarufan, sistem mewajibkan pemilihan sumber dana dari periode penthong tertentu.</p>
+
+        <div class="formula-box">
+            <div class="formula-title"><i class="fas fa-calculator"></i> Formula Akuntansi Sisa Saldo Pilar Siap Salur (PentasyarufanBalanceService)</div>
+            <div><code>Total Koin Kotor (Bruto) = SUM(Setoran Terkonfirmasi Periode Penthong ID Terpilih)</code></div>
+            <div style="margin-top: 5px;"><code>Potongan Hak Amil / Operasional (20%) = Total Koin Kotor × 20%</code></div>
+            <div style="margin-top: 5px;"><code>Dana Bersih (Netto) = Total Koin Kotor - Potongan Hak Amil</code></div>
+            <div style="margin-top: 5px;"><code>Pagu Anggaran Pilar A = Dana Bersih × Target Persentase Pilar A</code></div>
+            <div style="margin-top: 5px; color: #166534; font-weight: bold;"><code>Sisa Saldo Siap Salur Pilar A = Pagu Anggaran Pilar A - SUM(Realisasi Pencairan Pilar A pada Periode Tersebut)</code></div>
+            <div class="formula-detail">
+                Virtual Balance ini dihitung secara dinamis. Bila sisa saldo pilar tidak mencukupi, sistem akan otomatis menolak formulir pencairan untuk mencegah defisit anggaran kas.
+            </div>
+        </div>
+
+        <h2 class="subsection-title" id="alur-proker">5.3 Alur Program Kerja (Proker) Berjenjang</h2>
+        <p>Setiap pengeluaran dana tidak boleh dilakukan tanpa adanya Program Kerja (RAB) yang disetujui sebelumnya. Alur pengesahan proker berjalan berjenjang:</p>
+
+        <div class="workflow-box">
+            <span class="workflow-step"><i class="fas fa-pen"></i> Draft Usulan</span>
+            <span class="workflow-arrow"><i class="fas fa-arrow-right"></i></span>
+            <span class="workflow-step highlight"><i class="fas fa-paper-plane"></i> Diajukan</span>
+            <span class="workflow-arrow"><i class="fas fa-arrow-right"></i></span>
+            <span class="workflow-step" style="border-color:#16a34a; color:#16a34a;"><i class="fas fa-check-circle"></i> Disetujui (Approved)</span>
+            <span class="workflow-arrow"><i class="fas fa-arrows-alt-h"></i></span>
+            <span class="workflow-step" style="border-color:#dc2626; color:#dc2626;"><i class="fas fa-times-circle"></i> Ditolak (Revisi)</span>
+        </div>
+
+        <p><strong>Langkah Pembuatan Usulan Proker Baru:</strong></p>
+        <p><span class="step-num">1</span> Buka menu <strong>Pentasyarufan</strong> $\rightarrow$ pilih <strong>Program Kerja (RAB)</strong>.</p>
+        <p><span class="step-num">2</span> Klik tombol hijau <strong>+ Buat Usulan Proker</strong>.</p>
+        <p><span class="step-num">3</span> Pilih <strong>Pilar Program</strong> (contoh: NU Cerdas / Pendidikan).</p>
+        <p><span class="step-num">4</span> Pilih <strong>Sumber Dana Periode Penthong</strong>.</p>
+        <p><span class="step-num">5</span> Masukkan <strong>Nama Kegiatan</strong>, <strong>Target Anggaran (Rp)</strong>, tanggal pelaksanaan, dan rincian latar belakang kegiatan.</p>
+        <p><span class="step-num">6</span> Klik <strong>Simpan sebagai Draft</strong> (bila masih disiapkan) atau <strong>Kirim Usulan Proker</strong> untuk langsung meminta persetujuan Pimpinan PC.</p>
+
+        <p><strong>Otorisasi Persetujuan Proker (Ketua / Sekretaris / Bendahara PC):</strong></p>
+        <ul>
+            <li>Buka detail proker yang berstatus <span class="badge badge-warning">Diajukan</span>.</li>
+            <li>Klik tombol hijau <strong>Setujui Usulan (Approve)</strong> jika dokumen lengkap dan sesuai prinsip syariah. Status berubah menjadi <span class="badge badge-success">Disetujui</span> dan siap dicairkan.</li>
+            <li>Klik tombol merah <strong>Tolak Usulan (Reject)</strong> dan sertakan catatan revisi jika anggaran tidak wajar atau melampaui kemampuan pagu.</li>
+        </ul>
+
+        <h2 class="subsection-title" id="realisasi-spj">5.4 Realisasi Pencairan Saldo Siap Salur &amp; Verifikasi SPJ</h2>
+        <p>Setelah Program Kerja disetujui, Bendahara PC atau Admin Wilayah dapat mencairkan dana secara bertahap atau sekaligus melalui menu <strong>Pentasyarufan</strong> $\rightarrow$ <strong>Penyaluran &amp; SPJ</strong>.</p>
+
+        <p><strong>Validasi Sistem Sebelum Pencairan:</strong></p>
+        <ol>
+            <li><strong>Validasi Status:</strong> Program kerja wajib berstatus <code>disetujui</code>.</li>
+            <li><strong>Validasi Sisa Anggaran RAB:</strong> Nominal pencairan tidak boleh melebihi sisa anggaran RAB proker tersebut.</li>
+            <li><strong>Validasi Saldo Virtual Pilar:</strong> Nominal pencairan tidak boleh melebihi sisa saldo pilar yang tersedia pada periode penthong bersangkutan.</li>
+        </ol>
+
+        <div class="callout callout-warning">
+            <div class="callout-icon"><i class="fas fa-file-upload"></i></div>
+            <div class="callout-content">
+                <strong>Kewajiban Unggah &amp; Verifikasi SPJ (Surat Pertanggungjawaban):</strong>
+                Setelah dana disalurkan kepada mustahiq atau panitia pelaksana:
+                <ol style="margin-top: 6px; padding-left: 18px;">
+                    <li>Klik tombol <strong>Unggah Dokumen SPJ</strong> pada rincian penyaluran.</li>
+                    <li>Unggah berkas bukti (format PDF atau foto kuitansi/dokumentasi maksimal 2MB).</li>
+                    <li>Status SPJ awal adalah <span class="badge badge-warning">Belum Diverifikasi</span>.</li>
+                    <li>Tim Keuangan / Bendahara PC memeriksa berkas fisik dan mengklik tombol hijau <strong>Verifikasi Sah SPJ</strong> hingga berubah menjadi <span class="badge badge-success">Terverifikasi</span>.</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- 6. MODUL BUKU KAS UMUM (BKU) -->
+        <h1 class="section-title page-break" id="modul-bku"><i class="fas fa-book"></i> 6. MODUL BUKU KAS UMUM (BKU) KOIN NU - FORMAT T-ACCOUNT</h1>
+        
+        <h2 class="subsection-title" id="konsep-bku">6.1 Standar Akuntansi T-Account &amp; Chart of Accounts (COA)</h2>
+        <p>Buku Kas Umum (BKU) KOIN NU berfungsi sebagai buku besar kas (*cash ledger*) yang menyajikan arus kas masuk dan keluar secara berimbang (*balanced*) dengan tata letak dua sisi standar akuntansi <strong>T-Account</strong>:</p>
+        <ul>
+            <li><strong>Sisi Kiri (Debet / Pemasukan):</strong> Mencatat saldo bulan lalu (saldo awal) dan seluruh setoran kas masuk infaq koin kaleng dari ranting-ranting pada bulan berjalan.</li>
+            <li><strong>Sisi Kanan (Kredit / Pengeluaran):</strong> Mencatat seluruh realisasi pentasyarufan program 5 pilar serta saldo buku akhir bulan sebagai penyeimbang sisi debet.</li>
+        </ul>
+
+        <div class="t-account-demo">
+            <div class="t-account-col left">
+                <div class="t-account-head">
+                    <span><i class="fas fa-arrow-down"></i> SISI KIRI: PENERIMAAN (DEBET)</span>
+                    <span class="badge badge-success">KAS MASUK</span>
+                </div>
+                <div class="t-account-item">
+                    <span><strong>01/10/2026</strong> Saldo Bulan Lalu</span>
+                    <span>Rp 45.200.000</span>
+                </div>
+                <div class="t-account-item">
+                    <span><strong>05/10/2026</strong> [NU-PB] Setoran Koin Ranting Deket Kulon</span>
+                    <span>Rp 2.450.000</span>
+                </div>
+                <div class="t-account-item">
+                    <span><strong>12/10/2026</strong> [NU-PB] Setoran Koin Ranting Karanggeneng</span>
+                    <span>Rp 3.100.000</span>
+                </div>
+                <div class="t-account-item">
+                    <span><strong>20/10/2026</strong> [NU-PB] Setoran Koin Ranting Babat</span>
+                    <span>Rp 4.250.000</span>
+                </div>
+                <div class="t-account-item total-row" style="color: #166534;">
+                    <span>JUMLAH PENERIMAAN (A):</span>
+                    <span>Rp 55.000.000</span>
+                </div>
+            </div>
+
+            <div class="t-account-col right">
+                <div class="t-account-head">
+                    <span><i class="fas fa-arrow-up"></i> SISI KANAN: PENGELUARAN (KREDIT)</span>
+                    <span class="badge badge-danger">KAS KELUAR</span>
+                </div>
+                <div class="t-account-item">
+                    <span><strong>08/10/2026</strong> [NU Sehat] Biaya Berobat Pasien Dhuafa</span>
+                    <span>Rp 1.500.000</span>
+                </div>
+                <div class="t-account-item">
+                    <span><strong>15/10/2026</strong> [NU Cerdas] Beasiswa Santri Yatim Pesantren</span>
+                    <span>Rp 3.500.000</span>
+                </div>
+                <div class="t-account-item">
+                    <span><strong>22/10/2026</strong> [NU Damai] Tanggap Bencana Banjir Bengawan Solo</span>
+                    <span>Rp 5.000.000</span>
+                </div>
+                <div class="t-account-item" style="color: #0369a1; font-weight: bold; background: #f0f9ff; padding: 4px 6px; border-radius: 4px;">
+                    <span><strong>31/10/2026</strong> Saldo Buku Bulan Ini (Saldo Akhir)</span>
+                    <span>Rp 45.000.000</span>
+                </div>
+                <div class="t-account-item total-row" style="color: #991b1b;">
+                    <span>JUMLAH PENYEIMBANG (B):</span>
+                    <span>Rp 55.000.000</span>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="subsubsection-title">Standardisasi Kode Akun Transaksi (Chart of Accounts / COA)</h3>
+        <p>Setiap transaksi otomatis dikelompokkan ke dalam kode akun standar lembaga:</p>
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th style="width: 20%;">Kode Akun (COA)</th>
+                    <th style="width: 25%;">Nama Akun Standar</th>
+                    <th style="width: 15%;">Posisi Normal</th>
+                    <th style="width: 40%;">Keterangan &amp; Penggunaan</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>NU Cerdas</code></td>
+                    <td>Pilar Pendidikan</td>
+                    <td>Kredit (Pengeluaran)</td>
+                    <td>Penyaluran beasiswa, seragam, insentif ustadz, dan sarana belajar.</td>
+                </tr>
+                <tr>
+                    <td><code>NU Berdaya</code></td>
+                    <td>Pilar Ekonomi</td>
+                    <td>Kredit (Pengeluaran)</td>
+                    <td>Pemberdayaan usaha mikro mustahiq dan modal bergulir.</td>
+                </tr>
+                <tr>
+                    <td><code>NU Sehat</code></td>
+                    <td>Pilar Kesehatan</td>
+                    <td>Kredit (Pengeluaran)</td>
+                    <td>Pelayanan ambulans, pengobatan darurat mustahiq, dan poskesren.</td>
+                </tr>
+                <tr>
+                    <td><code>NU Damai</code></td>
+                    <td>Pilar Sosial &amp; Kebencanaan</td>
+                    <td>Kredit (Pengeluaran)</td>
+                    <td>Santunan dhuafa/fakir, logistik bencana, dan bedah rumah.</td>
+                </tr>
+                <tr>
+                    <td><code>NU Hijau</code></td>
+                    <td>Pilar Lingkungan &amp; Dakwah</td>
+                    <td>Kredit (Pengeluaran)</td>
+                    <td>Pembinaan syiar keagamaan dan pelestarian lingkungan hidup.</td>
+                </tr>
+                <tr>
+                    <td><code>NU-O</code></td>
+                    <td>Hak Amil &amp; Operasional</td>
+                    <td>Kredit (Pengeluaran)</td>
+                    <td>Biaya operasional kantor cabang, bisyaroh petugas, dan cetak kaleng.</td>
+                </tr>
+                <tr>
+                    <td><code>NU-PB</code></td>
+                    <td>Pindah Buku / Setoran Kas</td>
+                    <td>Debet / Kredit</td>
+                    <td>Mutasi setoran koin dari ranting atau pemindahan rekening kas bank.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="subsection-title" id="cetak-bku">6.2 Cetak Lembar BKU Resmi &amp; Ekspor Microsoft Excel</h2>
+        <p>Modul BKU dirancang untuk menghasilkan dokumen pertanggungjawaban fisik yang siap ditandatangani oleh Ketua dan Bendahara:</p>
+        <p><span class="step-num">1</span> Buka menu <strong>Pentasyarufan</strong> $\rightarrow$ pilih <strong>Buku Kas Umum (BKU)</strong>.</p>
+        <p><span class="step-num">2</span> Gunakan filter di bagian atas: pilih <strong>Bulan</strong>, <strong>Tahun</strong>, serta lingkup wilayah (Seluruh Cabang / MWC / Ranting tertentu).</p>
+        <p><span class="step-num">3</span> <strong>Tombol Cetak Lembar BKU:</strong> Klik tombol hijau <strong><i class="fas fa-print"></i> Cetak BKU Resmi</strong>. Sistem akan membuka lembar format cetak standar T-Account lengkap dengan Kop Surat Resmi PCNU LAZISNU Lamongan, garis seimbang ganda, serta kolom tanda tangan Pengesahan Ketua dan Bendahara.</p>
+        <p><span class="step-num">4</span> <strong>Tombol Ekspor Excel:</strong> Klik tombol biru <strong><i class="fas fa-file-excel"></i> Ekspor Excel</strong> untuk mengunduh rekapitulasi data mutasi lengkap ke dalam lembar kerja Microsoft Excel (.xlsx/.csv) untuk keperluan pelaporan pajak atau audit akuntan independen.</p>
+
+        <!-- 7. KEAMANAN SISTEM & SESSION TIMEOUT -->
+        <h1 class="section-title page-break" id="keamanan-sistem"><i class="fas fa-lock"></i> 7. KEAMANAN SISTEM, PROTEKSI RUTE &amp; SESSION TIMEOUT</h1>
+        
+        <h2 class="subsection-title">7.1 Pengamanan Rute Backend (Authentication Middleware Guard)</h2>
+        <p>Untuk mengantisipasi kerentanan *Broken Access Control* (akses tidak terotentikasi), seluruh rute internal aplikasi telah diproteksi ketat menggunakan middleware otentikasi di sisi server:</p>
+        <ul>
+            <li>Tamu publik (unauthenticated guest) dilarang membuka URL admin manapun (misal: <code>/dashboard</code>, <code>/users</code>, <code>/transactions</code>, <code>/pentasyarufan/*</code>, <code>/bku</code>, atau <code>/buku-panduan</code>).</li>
+            <li>Jika seseorang mencoba mengetikkan URL halaman admin secara langsung di browser tanpa login, sistem akan menolak akses secara instan dan mengalihkannya (Redirect 302) ke halaman login disertai pesan: <em>"Sesi Anda telah habis, silakan login kembali."</em></li>
+            <li>Setiap request API/AJAX tanpa sesi otentikasi valid akan langsung dibalas dengan kode HTTP standar <code>401 Unauthorized</code>.</li>
+        </ul>
+
+        <h2 class="subsection-title">7.2 Deteksi Otomatis Sesi Kadaluarsa (Session Timeout Handling)</h2>
+        <p>Ketika pengguna meninggalkan komputer dalam kondisi tidak aktif dalam waktu lama sehingga sesi Laravel kedaluwarsa:</p>
+        <ol>
+            <li>Interaksi klik atau simpan tombol AJAX tidak akan mengakibatkan galat sistem tak terduga (*unexpected blank screen*).</li>
+            <li>Lapisan *Global AJAX Interceptor* sistem mendeteksi kode <code>401</code>, menampilkan dialog peringatan bersahabat bahwa sesi telah berakhir demi keamanan data, lalu memindahkan pengguna secara aman ke formulir login.</li>
+            <li>Setelah memasukkan kembali kredensial, pengguna dapat melanjutkan pekerjaan tanpa kehilangan konsistensi data.</li>
+        </ol>
+
+        <h2 class="subsection-title">7.3 Pembaruan Antarmuka Login Modern</h2>
+        <p>Halaman formulir masuk (<code>/login</code>) telah diperbarui dengan estetika modern bercorak hijau kelembagaan Nahdlatul Ulama yang elegan, bersih (*clean UI*), serta dilengkapi dengan perlindungan token CSRF (*Cross-Site Request Forgery*) dan enkripsi kata sandi menggunakan algoritma *Bcrypt* dengan biaya pengacakan aman.</p>
+
+        <!-- 8. TROUBLESHOOTING & FAQ -->
+        <h1 class="section-title page-break" id="troubleshooting"><i class="fas fa-wrench"></i> 8. TROUBLESHOOTING &amp; FAQ (TANYA JAWAB KENDALA TEKNIS)</h1>
+        
+        <div class="callout callout-note">
+            <div class="callout-icon"><i class="fas fa-question-circle"></i></div>
+            <div class="callout-content">
+                <strong>Q1: Mengapa muncul peringatan "Pencairan Ditolak: Melebihi Sisa Saldo untuk Pilar X"?</strong>
+                <strong>Penjelasan:</strong> Sistem mendeteksi bahwa pengajuan pencairan melebihi pagu anggaran virtual pilar tersebut pada periode penthong yang dipilih. Hal ini terjadi karena dana koin kotor telah dipotong 20% biaya operasional (hak amil), dan alokasi persentase pilar telah habis terserap oleh pencairan sebelumnya. Solusinya: Pilih sumber dana dari periode penthong lain yang masih memiliki saldo siap salur, atau lakukan revisi nominal RAB.
+            </div>
+        </div>
+
+        <div class="callout callout-note">
+            <div class="callout-icon"><i class="fas fa-question-circle"></i></div>
+            <div class="callout-content">
+                <strong>Q2: Mengapa saya tidak melihat menu "Buku Kas Umum (BKU)" atau "Manajemen Pengguna" di sidebar?</strong>
+                <strong>Penjelasan:</strong> Akun Anda belum diberikan hak akses terhadap menu tersebut melalui fitur *Dynamic Menu Permissions*. Hubungi Super Admin PC LAZISNU untuk meminta pengaktifan izin menu terkait pada profil akun Anda.
+            </div>
+        </div>
+
+        <div class="callout callout-note">
+            <div class="callout-icon"><i class="fas fa-question-circle"></i></div>
+            <div class="callout-content">
+                <strong>Q3: Mengapa tombol "Input Setoran" di akun Ranting saya terkunci dan berwarna merah?</strong>
+                <strong>Penjelasan:</strong> Ranting Anda saat ini berada dalam status "Non-Aktif" (Suspended) oleh Pengurus Cabang akibat keterlambatan rekapitulasi kaleng atau alasan pembinaan administratif. Segera hubungi Koordinator MWC Anda untuk proses rekonsiliasi dan pembukaan kembali status aktif ranting.
+            </div>
+        </div>
+
+        <div class="callout callout-note">
+            <div class="callout-icon"><i class="fas fa-question-circle"></i></div>
+            <div class="callout-content">
+                <strong>Q4: Berapa batas ukuran berkas untuk bukti setoran koin dan dokumen SPJ?</strong>
+                <strong>Penjelasan:</strong> Ukuran berkas maksimal adalah <strong>2 Megabyte (2 MB)</strong>. Format yang didukung adalah gambar (JPG, JPEG, PNG) serta dokumen PDF untuk berkas SPJ. Jika berkas kamera ponsel terlalu besar, perkecil resolusi atau kirimkan via WhatsApp terlebih dahulu sebelum diunggah ke sistem.
+            </div>
+        </div>
+
+        <div class="callout callout-note">
+            <div class="callout-icon"><i class="fas fa-question-circle"></i></div>
+            <div class="callout-content">
+                <strong>Q5: Bagaimana format pengaduan jika menjumpai galat atau kendala teknis?</strong>
+                <strong>Format WhatsApp ke Tim IT LAZISNU (0851 8899 1926):</strong><br>
+                <div style="background: white; border: 1px solid #cbd5e1; padding: 10px 14px; border-radius: 6px; margin-top: 6px; font-family: var(--font-mono); font-size: 12px;">
+                    [LAPORAN KENDALA SISTEM KOIN NU]<br>
+                    Nama Pengguna : [Nama Anda]<br>
+                    Peran / Wilayah: [Contoh: Bendahara PC / Admin Ranting Karanggeneng]<br>
+                    Nama Menu / URL: [Contoh: /pentasyarufan/realisasi]<br>
+                    Pesan Kesalahan: [Salin teks error yang tampil di layar]<br>
+                    (Sertakan foto tangkapan layar / screenshot kendala)
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. KONTAK BANTUAN -->
+        <h1 class="section-title" id="kontak"><i class="fas fa-headset"></i> 9. KONTAK BANTUAN &amp; SEKRETARIAT RESMI</h1>
+        
+        <table class="styled-table">
+            <tbody>
+                <tr>
+                    <td style="width: 30%;"><strong>Nama Instansi Lembaga</strong></td>
+                    <td>Pengurus Cabang Nahdlatul Ulama (PCNU) Lamongan<br>Lembaga Amil Zakat, Infaq, dan Shadaqah (NU Care - LAZISNU)</td>
+                </tr>
+                <tr>
+                    <td><strong>Alamat Kantor Sekretariat</strong></td>
+                    <td>Gedung PCNU Lamongan Lantai 1, Jl. Kyai Amin No. 9, Sidokumpul, Kec. Lamongan, Kabupaten Lamongan, Jawa Timur 62213</td>
+                </tr>
+                <tr>
+                    <td><strong>Hotline &amp; Layanan Aduan</strong></td>
+                    <td><strong>0851 8899 1926</strong> (Telepon &amp; WhatsApp Resmi Siaga 24 Jam)</td>
+                </tr>
+                <tr>
+                    <td><strong>Layanan Ambulans Gratis</strong></td>
+                    <td><strong>0851 8899 1926</strong> (Layanan Siaga Pasien Dhuafa Se-Kabupaten Lamongan)</td>
+                </tr>
+                <tr>
+                    <td><strong>Surat Elektronik (Email)</strong></td>
+                    <td>lazisnulamongan@gmail.com</td>
+                </tr>
+                <tr>
+                    <td><strong>Portal Website Resmi</strong></td>
+                    <td><a href="https://lazispcnulamongan.com" target="_blank" style="color: var(--primary); font-weight: bold; text-decoration: none;">https://lazispcnulamongan.com</a></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- FOOTER DOKUMEN -->
+        <div class="doc-footer">
+            <div>
+                <strong>Buku Panduan Operasional Sistem Informasi Manajemen KOIN NU Lamongan</strong><br>
+                Diterbitkan secara resmi oleh NU Care - LAZISNU PCNU Lamongan &copy; 2026
+            </div>
+            <div style="text-align: right;">
+                Edisi Pembaruan 2.5.0 &bull; ISO/IEC 26514 &amp; Standar Akuntansi Syariah PSAK 109<br>
+                Sistem Akuntabel, Transparan, Berkelanjutan &amp; Bebas Defisit
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
