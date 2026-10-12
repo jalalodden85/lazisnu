@@ -20,7 +20,7 @@ services:
       - APP_ENV=${APP_ENV:-local}
       - APP_DEBUG=${APP_DEBUG:-true}
       - DB_CONNECTION=mysql
-      - DB_HOST=${DB_HOST:-host.docker.internal}
+      - DB_HOST=${DB_HOST:-mysql_server}
       - DB_PORT=${DB_PORT:-3306}
       - DB_DATABASE=${DB_DATABASE:-lazisnu}
       - DB_USERNAME=${DB_USERNAME:-AmirSulaiman@2022}
