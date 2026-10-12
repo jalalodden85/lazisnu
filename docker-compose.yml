@@ -25,6 +25,7 @@ services:
       - DB_DATABASE=${DB_DATABASE:-lazisnu}
       - DB_USERNAME=${DB_USERNAME:-AmirSulaiman@2022}
       - DB_PASSWORD=${DB_PASSWORD:-AmirSulaiman@2022}
+    command: php-fpm
     networks:
       - lazisnu_network
 
