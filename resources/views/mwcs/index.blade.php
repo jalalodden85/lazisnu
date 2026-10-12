@@ -1,6 +1,6 @@
 @extends('layouts.adminlte')
 
-@section('title', 'Master Data MWC')
+@section('title', 'Master Data MWC Lamongan')
 @section('page_title', 'Master Data Majelis Wakil Cabang (MWC)')
 
 @section('breadcrumb')
