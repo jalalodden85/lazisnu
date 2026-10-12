@@ -69,10 +69,25 @@
                 <div class="info-box bg-light border shadow-sm">
                     <span class="info-box-icon bg-warning"><i class="fas fa-tools"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text text-muted">Operasional ({{ $setting->operasional_pct }}%)</span>
-                        <span class="info-box-number text-warning font-weight-bold fs-5">
-                            Rp {{ number_format($split['operasional_amount'] ?? 0, 0, ',', '.') }}
-                        </span>
+                        @if(Auth::user()?->isMwc())
+                            <span class="info-box-text text-muted">Hak Amil MWC (20% Kontribusi)</span>
+                            <span class="info-box-number text-warning font-weight-bold fs-5">
+                                Rp {{ number_format($split['operasional_mwc'] ?? round(($split['hak_mwc'] ?? 0) * 0.2), 0, ',', '.') }}
+                            </span>
+                            <small class="text-muted d-block">Dari Hak MWC: Rp {{ number_format($split['hak_mwc'] ?? 0, 0, ',', '.') }}</small>
+                        @elseif(Auth::user()?->isPc())
+                            <span class="info-box-text text-muted">Hak Amil PC (20% Kontribusi)</span>
+                            <span class="info-box-number text-warning font-weight-bold fs-5">
+                                Rp {{ number_format($split['operasional_pc'] ?? round(($split['hak_pc'] ?? 0) * 0.2), 0, ',', '.') }}
+                            </span>
+                            <small class="text-muted d-block">Ops Ranting: Rp {{ number_format($split['operasional_amount'] ?? 0, 0, ',', '.') }}</small>
+                        @else
+                            <span class="info-box-text text-muted">Operasional Ranting ({{ $setting->operasional_pct }}%)</span>
+                            <span class="info-box-number text-warning font-weight-bold fs-5">
+                                Rp {{ number_format($split['operasional_amount'] ?? 0, 0, ',', '.') }}
+                            </span>
+                            <small class="text-muted d-block">20% dari Rekap Koin Bruto</small>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -102,17 +117,17 @@
             </div>
         </div>
 
-        <!-- Banner Formula Skema Bagi Hasil Tasharruf -->
+        <!-- Banner Formula Skema Bagi Hasil Tasharruf & Hak Amil Operasional -->
         <div class="callout callout-success py-2 mb-0 bg-light">
             <h6 class="font-weight-bold mb-1 text-success">
-                <i class="fas fa-calculator mr-1"></i> Rumus Alokasi Distribusi Tasharruf (Dana Bersih):
+                <i class="fas fa-calculator mr-1"></i> Rumus Alokasi Distribusi Tasharruf (Dana Bersih) & Hak Amil Operasional:
             </h6>
             <div class="d-flex flex-wrap gap-3 small text-muted">
-                <span><i class="fas fa-check text-success mr-1"></i><strong>Ranting:</strong> {{ $setting->ranting_pct }}% (Rp {{ number_format($split['hak_ranting'] ?? 0, 0, ',', '.') }})</span>
+                <span><i class="fas fa-check text-success mr-1"></i><strong>Ranting:</strong> {{ $setting->ranting_pct }}% (Rp {{ number_format($split['hak_ranting'] ?? 0, 0, ',', '.') }}) <span class="badge badge-light border text-warning" title="20% dari koin bruto">Ops Koin: Rp {{ number_format($split['operasional_ranting'] ?? $split['operasional_amount'] ?? 0, 0, ',', '.') }}</span></span>
                 <span class="text-muted">|</span>
-                <span><i class="fas fa-check text-info mr-1"></i><strong>MWC:</strong> {{ $setting->mwc_pct }}% (Rp {{ number_format($split['hak_mwc'] ?? 0, 0, ',', '.') }})</span>
+                <span><i class="fas fa-check text-info mr-1"></i><strong>MWC:</strong> {{ $setting->mwc_pct }}% (Rp {{ number_format($split['hak_mwc'] ?? 0, 0, ',', '.') }}) <span class="badge badge-light border text-warning" title="20% dari kontribusi MWC">Ops: Rp {{ number_format($split['operasional_mwc'] ?? round(($split['hak_mwc'] ?? 0) * 0.2), 0, ',', '.') }} &bull; 5 Pilar: Rp {{ number_format($split['pilar_mwc'] ?? round(($split['hak_mwc'] ?? 0) * 0.8), 0, ',', '.') }}</span></span>
                 <span class="text-muted">|</span>
-                <span><i class="fas fa-check text-primary mr-1"></i><strong>PC Cabang:</strong> {{ $setting->pc_pct }}% (Rp {{ number_format($split['hak_pc'] ?? 0, 0, ',', '.') }})</span>
+                <span><i class="fas fa-check text-primary mr-1"></i><strong>PC Cabang:</strong> {{ $setting->pc_pct }}% (Rp {{ number_format($split['hak_pc'] ?? 0, 0, ',', '.') }}) <span class="badge badge-light border text-warning" title="20% dari kontribusi PC">Ops: Rp {{ number_format($split['operasional_pc'] ?? round(($split['hak_pc'] ?? 0) * 0.2), 0, ',', '.') }} &bull; 5 Pilar: Rp {{ number_format($split['pilar_pc'] ?? round(($split['hak_pc'] ?? 0) * 0.8), 0, ',', '.') }}</span></span>
                 <span class="text-muted">|</span>
                 <span><i class="fas fa-check text-secondary mr-1"></i><strong>PW Wilayah:</strong> {{ $setting->pw_pct }}% (Rp {{ number_format($split['hak_pw'] ?? 0, 0, ',', '.') }})</span>
                 <span class="text-muted">|</span>

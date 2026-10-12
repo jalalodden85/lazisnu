@@ -147,6 +147,83 @@
     </div>
 </div>
 
+<!-- Baris Ringkasan Pentasyarufan & Penerima Manfaat (Mustahiq) -->
+<div class="row">
+    <div class="col-lg-6 col-12 mb-3">
+        <div class="info-box bg-white shadow-sm border">
+            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-hands-holding-child"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text text-muted font-weight-bold">PENERIMA MANFAAT / MUSTAHIQ AKTIF</span>
+                <span class="info-box-number text-danger font-weight-bold" style="font-size: 1.4rem;">
+                    {{ number_format($totalPenerimaManfaat, 0, ',', '.') }} Jiwa
+                </span>
+                <div class="d-flex justify-content-between align-items-center mt-1">
+                    <small class="text-muted">Mustahiq Aktif: <strong>{{ number_format($totalMustahiqAktif, 0, ',', '.') }}</strong> | Pernah Menerima Bantuan: <strong>{{ number_format($totalPenerimaRiil, 0, ',', '.') }}</strong></small>
+                    <a href="{{ route('mustahiqs.index') }}" class="small font-weight-bold text-danger">Kelola Data <i class="fas fa-arrow-right ml-1"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-12 mb-3">
+        <div class="info-box bg-white shadow-sm border">
+            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-hand-holding-heart"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text text-muted font-weight-bold">REALISASI PENYALURAN (PENTASYARUFAN)</span>
+                <span class="info-box-number text-success font-weight-bold" style="font-size: 1.4rem;">
+                    Rp {{ number_format($totalPentasyarufan, 0, ',', '.') }}
+                </span>
+                <div class="d-flex justify-content-between align-items-center mt-1">
+                    <small class="text-muted">Sisa Kas Penyaluran: <strong>Rp {{ number_format($sisaKasPenyaluran, 0, ',', '.') }}</strong></small>
+                    <a href="{{ url('pentasyarufan/realisasi') }}" class="small font-weight-bold text-success">Lihat Penyaluran <i class="fas fa-arrow-right ml-1"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Baris Manajemen Saldo Operasional (Hak Amil) -->
+<div class="row">
+    <div class="col-lg-4 col-12 mb-3">
+        <div class="info-box bg-white shadow-sm border">
+            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-hand-holding-usd"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text text-muted font-weight-bold">PEMASUKAN OPERASIONAL (HAK AMIL)</span>
+                <span class="info-box-number text-info font-weight-bold" style="font-size: 1.25rem;">
+                    Rp {{ number_format($totalPemasukanOps, 0, ',', '.') }}
+                </span>
+                <small class="text-muted">Potongan KOIN NU & infaq amil</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-12 mb-3">
+        <div class="info-box bg-white shadow-sm border">
+            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-receipt"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text text-muted font-weight-bold">PENGGUNAAN OPERASIONAL</span>
+                <span class="info-box-number text-danger font-weight-bold" style="font-size: 1.25rem;">
+                    Rp {{ number_format($totalPengeluaranOps, 0, ',', '.') }}
+                </span>
+                <small class="text-muted">ATK, bisyaroh, rapat & transport</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-12 mb-3">
+        <div class="info-box bg-white shadow-sm border">
+            <span class="info-box-icon bg-warning elevation-1 text-white"><i class="fas fa-wallet"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text text-muted font-weight-bold">SISA KAS OPERASIONAL</span>
+                <span class="info-box-number text-warning font-weight-bold" style="font-size: 1.25rem;">
+                    Rp {{ number_format($sisaSaldoOps, 0, ',', '.') }}
+                </span>
+                <div class="d-flex justify-content-between align-items-center mt-1">
+                    <small class="text-muted font-weight-bold">Tersedia untuk Amil</small>
+                    <a href="{{ route('bku-operasional.index') }}" class="small font-weight-bold text-info">Buka BKU <i class="fas fa-arrow-right ml-1"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Baris Grafik Komparasi -->
 <div class="row">
     <div class="col-12">

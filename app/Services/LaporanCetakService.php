@@ -207,12 +207,12 @@ class LaporanCetakService
                 // Pihak 1 (Kiri - Pemeriksa / Pembuat Laporan)
                 'pihak1_title'     => 'Pemeriksa / Pembuat Laporan,',
                 'pihak1_jabatan'   => 'Bendahara UPZIS',
-                'pihak1_nama'      => '',
-                'pihak1_nip'       => 'Petugas Administrasi Ranting',
+                'pihak1_nama'      => $ranting->nama_bendahara ?: '',
+                'pihak1_nip'       => 'Bendahara Ranting NU',
                 // Pihak 2 (Kanan - Mengetahui / Pejabat Penanggung Jawab)
                 'pihak2_title'     => 'Mengetahui / Penanggung Jawab,',
                 'pihak2_jabatan'   => 'Ketua Pengurus Ranting NU',
-                'pihak2_nama'      => $ranting->pj_name ?: '',
+                'pihak2_nama'      => $ranting->nama_ketua_ranting ?: ($ranting->nama_ketua_upzis ?: ($ranting->pj_name ?: '')),
                 'pihak2_nip'       => 'Pimpinan Ranting NU',
             ];
         }
@@ -225,13 +225,13 @@ class LaporanCetakService
                 'doc_place_date'   => "{$kecamatanName}, {$todayFormatted}",
                 // Pihak 1
                 'pihak1_title'     => 'Pemeriksa / Divisi Keuangan,',
-                'pihak1_jabatan'   => 'Divisi Keuangan MWC',
-                'pihak1_nama'      => '',
-                'pihak1_nip'       => 'UPZIS MWC NU Lamongan',
+                'pihak1_jabatan'   => 'Bendahara UPZIS MWC',
+                'pihak1_nama'      => $mwc->nama_bendahara ?: ($mwc->nama_sekretaris ?: ''),
+                'pihak1_nip'       => 'Divisi Keuangan UPZIS MWC',
                 // Pihak 2
                 'pihak2_title'     => 'Mengetahui / Penanggung Jawab,',
-                'pihak2_jabatan'   => 'Ketua UPZIS MWC NU',
-                'pihak2_nama'      => '',
+                'pihak2_jabatan'   => 'Ketua LAZISNU MWC NU',
+                'pihak2_nama'      => $mwc->nama_ketua_lazisnu ?: ($mwc->nama_ketua_mwc ?: ''),
                 'pihak2_nip'       => 'Pimpinan MWC NU',
             ];
         }

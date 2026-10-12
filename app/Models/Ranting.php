@@ -20,6 +20,13 @@ class Ranting extends Model
         'pj_name',
         'address',
         'is_active',
+        // Susunan Pengurus Ranting & WhatsApp
+        'nama_ketua_ranting',
+        'wa_ketua_ranting',
+        'nama_ketua_upzis',
+        'wa_ketua_upzis',
+        'nama_bendahara',
+        'wa_bendahara',
     ];
 
     protected function casts(): array
@@ -49,8 +56,7 @@ class Ranting extends Model
     }
 
     /**
-     * Otomatis susun format kode ranting: {KODE_MWC}R{No_2_digit}
-     * Contoh: M01 + No 1 -> M01R01
+     * Otomatis susun format kode ranting dan format nomor WhatsApp
      */
     protected static function booted(): void
     {
@@ -59,6 +65,45 @@ class Ranting extends Model
                 $ranting->code = self::generateCode($ranting->mwc_id);
             }
         });
+
+        static::saving(function (Ranting $ranting) {
+            $ranting->wa_ketua_ranting = \App\Services\WhatsAppHelper::formatNumber($ranting->wa_ketua_ranting);
+            $ranting->wa_ketua_upzis   = \App\Services\WhatsAppHelper::formatNumber($ranting->wa_ketua_upzis);
+            $ranting->wa_bendahara     = \App\Services\WhatsAppHelper::formatNumber($ranting->wa_bendahara);
+        });
+    }
+
+    /**
+     * Struktur daftar pengurus Ranting terformat untuk antarmuka
+     */
+    public function getPengurusListAttribute(): array
+    {
+        return [
+            [
+                'jabatan' => 'Ketua Tanfidziyah Ranting NU',
+                'nama'    => $this->nama_ketua_ranting,
+                'wa'      => $this->wa_ketua_ranting,
+                'link'    => \App\Services\WhatsAppHelper::generateLink($this->wa_ketua_ranting, $this->nama_ketua_ranting, 'Ketua Tanfidziyah', "Ranting {$this->name}"),
+                'badge'   => 'bg-success',
+                'icon'    => 'fas fa-user-tie',
+            ],
+            [
+                'jabatan' => 'Ketua UPZIS / JPZIS Ranting',
+                'nama'    => $this->nama_ketua_upzis,
+                'wa'      => $this->wa_ketua_upzis,
+                'link'    => \App\Services\WhatsAppHelper::generateLink($this->wa_ketua_upzis, $this->nama_ketua_upzis, 'Ketua UPZIS', "Ranting {$this->name}"),
+                'badge'   => 'bg-primary',
+                'icon'    => 'fas fa-hand-holding-heart',
+            ],
+            [
+                'jabatan' => 'Bendahara UPZIS Ranting',
+                'nama'    => $this->nama_bendahara,
+                'wa'      => $this->wa_bendahara,
+                'link'    => \App\Services\WhatsAppHelper::generateLink($this->wa_bendahara, $this->nama_bendahara, 'Bendahara UPZIS', "Ranting {$this->name}"),
+                'badge'   => 'bg-warning text-dark',
+                'icon'    => 'fas fa-coins',
+            ],
+        ];
     }
 
     /**

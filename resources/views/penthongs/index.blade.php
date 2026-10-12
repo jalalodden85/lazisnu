@@ -48,13 +48,35 @@
                 <div class="col-lg-3 col-md-6 mb-3">
                     <div class="p-3 bg-light rounded border border-warning h-100">
                         <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted text-uppercase font-weight-bold">Potongan Operasional:</small>
-                            <span class="badge badge-warning text-dark font-weight-bold">{{ $activeSummary['operasional_pct'] ?? 20 }}%</span>
+                            @if(Auth::user()?->isMwc())
+                                <small class="text-muted text-uppercase font-weight-bold">Hak Amil MWC:</small>
+                                <span class="badge badge-warning text-dark font-weight-bold">20% Kontribusi</span>
+                            @elseif(Auth::user()?->isPc())
+                                <small class="text-muted text-uppercase font-weight-bold">Hak Amil Cabang (PC):</small>
+                                <span class="badge badge-warning text-dark font-weight-bold">20% Kontribusi</span>
+                            @else
+                                <small class="text-muted text-uppercase font-weight-bold">Potongan Operasional:</small>
+                                <span class="badge badge-warning text-dark font-weight-bold">{{ $activeSummary['operasional_pct'] ?? 20 }}%</span>
+                            @endif
                         </div>
                         <div class="fs-4 font-weight-bold text-warning my-1">
-                            Rp {{ number_format($activeSummary['operasional_amount'] ?? 0, 0, ',', '.') }}
+                            @if(Auth::user()?->isMwc())
+                                Rp {{ number_format($activeSummary['operasional_mwc'] ?? round(($activeSummary['hak_mwc'] ?? 0) * 0.2), 0, ',', '.') }}
+                            @elseif(Auth::user()?->isPc())
+                                Rp {{ number_format($activeSummary['operasional_pc'] ?? round(($activeSummary['hak_pc'] ?? 0) * 0.2), 0, ',', '.') }}
+                            @else
+                                Rp {{ number_format($activeSummary['operasional_amount'] ?? 0, 0, ',', '.') }}
+                            @endif
                         </div>
-                        <small class="text-muted">Armada, kaleng & administrasi</small>
+                        <small class="text-muted">
+                            @if(Auth::user()?->isMwc())
+                                Dari kontribusi masuk MWC: Rp {{ number_format($activeSummary['hak_mwc'] ?? 0, 0, ',', '.') }}
+                            @elseif(Auth::user()?->isPc())
+                                Dari kontribusi masuk PC: Rp {{ number_format($activeSummary['hak_pc'] ?? 0, 0, ',', '.') }}
+                            @else
+                                Armada, kaleng & administrasi ranting
+                            @endif
+                        </small>
                     </div>
                 </div>
 

@@ -80,23 +80,41 @@ class DistributionService
         $diffNet = $net - $allocatedNet;
 
         if ($diffNet !== 0) {
-            // Selisih sen/rupiah dialokasikan ke porsi utama Ranting
             $hakRanting += $diffNet;
         }
 
+        // 5. Potongan Operasional Hak Amil Sesuai Tingkatannya (Level-Based Operational Cost):
+        // Tingkat Ranting: 20% dari Kotor (gross)
+        $operasionalRanting = $operasional;
+        // Tingkat MWC: 20% dari Porsi Bagi Hasil MWC (hak_mwc)
+        $operasionalMwc     = (int) round($hakMwc * ($operasionalPct / 100));
+        // Tingkat PC: 20% dari Porsi Bagi Hasil PC (hak_pc)
+        $operasionalPc      = (int) round($hakPc * ($operasionalPct / 100));
+
+        // Dana 5 Pilar Program (Netto 80% setelah operasional di masing-masing tingkat):
+        $pilarRanting = $hakRanting;                 // Hak Ranting untuk 5 Pilar Ranting
+        $pilarMwc     = $hakMwc - $operasionalMwc;   // 80% Netto untuk 5 Pilar MWC
+        $pilarPc      = $hakPc - $operasionalPc;     // 80% Netto untuk 5 Pilar PC
+
         return [
-            'total_gross'        => (int) $gross,
-            'operasional_pct'    => $operasionalPct,
-            'operasional'        => $operasional,
-            'operasional_amount' => $operasional,
-            'net'                => $net,
-            'net_amount'         => $net,
-            'hak_ranting'        => $hakRanting,
-            'hak_mwc'            => $hakMwc,
-            'hak_pc'             => $hakPc,
-            'hak_pw'             => $hakPw,
-            'hak_pb'             => $hakPb,
-            'percentages'        => [
+            'total_gross'            => (int) $gross,
+            'operasional_pct'        => $operasionalPct,
+            'operasional'            => $operasional,
+            'operasional_amount'     => $operasional,
+            'operasional_ranting'    => $operasionalRanting,
+            'operasional_mwc'        => $operasionalMwc,
+            'operasional_pc'         => $operasionalPc,
+            'pilar_ranting'          => $pilarRanting,
+            'pilar_mwc'              => $pilarMwc,
+            'pilar_pc'               => $pilarPc,
+            'net'                    => $net,
+            'net_amount'             => $net,
+            'hak_ranting'            => $hakRanting,
+            'hak_mwc'                => $hakMwc,
+            'hak_pc'                 => $hakPc,
+            'hak_pw'                 => $hakPw,
+            'hak_pb'                 => $hakPb,
+            'percentages'            => [
                 'operasional' => $operasionalPct,
                 'ranting'     => $rantingPct,
                 'mwc'         => $mwcPct,

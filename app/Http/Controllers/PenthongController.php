@@ -162,6 +162,12 @@ class PenthongController extends Controller
             $split = [
                 'total_gross'        => $penthong->total_collected,
                 'operasional_amount' => $penthong->operasional_amount,
+                'operasional_ranting'=> $penthong->operasional_amount,
+                'operasional_mwc'    => (int) round($penthong->mwc_amount * (($setting->operasional_pct ?? 20) / 100)),
+                'operasional_pc'     => (int) round($penthong->pc_amount * (($setting->operasional_pct ?? 20) / 100)),
+                'pilar_ranting'      => $penthong->ranting_amount,
+                'pilar_mwc'          => $penthong->mwc_amount - (int) round($penthong->mwc_amount * (($setting->operasional_pct ?? 20) / 100)),
+                'pilar_pc'           => $penthong->pc_amount - (int) round($penthong->pc_amount * (($setting->operasional_pct ?? 20) / 100)),
                 'net_amount'         => $penthong->net_amount,
                 'hak_ranting'        => $penthong->ranting_amount,
                 'hak_mwc'            => $penthong->mwc_amount,

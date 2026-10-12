@@ -18,6 +18,7 @@ use App\Http\Controllers\PentasyarufanController;
 use App\Http\Controllers\MustahiqController;
 use App\Http\Controllers\KontribusiStrukturController;
 use App\Http\Controllers\BkuController;
+use App\Http\Controllers\BkuOperasionalController;
 use App\Http\Controllers\Admin\ProgramCategoryController;
 use App\Http\Controllers\Admin\CampaignController;
 use App\Http\Controllers\Admin\OnlineDonationAdminController;
@@ -107,15 +108,19 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/donators/{donator}', [DonatorController::class, 'destroy'])->name('donators.destroy');
         Route::post('/donators/{donator}/assign', [DonatorController::class, 'assignPetugas'])->name('donators.assign');
 
-        // 4. Data Mustahiq (Create, Store, Edit, Update, Destroy)
+        // 4. Data Mustahiq (Create, Store, Import, Edit, Update, Destroy)
         Route::get('/mustahiqs/create', [MustahiqController::class, 'create'])->name('mustahiqs.create');
         Route::post('/mustahiqs', [MustahiqController::class, 'store'])->name('mustahiqs.store');
+        Route::post('/mustahiqs/import', [MustahiqController::class, 'import'])->name('mustahiqs.import');
         Route::get('/mustahiqs/{mustahiq}/edit', [MustahiqController::class, 'edit'])->name('mustahiqs.edit');
         Route::put('/mustahiqs/{mustahiq}', [MustahiqController::class, 'update'])->name('mustahiqs.update');
         Route::delete('/mustahiqs/{mustahiq}', [MustahiqController::class, 'destroy'])->name('mustahiqs.destroy');
     });
 
-    // Rute Data Mustahiq (Autocomplete Search, Secure Photo Stream, Index, Show)
+    // Rute Data Mustahiq (Template, Export PDF/Excel, Autocomplete Search, Secure Photo Stream, Index, Show)
+    Route::get('/mustahiqs/template', [MustahiqController::class, 'downloadTemplate'])->name('mustahiqs.template');
+    Route::get('/mustahiqs/export/pdf', [MustahiqController::class, 'exportPdf'])->name('mustahiqs.export.pdf');
+    Route::get('/mustahiqs/export/excel', [MustahiqController::class, 'exportExcel'])->name('mustahiqs.export.excel');
     Route::get('/mustahiqs/search', [MustahiqController::class, 'search'])->name('mustahiqs.search');
     Route::get('/mustahiqs/{mustahiq}/foto', [MustahiqController::class, 'serveFoto'])->name('mustahiqs.foto');
     Route::resource('mustahiqs', MustahiqController::class)->only(['index', 'show']);
@@ -238,6 +243,16 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [BkuController::class, 'index'])->name('bku.index');
         Route::get('/cetak', [BkuController::class, 'cetak'])->name('bku.cetak');
         Route::get('/excel', [BkuController::class, 'exportExcel'])->name('bku.excel');
+    });
+
+    // 10. Modul Buku Kas Umum (BKU) Operasional / Hak Amil
+    Route::prefix('bku-operasional')->name('bku-operasional.')->group(function () {
+        Route::get('/', [BkuOperasionalController::class, 'index'])->name('index');
+        Route::post('/expense', [BkuOperasionalController::class, 'storeExpense'])->name('expense');
+        Route::post('/income', [BkuOperasionalController::class, 'storeIncome'])->name('income');
+        Route::post('/sync-penthong', [BkuOperasionalController::class, 'syncPenthong'])->name('sync-penthong');
+        Route::get('/export/pdf', [BkuOperasionalController::class, 'exportPdf'])->name('export.pdf');
+        Route::get('/export/excel', [BkuOperasionalController::class, 'exportExcel'])->name('export.excel');
     });
 
     // 8. Buku Panduan Operasional Sistem (User Manual & PDF Ready)

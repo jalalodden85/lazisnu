@@ -104,11 +104,9 @@
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-muted">Metode Pembayaran:</label>
                         <select name="payment_method" class="form-select form-select-sm fw-semibold" required>
-                            <option value="transfer_bri">Transfer BRI (Selain Zakat: Infaq & Koin - 00411001448562)</option>
+                            <option value="transfer_bri">Transfer BRI (Selain Zakat: Infaq &amp; Koin - 00411001448562)</option>
                             <option value="transfer_bsi">Transfer BSI (Khusus Zakat Mal/Profesi/Fitrah - 2026070708)</option>
-                            <option value="qris">QRIS Bank BRI (Semua E-Wallet & Mobile Banking)</option>
-                            <option value="transfer_mandiri">Transfer Bank Mandiri</option>
-                            <option value="transfer_bca">Transfer Bank BCA</option>
+                            <option value="qris">QRIS Bank BRI (Semua E-Wallet &amp; Mobile Banking)</option>
                         </select>
                     </div>
 

@@ -15,6 +15,8 @@ use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Imports\MustahiqImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class MustahiqController extends Controller
 {
@@ -422,5 +424,233 @@ class MustahiqController extends Controller
         }
 
         abort(403, 'Akses Ditolak: Anda tidak memiliki otoritas teritorial atas data Mustahiq ini.');
+    }
+
+    /**
+     * Download Format Template Excel (.xlsx) untuk Import Data Mustahiq
+     */
+    public function downloadTemplate(): BinaryFileResponse|\Illuminate\Http\Response
+    {
+        $headers = [
+            ['NIK', 'Nama_Lengkap', 'Jenis_Kelamin', 'Alamat', 'Kategori_Asnaf', 'Pekerjaan/Keterangan'],
+            ['3524010101900001', 'Ahmad Dahlan', 'L', 'Dusun Krajan RT 01 RW 02 Desa Sedayu', 'fakir', 'Buruh tani serabutan / Lansia'],
+            ['3524015002850002', 'Siti Aminah', 'P', 'Dusun Glugu RT 03 RW 01 Desa Sedayu', 'miskin', 'Janda tanggungan 3 anak yatim'],
+        ];
+
+        return Excel::download(new class($headers) implements \Maatwebsite\Excel\Concerns\FromArray, \Maatwebsite\Excel\Concerns\ShouldAutoSize, \Maatwebsite\Excel\Concerns\WithStyles {
+            protected array $data;
+            public function __construct(array $data) { $this->data = $data; }
+            public function array(): array { return $this->data; }
+            public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
+            {
+                return [
+                    1 => [
+                        'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+                        'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => '0A6B38']],
+                        'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
+                    ],
+                ];
+            }
+        }, 'Template_Import_Mustahiq_LAZISNU.xlsx');
+    }
+
+    /**
+     * Import massal data Mustahiq dari Excel/CSV dengan validasi NIK unik dan skip duplikat
+     */
+    public function import(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:xlsx,xls,csv,txt', 'max:5120'],
+            'ranting_id' => ['nullable', 'exists:rantings,id'],
+        ], [
+            'file.required' => 'Pilih berkas Excel/CSV terlebih dahulu.',
+            'file.mimes'    => 'Format file harus berupa .xlsx, .xls, atau .csv',
+            'file.max'      => 'Ukuran file maksimal adalah 5 Megabyte.',
+        ]);
+
+        /** @var User $user */
+        $user = Auth::user();
+
+        if ($user && $user->isRanting()) {
+            $targetRantingId = (int) $user->ranting_id;
+            $targetMwcId = (int) ($user->mwc_id ?? $user->ranting?->mwc_id ?? 1);
+        } elseif ($user && $user->isMwc()) {
+            $reqRantingId = (int) $request->input('ranting_id', 0);
+            $ranting = Ranting::where('id', $reqRantingId)->where('mwc_id', $user->mwc_id)->first();
+            $targetRantingId = $ranting ? $ranting->id : (int) ($user->ranting_id ?? 1);
+            $targetMwcId = (int) $user->mwc_id;
+        } else {
+            $targetRantingId = (int) ($request->input('ranting_id') ?? 1);
+            $ranting = Ranting::find($targetRantingId);
+            $targetMwcId = (int) ($ranting?->mwc_id ?? 1);
+        }
+
+        $import = new MustahiqImport($targetRantingId, $targetMwcId);
+
+        try {
+            Excel::import($import, $request->file('file'));
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal memproses berkas import mustahiq: ' . $e->getMessage());
+        }
+
+        $successMsg = "Berhasil mengimpor {$import->importedCount} data mustahiq.";
+        $details = [];
+
+        if ($import->skippedDuplicateCount > 0) {
+            $details[] = "{$import->skippedDuplicateCount} data dilewati karena NIK sudah terdaftar";
+        }
+
+        if (!empty($import->errors)) {
+            $details[] = count($import->errors) . " data gagal format";
+        }
+
+        if (!empty($details)) {
+            $successMsg .= " (" . implode(', ', $details) . ").";
+        }
+
+        return redirect()->route('mustahiqs.index')
+            ->with('success', $successMsg)
+            ->with('import_failures', array_slice($import->errors, 0, 10));
+    }
+
+    /**
+     * Cetak Laporan PDF Data Mustahiq dengan Kop Surat Resmi dan Lembar Pengesahan
+     */
+    public function exportPdf(Request $request): \Illuminate\Http\Response|\Illuminate\View\View
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $query = Mustahiq::with(['ranting', 'mwc'])
+            ->forUser($user)
+            ->latest();
+
+        if ($request->filled('asnaf')) {
+            $query->where('asnaf', $request->input('asnaf'));
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+        if ($request->filled('mwc_id') && ($user->isPc() || $user->isSuperAdmin())) {
+            $query->where('mwc_id', (int) $request->input('mwc_id'));
+        }
+        if ($request->filled('ranting_id')) {
+            $query->where('ranting_id', (int) $request->input('ranting_id'));
+        }
+        if ($request->filled('search')) {
+            $query->search($request->input('search'));
+        }
+
+        $mustahiqs = $query->get();
+
+        // Keterangan Filter untuk Sub-header
+        $filterParts = [];
+        if ($request->filled('ranting_id')) {
+            $r = Ranting::find($request->input('ranting_id'));
+            $filterParts[] = "Ranting: " . ($r?->name ?? 'N/A');
+        } elseif ($request->filled('mwc_id')) {
+            $m = Mwc::find($request->input('mwc_id'));
+            $filterParts[] = "MWC: " . ($m?->name ?? 'N/A');
+        } elseif ($user->isRanting()) {
+            $filterParts[] = "Wilayah: Ranting " . ($user->ranting?->name ?? 'Desa');
+        } elseif ($user->isMwc()) {
+            $filterParts[] = "Wilayah: MWC " . ($user->mwc?->name ?? 'Kecamatan');
+        } else {
+            $filterParts[] = "Wilayah: Seluruh Kabupaten Lamongan";
+        }
+
+        if ($request->filled('asnaf')) {
+            $filterParts[] = "Asnaf: " . ucfirst($request->input('asnaf'));
+        }
+        if ($request->filled('status')) {
+            $filterParts[] = "Status: " . ucfirst($request->input('status'));
+        }
+
+        $subHeaderFilter = implode(' | ', $filterParts);
+        $totalCount = $mustahiqs->count();
+        $printedAt = now()->translatedFormat('d F Y, H:i') . ' WIB';
+        $signerName = $user?->name ?? 'Pengurus PC LAZISNU Lamongan';
+
+        $viewData = compact('mustahiqs', 'subHeaderFilter', 'totalCount', 'printedAt', 'signerName');
+
+        return response()->view('mustahiq.export_pdf', $viewData);
+    }
+
+    /**
+     * Ekspor Data Mustahiq ke Spreadsheet Excel (.xlsx) dengan Formatting Rapi
+     */
+    public function exportExcel(Request $request): BinaryFileResponse
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $query = Mustahiq::with(['ranting', 'mwc'])
+            ->forUser($user)
+            ->latest();
+
+        if ($request->filled('asnaf')) {
+            $query->where('asnaf', $request->input('asnaf'));
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+        if ($request->filled('mwc_id') && ($user->isPc() || $user->isSuperAdmin())) {
+            $query->where('mwc_id', (int) $request->input('mwc_id'));
+        }
+        if ($request->filled('ranting_id')) {
+            $query->where('ranting_id', (int) $request->input('ranting_id'));
+        }
+        if ($request->filled('search')) {
+            $query->search($request->input('search'));
+        }
+
+        $mustahiqs = $query->get();
+
+        return Excel::download(new class($mustahiqs) implements 
+            \Maatwebsite\Excel\Concerns\FromCollection,
+            \Maatwebsite\Excel\Concerns\WithHeadings,
+            \Maatwebsite\Excel\Concerns\ShouldAutoSize,
+            \Maatwebsite\Excel\Concerns\WithStyles
+        {
+            protected $data;
+            public function __construct($data) { $this->data = $data; }
+
+            public function collection()
+            {
+                return $this->data->map(function ($item, $index) {
+                    return [
+                        'no'            => $index + 1,
+                        'nik'           => "'" . $item->nik, // Format teks agar angka 16 digit tidak terpotong ilmiah
+                        'nama_lengkap'  => $item->nama,
+                        'jenis_kelamin' => $item->jenis_kelamin,
+                        'alamat'        => $item->alamat,
+                        'ranting'       => $item->ranting?->name ?? '-',
+                        'mwc'           => $item->mwc?->name ?? '-',
+                        'asnaf'         => $item->asnaf_label,
+                        'pekerjaan'     => $item->kondisi_spesifik ?: ($item->pekerjaan ?: '-'),
+                        'status'        => ucfirst($item->status),
+                    ];
+                });
+            }
+
+            public function headings(): array
+            {
+                return [
+                    'NO', 'NIK', 'NAMA LENGKAP', 'L/P', 'ALAMAT', 
+                    'RANTING', 'MWC', 'KATEGORI ASNAF', 'KETERANGAN / KERENTANAN', 'STATUS'
+                ];
+            }
+
+            public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet)
+            {
+                return [
+                    1 => [
+                        'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+                        'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => '0A6B38']],
+                        'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER],
+                    ],
+                ];
+            }
+        }, 'Data_Mustahiq_LAZISNU_' . date('Ymd_His') . '.xlsx');
     }
 }

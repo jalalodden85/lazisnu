@@ -139,19 +139,112 @@ class BkuController extends Controller
         $selectedPenthongId = $filters['penthong_id'] ?? null;
         $bkuData = $this->bkuService->getBkuDataByPenthong($selectedPenthongId, $filters);
 
-        // Label Wilayah
-        $wilayahLabel = 'JPZIS LAZISNU Lamongan';
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
+
+        // Resolusi Entitas Wilayah untuk Penandatangan & Label Laporan
+        $activeRanting = null;
+        $activeMwc = null;
+
         if (!empty($filters['ranting_id'])) {
-            $r = Ranting::find($filters['ranting_id']);
-            $wilayahLabel = 'JPZIS Ranting ' . ($r?->name ?? '');
+            $activeRanting = Ranting::with('mwc')->find($filters['ranting_id']);
+            $activeMwc = $activeRanting?->mwc;
         } elseif (!empty($filters['mwc_id'])) {
-            $m = Mwc::find($filters['mwc_id']);
-            $wilayahLabel = 'JPZIS MWC ' . ($m?->name ?? '');
+            $activeMwc = Mwc::find($filters['mwc_id']);
+        } elseif ($user && $user->isRanting()) {
+            $activeRanting = $user->ranting;
+            $activeMwc = $activeRanting?->mwc ?? $user->mwc;
+        } elseif ($user && $user->isMwc()) {
+            $activeMwc = $user->mwc;
         }
 
-        $namaKetua = $request->input('nama_ketua', 'Drs. H. M. Syukrillah');
-        $namaBendahara = $request->input('nama_bendahara', 'H. Agus Salim, S.E.');
         $tanggalCetak = $request->input('tanggal_cetak', now()->translatedFormat('d F Y'));
+
+        // Konfigurasi 3 Penandatangan Otomatis Berdasarkan Data Entri (Kiri: Ketua Tanfidz, Tengah: Ketua Lazisnu/UPZIS, Kanan: Bendahara)
+        if ($activeRanting) {
+            $wilayahLabel = 'JPZIS Ranting ' . ($activeRanting->name ?? '');
+            $tingkatWilayah = 'Ranting ' . ($activeRanting->name ?? '');
+            $tempatCetak = $activeRanting->desa ?: $activeRanting->name;
+            $signatories = [
+                'level'       => 'ranting',
+                'place'       => $tempatCetak,
+                'kiri'        => [
+                    'label'   => 'Mengetahui,',
+                    'jabatan' => 'Ketua Tanfidziyah Ranting NU',
+                    'nama'    => $request->input('nama_ketua_tanfidz', $activeRanting->nama_ketua_ranting ?: '....................................'),
+                    'sub'     => 'PR Nahdlatul Ulama ' . ($activeRanting->desa ?: $activeRanting->name),
+                ],
+                'tengah'      => [
+                    'label'   => 'Pimpinan Lembaga,',
+                    'jabatan' => 'Ketua UPZIS Ranting',
+                    'nama'    => $request->input('nama_ketua_lazisnu', $activeRanting->nama_ketua_upzis ?: ($activeRanting->pj_name ?: '....................................')),
+                    'sub'     => 'UPZIS NU CARE - LAZISNU',
+                ],
+                'kanan'       => [
+                    'label'   => 'Pemeriksa / Keuangan,',
+                    'jabatan' => 'Bendahara UPZIS Ranting',
+                    'nama'    => $request->input('nama_bendahara', $activeRanting->nama_bendahara ?: '....................................'),
+                    'sub'     => 'Divisi Keuangan UPZIS',
+                ],
+            ];
+        } elseif ($activeMwc) {
+            $wilayahLabel = 'JPZIS MWC ' . ($activeMwc->name ?? '');
+            $tingkatWilayah = 'MWC ' . ($activeMwc->name ?? '');
+            $tempatCetak = $activeMwc->kecamatan ?: $activeMwc->name;
+            $signatories = [
+                'level'       => 'mwc',
+                'place'       => $tempatCetak,
+                'kiri'        => [
+                    'label'   => 'Mengetahui,',
+                    'jabatan' => 'Ketua Tanfidziyah MWC NU',
+                    'nama'    => $request->input('nama_ketua_tanfidz', $activeMwc->nama_ketua_mwc ?: '....................................'),
+                    'sub'     => 'MWCNU ' . ($activeMwc->kecamatan ?: $activeMwc->name),
+                ],
+                'tengah'      => [
+                    'label'   => 'Pimpinan Lembaga,',
+                    'jabatan' => 'Ketua LAZISNU MWC',
+                    'nama'    => $request->input('nama_ketua_lazisnu', $activeMwc->nama_ketua_lazisnu ?: '....................................'),
+                    'sub'     => 'NU CARE - LAZISNU MWC',
+                ],
+                'kanan'       => [
+                    'label'   => 'Pemeriksa / Keuangan,',
+                    'jabatan' => 'Bendahara UPZIS MWC',
+                    'nama'    => $request->input('nama_bendahara', $activeMwc->nama_bendahara ?: '....................................'),
+                    'sub'     => 'Divisi Keuangan MWC',
+                ],
+            ];
+        } else {
+            $wilayahLabel = 'JPZIS LAZISNU Lamongan';
+            $tingkatWilayah = 'PCNU Lamongan';
+            $tempatCetak = 'Lamongan';
+            $signatories = [
+                'level'       => 'pc',
+                'place'       => $tempatCetak,
+                'kiri'        => [
+                    'label'   => 'Mengetahui,',
+                    'jabatan' => 'Ketua Tanfidziyah PCNU Lamongan',
+                    'nama'    => $request->input('nama_ketua_tanfidz', 'Dr. H. Supandi, S.Pd., M.Pd.'),
+                    'sub'     => 'Pengurus Cabang Nahdlatul Ulama',
+                ],
+                'tengah'      => [
+                    'label'   => 'Pimpinan Lembaga,',
+                    'jabatan' => 'Ketua PC NU CARE - LAZISNU',
+                    'nama'    => $request->input('nama_ketua_lazisnu', $request->input('nama_ketua', 'Drs. H. Suharjono, M.Si')),
+                    'sub'     => 'NU CARE - LAZISNU Lamongan',
+                ],
+                'kanan'       => [
+                    'label'   => 'Pemeriksa / Keuangan,',
+                    'jabatan' => 'Bendahara PC LAZISNU',
+                    'nama'    => $request->input('nama_bendahara', 'H. Agus Salim, S.E.'),
+                    'sub'     => 'Divisi Keuangan & Pembukuan',
+                ],
+            ];
+        }
+
+        $namaKetuaTanfidz = $signatories['kiri']['nama'];
+        $namaKetuaLazisnu = $signatories['tengah']['nama'];
+        $namaKetua        = $namaKetuaLazisnu;
+        $namaBendahara    = $signatories['kanan']['nama'];
 
         $bulan = $bkuData['bulan'];
         $tahun = $bkuData['tahun'];
@@ -162,6 +255,12 @@ class BkuController extends Controller
             'tahun',
             'filters',
             'wilayahLabel',
+            'tingkatWilayah',
+            'activeRanting',
+            'activeMwc',
+            'signatories',
+            'namaKetuaTanfidz',
+            'namaKetuaLazisnu',
             'namaKetua',
             'namaBendahara',
             'tanggalCetak'

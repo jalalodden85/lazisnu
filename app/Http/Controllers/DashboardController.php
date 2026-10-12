@@ -6,8 +6,11 @@ use App\Models\KoinTransaction;
 use App\Models\Mwc;
 use App\Models\Ranting;
 use App\Models\Relawan;
+use App\Models\Mustahiq;
+use App\Models\BkuOperasional;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 use Illuminate\Support\Facades\Auth;
@@ -171,6 +174,21 @@ class DashboardController extends Controller
         $sisaKasPenyaluran  = max(0, $totalDanaAkumulasi - $totalPentasyarufan);
         $pilars = \App\Models\PilarProgram::where('is_active', true)->orderBy('sort_order')->get();
 
+        // Metrik Penerima Manfaat / Mustahiq (Dinamis Berdasarkan Hak Akses Wilayah)
+        $totalMustahiqAktif = Mustahiq::forUser($user)->active()->count();
+        $totalPenerimaRiil  = DB::table('pentasyarufan_mustahiq')
+            ->join('mustahiqs', 'pentasyarufan_mustahiq.mustahiq_id', '=', 'mustahiqs.id')
+            ->when($user && $user->isRanting() && $user->ranting_id, fn($q) => $q->where('mustahiqs.ranting_id', $user->ranting_id))
+            ->when($user && $user->isMwc() && $user->mwc_id, fn($q) => $q->where('mustahiqs.mwc_id', $user->mwc_id))
+            ->distinct('pentasyarufan_mustahiq.mustahiq_id')
+            ->count('pentasyarufan_mustahiq.mustahiq_id');
+        $totalPenerimaManfaat = $totalMustahiqAktif > 0 ? $totalMustahiqAktif : $totalPenerimaRiil;
+
+        // Metrik Saldo Kas Operasional (Hak Amil) Terpisah
+        $totalPemasukanOps   = (float) BkuOperasional::forUser($user)->debet()->sum('nominal');
+        $totalPengeluaranOps = (float) BkuOperasional::forUser($user)->kredit()->sum('nominal');
+        $sisaSaldoOps        = max(0, $totalPemasukanOps - $totalPengeluaranOps);
+
         return view('dashboard', compact(
             'scopeRole',
             'scopeTitle',
@@ -186,7 +204,13 @@ class DashboardController extends Controller
             'recentTransactions',
             'totalPentasyarufan',
             'sisaKasPenyaluran',
-            'pilars'
+            'pilars',
+            'totalMustahiqAktif',
+            'totalPenerimaRiil',
+            'totalPenerimaManfaat',
+            'totalPemasukanOps',
+            'totalPengeluaranOps',
+            'sisaSaldoOps'
         ));
     }
 }

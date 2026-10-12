@@ -140,13 +140,94 @@
                     </div>
 
                     <!-- Alamat / Sekretariat -->
-                    <div class="form-group">
-                        <label for="address" class="font-weight-bold">Alamat Sekretariat / Masjid Jami (Opsional)</label>
+                    <div class="form-group mb-4">
+                        <label for="address" class="font-weight-bold">Alamat Sekretariat / Kantor Ranting (Opsional)</label>
                         <textarea name="address" 
                                   id="address" 
                                   rows="2" 
                                   class="form-control @error('address') is-invalid @enderror" 
                                   placeholder="Contoh: Komplek Masjid Jami Baiturrahim, RT 01 / RW 01">{{ old('address') }}</textarea>
+                    </div>
+
+                    <!-- SUSUNAN PENGURUS RANTING & KONTAK WHATSAPP -->
+                    <div class="border rounded p-3 bg-white mb-2 shadow-xs">
+                        <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                            <h6 class="font-weight-bold text-info mb-0">
+                                <i class="fas fa-users-cog mr-1"></i> Susunan Pengurus Ranting & Kontak WhatsApp
+                            </h6>
+                            <span class="badge badge-light border text-muted">
+                                <i class="fab fa-whatsapp text-success mr-1"></i> Format otomatis wa.me
+                            </span>
+                        </div>
+                        <p class="small text-muted mb-3">
+                            <i class="fas fa-info-circle mr-1 text-info"></i>
+                            Nomor WhatsApp otomatis diformat ke format internasional (misal <code>08123...</code> menjadi <code>628123...</code>). Digunakan untuk otomatisasi nama penandatangan laporan PDF dan komunikasi langsung.
+                        </p>
+
+                        <div class="row">
+                            <!-- 1. Ketua Tanfidziyah Ranting NU -->
+                            <div class="col-md-4 mb-3 p-3 bg-light rounded border">
+                                <h6 class="font-weight-bold text-success mb-1 small text-uppercase">
+                                    <i class="fas fa-user-tie mr-1"></i> 1. Ketua Tanfidziyah NU
+                                </h6>
+                                <small class="text-muted d-block mb-2">Penandatangan: <em>Mengetahui</em></small>
+                                <div class="form-group mb-2">
+                                    <label class="small font-weight-bold">Nama Lengkap & Gelar</label>
+                                    <input type="text" name="nama_ketua_ranting" class="form-control form-control-sm" placeholder="Nama Ketua Tanfidziyah" value="{{ old('nama_ketua_ranting') }}">
+                                </div>
+                                <div class="form-group mb-0">
+                                    <label class="small font-weight-bold">WhatsApp</label>
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-white text-success"><i class="fab fa-whatsapp"></i></span>
+                                        </div>
+                                        <input type="text" name="wa_ketua_ranting" class="form-control" placeholder="081234567890" value="{{ old('wa_ketua_ranting') }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. Ketua UPZIS / JPZIS Ranting -->
+                            <div class="col-md-4 mb-3 p-3 bg-light rounded border">
+                                <h6 class="font-weight-bold text-primary mb-1 small text-uppercase">
+                                    <i class="fas fa-hand-holding-heart mr-1"></i> 2. Ketua UPZIS / JPZIS
+                                </h6>
+                                <small class="text-muted d-block mb-2">Penandatangan: <em>Kiri Bawah</em></small>
+                                <div class="form-group mb-2">
+                                    <label class="small font-weight-bold">Nama Lengkap & Gelar</label>
+                                    <input type="text" name="nama_ketua_upzis" class="form-control form-control-sm" placeholder="Nama Ketua UPZIS" value="{{ old('nama_ketua_upzis') }}">
+                                </div>
+                                <div class="form-group mb-0">
+                                    <label class="small font-weight-bold">WhatsApp</label>
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-white text-success"><i class="fab fa-whatsapp"></i></span>
+                                        </div>
+                                        <input type="text" name="wa_ketua_upzis" class="form-control" placeholder="081234567890" value="{{ old('wa_ketua_upzis') }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. Bendahara UPZIS Ranting -->
+                            <div class="col-md-4 mb-3 p-3 bg-light rounded border">
+                                <h6 class="font-weight-bold text-dark mb-1 small text-uppercase">
+                                    <i class="fas fa-coins mr-1 text-warning"></i> 3. Bendahara UPZIS
+                                </h6>
+                                <small class="text-muted d-block mb-2">Penandatangan: <em>Kanan Bawah</em></small>
+                                <div class="form-group mb-2">
+                                    <label class="small font-weight-bold">Nama Lengkap</label>
+                                    <input type="text" name="nama_bendahara" class="form-control form-control-sm" placeholder="Nama Bendahara" value="{{ old('nama_bendahara') }}">
+                                </div>
+                                <div class="form-group mb-0">
+                                    <label class="small font-weight-bold">WhatsApp</label>
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-white text-success"><i class="fab fa-whatsapp"></i></span>
+                                        </div>
+                                        <input type="text" name="wa_bendahara" class="form-control" placeholder="081234567890" value="{{ old('wa_bendahara') }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
