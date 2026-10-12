@@ -14,6 +14,8 @@ use App\Models\Ranting;
 use App\Models\Relawan;
 use App\Models\SiteSetting;
 use App\Models\Slider;
+use App\Models\Mustahiq;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -40,8 +42,10 @@ class FrontendController extends Controller
         }
         $totalMwc = Mwc::count();
 
-        // Estimasi Penerima Manfaat (Mustahik)
-        $penerimaManfaat = max(1850, (int) round($totalKotak * 1.8));
+        // Penerima Manfaat Riil / Mustahiq Aktif Terdata
+        $totalMustahiqAktif = Mustahiq::where('status', 'aktif')->count();
+        $totalPenerimaRiil  = DB::table('pentasyarufan_mustahiq')->distinct()->count('mustahiq_id');
+        $penerimaManfaat    = $totalMustahiqAktif > 0 ? $totalMustahiqAktif : $totalPenerimaRiil;
 
         // 2. Banner Slider
         $sliders = Slider::where('is_active', true)

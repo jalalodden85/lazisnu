@@ -144,10 +144,11 @@ class PentasyarufanBalanceService
                 $totalDanaKontribusiMasuk = round($mwcNetto * ($mwcPct / 100));
             }
 
-            // Potongan Operasional MWC jika ada
-            $potonganOperasional = $customOperasionalPct !== null 
-                ? round(($totalDanaKontribusiMasuk * $customOperasionalPct) / 100) 
-                : 0;
+            // Potongan Operasional MWC (Hak Amil MWC = 20% dari Pemasukan Riil Kontribusi)
+            $opsMwcPct = $customOperasionalPct !== null 
+                ? (float) $customOperasionalPct 
+                : (float) $operasionalPct;
+            $potonganOperasional = round(($totalDanaKontribusiMasuk * $opsMwcPct) / 100);
 
             $danaBersihNetto = max(0, $totalDanaKontribusiMasuk - $potonganOperasional);
             $danaPilarBasis = $danaBersihNetto;
@@ -161,7 +162,7 @@ class PentasyarufanBalanceService
         } else {
             $tingkat = 'pc';
             // 3. TINGKAT PC (CABANG):
-            // Rumus: (Total Dana Kontribusi Masuk PC pada Periode X) - (Biaya Operasional PC jika ada) = Dana Bersih PC
+            // Rumus: (Total Dana Kontribusi Masuk PC pada Periode X) - (Biaya Operasional PC 20%) = Dana Bersih 5 Pilar PC (80%)
             $ktrPcQuery = KontribusiStruktur::validDisetor()
                 ->forTujuan('PC')
                 ->forPeriode($penthongModel->id);
@@ -175,10 +176,11 @@ class PentasyarufanBalanceService
                 $totalDanaKontribusiMasuk = round($pcNetto * ($pcPct / 100));
             }
 
-            // Potongan Operasional PC jika ada
-            $potonganOperasional = $customOperasionalPct !== null 
-                ? round(($totalDanaKontribusiMasuk * $customOperasionalPct) / 100) 
-                : 0;
+            // Potongan Operasional PC (Hak Amil PC = 20% dari Pemasukan Riil Kontribusi)
+            $opsPcPct = $customOperasionalPct !== null 
+                ? (float) $customOperasionalPct 
+                : (float) $operasionalPct;
+            $potonganOperasional = round(($totalDanaKontribusiMasuk * $opsPcPct) / 100);
 
             $danaBersihNetto = max(0, $totalDanaKontribusiMasuk - $potonganOperasional);
             $danaPilarBasis = $danaBersihNetto;

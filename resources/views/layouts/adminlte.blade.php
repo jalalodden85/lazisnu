@@ -331,8 +331,8 @@
 
                     <!-- PENTASYARUFAN (PENGELUARAN DANA & PROKER 5 PILAR) -->
                     @if(!$currentUser || $currentUser->hasCategoryAccess('Pentasyarufan & Penyaluran'))
-                    <li class="nav-item has-treeview {{ request()->routeIs(['pilar-program.*', 'proker.*', 'pentasyarufan.*', 'bku.*']) ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs(['pilar-program.*', 'proker.*', 'pentasyarufan.*', 'bku.*']) ? 'active' : '' }}">
+                    <li class="nav-item has-treeview {{ request()->routeIs(['pilar-program.*', 'proker.*', 'pentasyarufan.*', 'bku.*', 'bku-operasional.*']) ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs(['pilar-program.*', 'proker.*', 'pentasyarufan.*', 'bku.*', 'bku-operasional.*']) ? 'active' : '' }}">
                             <i class="nav-icon fas fa-hand-holding-heart text-danger"></i>
                             <p>
                                 Pentasyarufan
@@ -376,6 +376,12 @@
                                 <a href="{{ route('bku.index') }}" class="nav-link {{ request()->routeIs('bku.*') ? 'active' : '' }}">
                                     <i class="fas fa-book nav-icon text-warning"></i>
                                     <p>Buku Kas Umum (BKU)</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('bku-operasional.index') }}" class="nav-link {{ request()->routeIs('bku-operasional.*') ? 'active' : '' }}">
+                                    <i class="fas fa-wallet nav-icon text-info"></i>
+                                    <p>BKU Operasional (Amil)</p>
                                 </a>
                             </li>
                         </ul>

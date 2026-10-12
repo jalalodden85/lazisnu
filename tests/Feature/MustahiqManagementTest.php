@@ -315,5 +315,34 @@ class MustahiqManagementTest extends TestCase
         $responseCreate = $this->actingAs($userSuperAdmin)->get(route('mustahiqs.create'));
         $responseCreate->assertStatus(200);
         $responseCreate->assertSee('Formulir Pendataan Mustahiq');
+
+        // 4. Halaman Index memuat tombol Cetak PDF, Export Excel, dan Import Data
+        $responseIndex->assertSee('Cetak PDF');
+        $responseIndex->assertSee('Export Excel');
+        $responseIndex->assertSee('Import Data');
+    }
+
+    public function test_mustahiq_template_and_exports(): void
+    {
+        $userSuperAdmin = User::where('username', 'adminpc')->first();
+        if (!$userSuperAdmin) {
+            $rolePc = Role::where('name', 'pc')->first();
+            $userSuperAdmin = User::factory()->create([
+                'role_id' => $rolePc->id,
+            ]);
+        }
+
+        // Test Template Download
+        $responseTemplate = $this->actingAs($userSuperAdmin)->get(route('mustahiqs.template'));
+        $responseTemplate->assertStatus(200);
+
+        // Test Export PDF View
+        $responsePdf = $this->actingAs($userSuperAdmin)->get(route('mustahiqs.export.pdf'));
+        $responsePdf->assertStatus(200);
+        $responsePdf->assertSee('DATA MUSTAHIQ / PENERIMA MANFAAT');
+
+        // Test Export Excel
+        $responseExcel = $this->actingAs($userSuperAdmin)->get(route('mustahiqs.export.excel'));
+        $responseExcel->assertStatus(200);
     }
 }

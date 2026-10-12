@@ -19,12 +19,15 @@
             </h3>
         </div>
         <div class="d-flex align-items-center mt-2 mt-md-0">
-            <span class="badge badge-success px-3 py-2 font-weight-bold mr-2">
+            <span class="badge badge-success px-3 py-2 font-weight-bold">
                 <i class="fas fa-box-open mr-1"></i> Periode: {{ $bkuData['periode_title'] }}
             </span>
-            <a href="{{ route('pentasyarufan.kontribusi.create', ['penthong_id' => $selectedPenthongId]) }}" class="btn btn-sm btn-warning text-dark font-weight-bold shadow-xs">
+            {{-- Sembunyikan sementara tombol Setor Kontribusi Struktur karena belum digunakan --}}
+            {{--
+            <a href="{{ route('pentasyarufan.kontribusi.create', ['penthong_id' => $selectedPenthongId]) }}" class="btn btn-sm btn-warning text-dark font-weight-bold shadow-xs ml-2">
                 <i class="fas fa-hand-holding-usd mr-1"></i> + Setor Kontribusi Struktur
             </a>
+            --}}
         </div>
     </div>
     <div class="card-body bg-light py-3">

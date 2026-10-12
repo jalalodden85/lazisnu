@@ -67,11 +67,22 @@ class MwcController extends Controller
         }
 
         $validated = $request->validate([
-            'code'      => ['required', 'string', 'max:10', 'unique:mwcs,code'],
-            'name'      => ['required', 'string', 'max:100'],
-            'kecamatan' => ['required', 'string', 'max:100'],
-            'address'   => ['nullable', 'string', 'max:255'],
-            'phone'     => ['nullable', 'string', 'max:25'],
+            'code'               => ['required', 'string', 'max:10', 'unique:mwcs,code'],
+            'name'               => ['required', 'string', 'max:100'],
+            'kecamatan'          => ['required', 'string', 'max:100'],
+            'address'            => ['nullable', 'string', 'max:255'],
+            'phone'              => ['nullable', 'string', 'max:25'],
+            // Susunan Pengurus MWC & Kontak WhatsApp
+            'nama_ketua_mwc'     => ['nullable', 'string', 'max:150'],
+            'wa_ketua_mwc'       => ['nullable', 'string', 'max:30'],
+            'nama_ketua_lazisnu' => ['nullable', 'string', 'max:150'],
+            'wa_ketua_lazisnu'   => ['nullable', 'string', 'max:30'],
+            'nama_manager_upzis' => ['nullable', 'string', 'max:150'],
+            'wa_manager_upzis'   => ['nullable', 'string', 'max:30'],
+            'nama_sekretaris'    => ['nullable', 'string', 'max:150'],
+            'wa_sekretaris'      => ['nullable', 'string', 'max:30'],
+            'nama_bendahara'     => ['nullable', 'string', 'max:150'],
+            'wa_bendahara'       => ['nullable', 'string', 'max:30'],
         ], [
             'code.required' => 'Kode MWC wajib diisi (contoh: M01).',
             'code.unique'   => 'Kode MWC ini sudah terdaftar.',
@@ -134,11 +145,22 @@ class MwcController extends Controller
         }
 
         $validated = $request->validate([
-            'code'      => ['required', 'string', 'max:10', 'unique:mwcs,code,' . $mwc->id],
-            'name'      => ['required', 'string', 'max:100'],
-            'kecamatan' => ['required', 'string', 'max:100'],
-            'address'   => ['nullable', 'string', 'max:255'],
-            'phone'     => ['nullable', 'string', 'max:25'],
+            'code'               => ['required', 'string', 'max:10', 'unique:mwcs,code,' . $mwc->id],
+            'name'               => ['required', 'string', 'max:100'],
+            'kecamatan'          => ['required', 'string', 'max:100'],
+            'address'            => ['nullable', 'string', 'max:255'],
+            'phone'              => ['nullable', 'string', 'max:25'],
+            // Susunan Pengurus MWC & Kontak WhatsApp
+            'nama_ketua_mwc'     => ['nullable', 'string', 'max:150'],
+            'wa_ketua_mwc'       => ['nullable', 'string', 'max:30'],
+            'nama_ketua_lazisnu' => ['nullable', 'string', 'max:150'],
+            'wa_ketua_lazisnu'   => ['nullable', 'string', 'max:30'],
+            'nama_manager_upzis' => ['nullable', 'string', 'max:150'],
+            'wa_manager_upzis'   => ['nullable', 'string', 'max:30'],
+            'nama_sekretaris'    => ['nullable', 'string', 'max:150'],
+            'wa_sekretaris'      => ['nullable', 'string', 'max:30'],
+            'nama_bendahara'     => ['nullable', 'string', 'max:150'],
+            'wa_bendahara'       => ['nullable', 'string', 'max:30'],
         ]);
 
         $mwc->update($validated);

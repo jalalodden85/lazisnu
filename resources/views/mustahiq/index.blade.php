@@ -10,6 +10,38 @@
 @endsection
 
 @section('content')
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="fas fa-check-circle mr-2"></i><strong>Sukses:</strong> {{ session('success') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="fas fa-exclamation-triangle mr-2"></i><strong>Perhatian:</strong> {{ session('error') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
+
+@if(session('import_failures') && count(session('import_failures')) > 0)
+    <div class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
+        <h6 class="font-weight-bold mb-2"><i class="fas fa-info-circle mr-2"></i>Catatan Baris Gagal / Perlu Koreksi:</h6>
+        <ul class="mb-0 pl-3 small">
+            @foreach(session('import_failures') as $fail)
+                <li>{{ $fail }}</li>
+            @endforeach
+        </ul>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
+
 <!-- KPI Ringkasan Statistik Mustahiq -->
 @php
     $totalMustahiqs = \App\Models\Mustahiq::forUser($user)->count();
@@ -90,8 +122,24 @@
         <h3 class="card-title font-weight-bold text-dark mb-0">
             <i class="fas fa-filter text-success mr-2"></i>Filter & Pencarian Penerima Manfaat
         </h3>
-        <div>
+        <div class="d-flex align-items-center flex-wrap" style="gap: 6px;">
+            <!-- Tombol Cetak PDF -->
+            <a href="{{ route('mustahiqs.export.pdf', request()->query()) }}" target="_blank" class="btn btn-outline-danger btn-sm font-weight-bold shadow-xs">
+                <i class="fas fa-file-pdf mr-1"></i> Cetak PDF
+            </a>
+
+            <!-- Tombol Export Excel -->
+            <a href="{{ route('mustahiqs.export.excel', request()->query()) }}" class="btn btn-outline-success btn-sm font-weight-bold shadow-xs">
+                <i class="fas fa-file-excel mr-1"></i> Export Excel
+            </a>
+
             @if($user->isRanting() || $user->isPc())
+                <!-- Tombol Import Data Excel -->
+                <button type="button" class="btn btn-info btn-sm font-weight-bold shadow-xs" data-toggle="modal" data-target="#modalImportMustahiq">
+                    <i class="fas fa-file-import mr-1"></i> Import Data
+                </button>
+
+                <!-- Tombol Tambah Baru -->
                 <a href="{{ route('mustahiqs.create') }}" class="btn btn-success btn-sm font-weight-bold shadow-xs">
                     <i class="fas fa-plus-circle mr-1"></i> Tambah Mustahiq Baru
                 </a>
@@ -289,4 +337,93 @@
         </div>
     @endif
 </div>
+
+<!-- Modal Import Data Mustahiq -->
+<div class="modal fade" id="modalImportMustahiq" tabindex="-1" role="dialog" aria-labelledby="modalImportMustahiqLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content shadow-lg border-0">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title font-weight-bold" id="modalImportMustahiqLabel">
+                    <i class="fas fa-file-excel mr-2"></i>Import Data Mustahiq (Penerima Manfaat)
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{{ route('mustahiqs.import') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body p-4">
+                    <!-- Banner Unduh Template Format -->
+                    <div class="card border border-success bg-light mb-3 shadow-none">
+                        <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="font-weight-bold text-success mb-1">
+                                    <i class="fas fa-download mr-1"></i> Download Format Template Excel
+                                </h6>
+                                <p class="text-muted small mb-0">
+                                    Header baku: <code>NIK</code>, <code>Nama_Lengkap</code>, <code>Jenis_Kelamin</code>, <code>Alamat</code>, <code>Kategori_Asnaf</code>, <code>Pekerjaan/Keterangan</code>.
+                                </p>
+                            </div>
+                            <a href="{{ route('mustahiqs.template') }}" class="btn btn-success btn-sm font-weight-bold text-nowrap ml-2 shadow-xs">
+                                <i class="fas fa-file-download mr-1"></i> Unduh
+                            </a>
+                        </div>
+                    </div>
+
+                    @if($user->isPc() || $user->isMwc())
+                        <div class="form-group mb-3">
+                            <label class="font-weight-bold small text-dark">Pilih Ranting Tujuan <span class="text-danger">*</span></label>
+                            <select name="ranting_id" class="form-control form-control-sm" required>
+                                <option value="">-- Pilih Ranting (Desa) Target --</option>
+                                @foreach($rantings as $rtg)
+                                    <option value="{{ $rtg->id }}" {{ request('ranting_id') == $rtg->id ? 'selected' : '' }}>
+                                        {{ $rtg->name }} ({{ $rtg->code }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="text-muted">Data yang diimpor akan langsung bernaung di ranting ini.</small>
+                        </div>
+                    @endif
+
+                    <!-- Input Upload File -->
+                    <div class="form-group mb-3">
+                        <label class="font-weight-bold small text-dark">File Dokumen (.xlsx / .csv) <span class="text-danger">*</span></label>
+                        <div class="custom-file">
+                            <input type="file" name="file" class="custom-file-input" id="customFileImport" accept=".xlsx,.xls,.csv" required onchange="updateFileLabel(this)">
+                            <label class="custom-file-label text-truncate" for="customFileImport" id="customFileImportLabel">Pilih file spreadsheet...</label>
+                        </div>
+                        <small class="text-muted d-block mt-1">Maksimal ukuran file: 5 MB.</small>
+                    </div>
+
+                    <!-- Ketentuan Validasi Baris -->
+                    <div class="alert alert-secondary border py-2 px-3 small mb-0">
+                        <strong class="d-block mb-1 text-dark"><i class="fas fa-info-circle mr-1 text-primary"></i>Ketentuan Validasi Import:</strong>
+                        <ul class="mb-0 pl-3">
+                            <li><strong>NIK:</strong> Wajib 16 digit angka. NIK yang sudah ada di database akan <em>dilewati secara otomatis (skip)</em> untuk mencegah data ganda.</li>
+                            <li><strong>Kolom Wajib:</strong> <code>Nama_Lengkap</code> dan <code>Kategori_Asnaf</code> tidak boleh kosong.</li>
+                            <li><strong>Pilihan Asnaf:</strong> <code>fakir</code>, <code>miskin</code>, <code>amil</code>, <code>muallaf</code>, <code>riqab</code>, <code>gharim</code>, <code>fisabilillah</code>, <code>ibnu_sabil</code>.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-success btn-sm font-weight-bold">
+                        <i class="fas fa-upload mr-1"></i> Mulai Proses Import
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateFileLabel(input) {
+    const label = document.getElementById('customFileImportLabel');
+    if (input.files && input.files[0]) {
+        label.textContent = input.files[0].name;
+    } else {
+        label.textContent = 'Pilih file spreadsheet...';
+    }
+}
+</script>
 @endsection

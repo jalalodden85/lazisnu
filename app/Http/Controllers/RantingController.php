@@ -149,12 +149,19 @@ class RantingController extends Controller
         }
 
         $request->validate([
-            'mwc_id'     => ['required', 'exists:mwcs,id'],
-            'name'       => ['required', 'string', 'max:100'],
-            'desa'       => ['nullable', 'string', 'max:100'],
-            'pj_name'    => ['nullable', 'string', 'max:150'],
-            'address'    => ['nullable', 'string', 'max:255'],
-            'nomor_urut' => ['nullable', 'integer', 'min:1'],
+            'mwc_id'             => ['required', 'exists:mwcs,id'],
+            'name'               => ['required', 'string', 'max:100'],
+            'desa'               => ['nullable', 'string', 'max:100'],
+            'pj_name'            => ['nullable', 'string', 'max:150'],
+            'address'            => ['nullable', 'string', 'max:255'],
+            'nomor_urut'         => ['nullable', 'integer', 'min:1'],
+            // Susunan Pengurus Ranting & WhatsApp
+            'nama_ketua_ranting' => ['nullable', 'string', 'max:150'],
+            'wa_ketua_ranting'   => ['nullable', 'string', 'max:30'],
+            'nama_ketua_upzis'   => ['nullable', 'string', 'max:150'],
+            'wa_ketua_upzis'     => ['nullable', 'string', 'max:30'],
+            'nama_bendahara'     => ['nullable', 'string', 'max:150'],
+            'wa_bendahara'       => ['nullable', 'string', 'max:30'],
         ], [
             'mwc_id.required' => 'Pilih MWC Induk terlebih dahulu.',
             'name.required'   => 'Nama Ranting NU wajib diisi.',
@@ -183,12 +190,18 @@ class RantingController extends Controller
         }
 
         $ranting = Ranting::create([
-            'mwc_id'  => $mwcId,
-            'code'    => $code,
-            'name'    => $request->input('name'),
-            'desa'    => $request->input('desa') ?? $request->input('name'),
-            'pj_name' => $request->input('pj_name'),
-            'address' => $request->input('address'),
+            'mwc_id'             => $mwcId,
+            'code'               => $code,
+            'name'               => $request->input('name'),
+            'desa'               => $request->input('desa') ?? $request->input('name'),
+            'pj_name'            => $request->input('pj_name'),
+            'address'            => $request->input('address'),
+            'nama_ketua_ranting' => $request->input('nama_ketua_ranting'),
+            'wa_ketua_ranting'   => $request->input('wa_ketua_ranting'),
+            'nama_ketua_upzis'   => $request->input('nama_ketua_upzis'),
+            'wa_ketua_upzis'     => $request->input('wa_ketua_upzis'),
+            'nama_bendahara'     => $request->input('nama_bendahara'),
+            'wa_bendahara'       => $request->input('wa_bendahara'),
         ]);
 
         return redirect()
@@ -259,12 +272,19 @@ class RantingController extends Controller
         }
 
         $validated = $request->validate([
-            'mwc_id'  => ['required', 'exists:mwcs,id'],
-            'code'    => ['required', 'string', 'max:20', 'unique:rantings,code,' . $ranting->id],
-            'name'    => ['required', 'string', 'max:100'],
-            'desa'    => ['nullable', 'string', 'max:100'],
-            'pj_name' => ['nullable', 'string', 'max:150'],
-            'address' => ['nullable', 'string', 'max:255'],
+            'mwc_id'             => ['required', 'exists:mwcs,id'],
+            'code'               => ['required', 'string', 'max:20', 'unique:rantings,code,' . $ranting->id],
+            'name'               => ['required', 'string', 'max:100'],
+            'desa'               => ['nullable', 'string', 'max:100'],
+            'pj_name'            => ['nullable', 'string', 'max:150'],
+            'address'            => ['nullable', 'string', 'max:255'],
+            // Susunan Pengurus Ranting & WhatsApp
+            'nama_ketua_ranting' => ['nullable', 'string', 'max:150'],
+            'wa_ketua_ranting'   => ['nullable', 'string', 'max:30'],
+            'nama_ketua_upzis'   => ['nullable', 'string', 'max:150'],
+            'wa_ketua_upzis'     => ['nullable', 'string', 'max:30'],
+            'nama_bendahara'     => ['nullable', 'string', 'max:150'],
+            'wa_bendahara'       => ['nullable', 'string', 'max:30'],
         ]);
 
         if ($user && $user->isMwc()) {

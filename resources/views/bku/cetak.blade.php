@@ -166,10 +166,10 @@
     <div class="kop-surat">
         <div class="row align-items-center">
             <div class="col-2 text-center">
-                <img src="{{ asset('images/logo-lazisnu.png') }}" 
-                     alt="Logo LAZISNU" 
+                <img src="{{ asset('logo_nucare_lazisnu.png') }}" 
+                     alt="Logo NU CARE - LAZISNU" 
                      class="logo-kop"
-                     onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Logo_Nahdlatul_Ulama.svg/300px-Logo_Nahdlatul_Ulama.svg.png';">
+                     onerror="this.onerror=null; this.src='{{ asset('logo_lazisnu_lmg.png') }}';">
             </div>
             <div class="col-10 text-center">
                 <div class="instansi-title">LEMBAGA AMIL ZAKAT, INFAQ DAN SHADAQAH NAHDLATUL ULAMA</div>
@@ -272,22 +272,34 @@
         </tfoot>
     </table>
 
-    <!-- LEMBAR PENGESAHAN DUA SISI -->
+    <!-- LEMBAR PENGESAHAN TIGA PIHAK OTOMATIS SESUAI DATA ENTRI -->
     <div class="pengesahan-area">
-        <div class="row">
-            <div class="col-6 text-center ttd-box">
-                <div>Mengetahui,</div>
-                <div class="fw-bold">Ketua JPZIS NU / LAZISNU</div>
+        <div class="row align-items-start">
+            <!-- Paling Kiri: Mengetahui Ketua Tanfidz -->
+            <div class="col-4 text-center ttd-box">
+                <div>{{ $signatories['kiri']['label'] ?? 'Mengetahui,' }}</div>
+                <div class="fw-bold">{{ $signatories['kiri']['jabatan'] ?? 'Ketua Tanfidziyah' }}</div>
                 <div class="ttd-space"></div>
-                <div class="ttd-nama">( {{ $namaKetua }} )</div>
-                <div class="small text-muted">NIP/NIA: .................................</div>
+                <div class="ttd-nama">( {{ $signatories['kiri']['nama'] ?? ($namaKetuaTanfidz ?? '....................................') }} )</div>
+                <div class="small text-muted">{{ $signatories['kiri']['sub'] ?? 'Pimpinan Nahdlatul Ulama' }}</div>
             </div>
-            <div class="col-6 text-center ttd-box">
-                <div>Lamongan, {{ $tanggalCetak }}</div>
-                <div class="fw-bold">Bendahara</div>
+
+            <!-- Tengah: Ketua LAZISNU atau UPZIS -->
+            <div class="col-4 text-center ttd-box">
+                <div>&nbsp;</div>
+                <div class="fw-bold">{{ $signatories['tengah']['jabatan'] ?? 'Ketua UPZIS / LAZISNU' }}</div>
                 <div class="ttd-space"></div>
-                <div class="ttd-nama">( {{ $namaBendahara }} )</div>
-                <div class="small text-muted">NIP/NIA: .................................</div>
+                <div class="ttd-nama">( {{ $signatories['tengah']['nama'] ?? ($namaKetuaLazisnu ?? $namaKetua) }} )</div>
+                <div class="small text-muted">{{ $signatories['tengah']['sub'] ?? 'NU CARE - LAZISNU' }}</div>
+            </div>
+
+            <!-- Paling Kanan: Bendahara -->
+            <div class="col-4 text-center ttd-box">
+                <div>{{ $signatories['place'] ?? 'Lamongan' }}, {{ $tanggalCetak }}</div>
+                <div class="fw-bold">{{ $signatories['kanan']['jabatan'] ?? 'Bendahara' }}</div>
+                <div class="ttd-space"></div>
+                <div class="ttd-nama">( {{ $signatories['kanan']['nama'] ?? $namaBendahara }} )</div>
+                <div class="small text-muted">{{ $signatories['kanan']['sub'] ?? 'Pemeriksa / Keuangan' }}</div>
             </div>
         </div>
     </div>

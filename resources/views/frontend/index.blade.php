@@ -263,43 +263,39 @@
         letter-spacing: 0.5px;
     }
 
-    /* Kategori Rekening Khusus */
-    .rekening-kategori-card {
+    /* Kategori Rekening Khusus & Rekening Pair (Bersanding) */
+    .rekening-pair-card {
         background: #ffffff;
-        border-radius: 20px;
-        padding: 26px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+        border-radius: 22px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         border: 2px solid #e2e8f0;
         transition: all 0.3s ease;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
     }
-    .rekening-kategori-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 16px 35px rgba(0, 0, 0, 0.1);
+    .rekening-pair-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
     }
-    .card-rekening-zakat {
-        border-color: rgba(16, 185, 129, 0.45);
-        background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+    .card-pair-bri {
+        border-color: rgba(0, 82, 156, 0.25);
+        background: linear-gradient(180deg, #ffffff 0%, #f4f8fd 100%);
     }
-    .card-rekening-zakat:hover {
-        border-color: #059669;
-    }
-    .card-rekening-infaq {
-        border-color: rgba(0, 82, 156, 0.35);
-        background: linear-gradient(180deg, #ffffff 0%, #f0f7ff 100%);
-    }
-    .card-rekening-infaq:hover {
+    .card-pair-bri:hover {
         border-color: #00529c;
     }
-    .card-rekening-qris {
-        border-color: rgba(207, 21, 45, 0.35);
-        background: linear-gradient(180deg, #ffffff 0%, #fff5f5 100%);
+    .card-pair-bsi {
+        border-color: rgba(16, 185, 129, 0.3);
+        background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
     }
-    .card-rekening-qris:hover {
-        border-color: #cf152d;
+    .card-pair-bsi:hover {
+        border-color: #059669;
+    }
+
+    @media (min-width: 992px) {
+        .border-start-lg {
+            border-left: 2px dashed #cbd5e1;
+            padding-left: 2rem !important;
+        }
     }
 
     /* QRIS Preview Card */
@@ -486,8 +482,6 @@
                                 <option value="transfer_bri">Transfer BRI (Selain Zakat: Infaq, Shadaqah & Koin - 00411001448562)</option>
                                 <option value="transfer_bsi">Transfer BSI (Khusus Zakat Mal / Profesi / Fitrah - 2026070708)</option>
                                 <option value="qris">QRIS Bank BRI (Semua E-Wallet & Mobile Banking)</option>
-                                <option value="transfer_mandiri">Transfer Bank Mandiri</option>
-                                <option value="transfer_bca">Transfer Bank BCA</option>
                             </select>
                         </div>
 
@@ -551,7 +545,7 @@
                     </div>
                     <div>
                         <div class="text-muted small fw-bold text-uppercase">Penerima Manfaat</div>
-                        <div class="fs-5 fw-extrabold text-danger mb-0">{{ number_format($penerimaManfaat) }}+ Jiwa</div>
+                        <div class="fs-5 fw-extrabold text-danger mb-0">{{ number_format($penerimaManfaat, 0, ',', '.') }} Jiwa</div>
                         <small class="text-muted" style="font-size: 0.72rem;">*Dhuafa, Santri, Yatim</small>
                     </div>
                 </div>
@@ -647,7 +641,7 @@
                         </div>
                     </div>
                     <div class="fs-2 fw-extrabold text-white mb-2 tracking-tight">
-                        {{ number_format($penerimaManfaat) }}+ Jiwa Mustahik
+                        {{ number_format($penerimaManfaat, 0, ',', '.') }} Jiwa Mustahik
                     </div>
                     <p class="small text-white-50 mb-0">
                         Santri dhuafa, guru ngaji, pasien dhuafa pengguna ambulans, dan fakir miskin yang terbantu langsung dari koin umat.
@@ -1021,59 +1015,24 @@
             </p>
         </div>
 
-        <!-- 3 Kategori Rekening Donasi -->
-        <div class="row g-4 mb-4">
-            <!-- Kategori A: Khusus Zakat (BSI) -->
-            <div class="col-lg-4 col-md-6">
-                <div class="rekening-kategori-card card-rekening-zakat">
-                    <div>
-                        <!-- Header Card -->
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="badge bg-success text-white fw-bold px-3 py-1 rounded-pill">
-                                <i class="fa-solid fa-hand-holding-heart me-1"></i> KHUSUS ZAKAT
-                            </span>
-                            <span class="fw-bold text-success fs-5">Bank BSI</span>
-                        </div>
-
-                        <div class="mb-3">
-                            <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.75rem;">Nomor Rekening Zakat:</small>
-                            <div class="fs-3 fw-extrabold text-dark tracking-wide my-1" id="rek-bsi-zakat">
-                                2026070708
-                            </div>
-                            <div class="small text-muted">
-                                Atas Nama: <strong class="text-dark">Lazisnu Lamongan</strong>
-                            </div>
-                        </div>
-
-                        <div class="p-3 bg-white rounded-3 border border-success-subtle mb-3 small text-muted">
-                            <i class="fa-solid fa-circle-check text-success me-1"></i>
-                            Dikhususkan untuk penerimaan dana <strong>Zakat Mal, Zakat Fitrah, Zakat Perniagaan, dan Zakat Profesi</strong> yang disalurkan murni kepada 8 Asnaf mustahik.
-                        </div>
-                    </div>
-
-                    <div>
-                        <button class="btn btn-success rounded-pill fw-bold w-100 py-2 shadow-sm" onclick="copyToClipboard('2026070708', 'btn-bsi-zakat')" id="btn-bsi-zakat" style="background: var(--nu-green);">
-                            <i class="fa-regular fa-copy me-1"></i> Salin No. Rekening BSI
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Kategori B: Selain Zakat (BRI) -->
-            <div class="col-lg-4 col-md-6">
-                <div class="rekening-kategori-card card-rekening-infaq">
-                    <div>
-                        <!-- Header Card -->
+        <!-- PASANGAN 1: BANK BRI BERSANDING DENGAN QRIS BANK BRI -->
+        <div class="rekening-pair-card card-pair-bri mb-4">
+            <div class="row g-4 align-items-center">
+                <!-- Sisi Kiri: Rekening Resmi Bank BRI -->
+                <div class="col-lg-7 col-md-12">
+                    <div class="pe-lg-3">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span class="badge bg-primary text-white fw-bold px-3 py-1 rounded-pill">
-                                <i class="fa-solid fa-coins me-1"></i> SELAIN ZAKAT (INFAQ &amp; KOIN)
+                                <i class="fa-solid fa-coins me-1"></i> SELAIN ZAKAT (INFAQ &amp; KOIN NU)
                             </span>
-                            <span class="fw-bold text-primary fs-5">Bank BRI</span>
+                            <span class="fw-bold text-primary fs-5">
+                                <i class="fa-solid fa-building-columns me-1"></i> Bank BRI
+                            </span>
                         </div>
 
                         <div class="mb-3">
                             <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.75rem;">Nomor Rekening Infaq / Shadaqah:</small>
-                            <div class="fs-3 fw-extrabold text-dark tracking-wide my-1" id="rek-bri-infaq">
+                            <div class="fs-2 fw-extrabold text-dark tracking-wide my-1 font-monospace" id="rek-bri-infaq">
                                 00411001448562
                             </div>
                             <div class="small text-muted">
@@ -1083,54 +1042,120 @@
 
                         <div class="p-3 bg-white rounded-3 border border-primary-subtle mb-3 small text-muted">
                             <i class="fa-solid fa-circle-check text-primary me-1"></i>
-                            Untuk penerimaan <strong>Infaq Umum, Sedekah Subuh, Himpunan Gerakan KOIN NU</strong>, operasional armada ambulans gratis, dan dana tanggap darurat bencana.
+                            Dikhususkan untuk penerimaan dana <strong>Infaq Umum, Sedekah Subuh, Himpunan Gerakan KOIN NU</strong>, operasional armada ambulans gratis dhuafa, dan tanggap darurat bencana.
                         </div>
-                    </div>
 
-                    <div>
-                        <button class="btn btn-primary rounded-pill fw-bold w-100 py-2 shadow-sm" onclick="copyToClipboard('00411001448562', 'btn-bri-infaq')" id="btn-bri-infaq">
-                            <i class="fa-regular fa-copy me-1"></i> Salin No. Rekening BRI
-                        </button>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary rounded-pill fw-bold py-2 px-4 shadow-sm" onclick="copyToClipboard('00411001448562', 'btn-bri-infaq')" id="btn-bri-infaq">
+                                <i class="fa-regular fa-copy me-1"></i> Salin No. Rekening BRI
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Kategori C: QRIS Bank BRI -->
-            <div class="col-lg-4 col-md-12">
-                <div class="rekening-kategori-card card-rekening-qris">
-                    <div>
-                        <!-- Header Card -->
-                        <div class="d-flex justify-content-between align-items-center mb-3">
+                <!-- Sisi Kanan: QRIS Bank BRI Bersanding Langsung -->
+                <div class="col-lg-5 col-md-12 text-center">
+                    <div class="ps-lg-3 border-start-lg">
+                        <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
                             <span class="badge bg-danger text-white fw-bold px-3 py-1 rounded-pill">
-                                <i class="fa-solid fa-qrcode me-1"></i> SCAN QRIS NASIONAL
+                                <i class="fa-solid fa-qrcode me-1"></i> SCAN QRIS BANK BRI
                             </span>
-                            <span class="badge text-bg-warning text-dark fw-bold">Bank BRI</span>
+                            <span class="badge text-bg-warning text-dark fw-bold">Infaq &amp; Koin</span>
                         </div>
 
-                        <!-- QR Code Preview Frame -->
-                        <div class="qris-preview-box mb-3" data-bs-toggle="modal" data-bs-target="#modalQris" title="Klik untuk memperbesar QR Code" style="cursor: pointer;">
-                            <img src="{{ asset('qris_lazisnu_bri.jpg') }}" alt="QRIS Bank BRI LAZISNU PCNU Lamongan" class="qris-img shadow-sm" style="max-height: 250px; width: 100%; object-fit: contain;">
-                            <div class="text-muted small mt-2">
-                                <i class="fa-solid fa-magnifying-glass-plus text-danger me-1"></i> Klik untuk memperbesar / simpan QRIS
+                        <div class="qris-preview-box mb-2 mx-auto" data-bs-toggle="modal" data-bs-target="#modalQrisBri" title="Klik untuk memperbesar QR Code" style="cursor: pointer; max-width: 270px;">
+                            <img src="{{ asset('qris_lazisnu_bri.jpg') }}" alt="QRIS Bank BRI LAZISNU PCNU Lamongan" class="qris-img shadow-sm rounded-2" style="max-height: 220px; width: 100%; object-fit: contain;">
+                            <div class="text-muted small mt-1" style="font-size: 0.75rem;">
+                                <i class="fa-solid fa-magnifying-glass-plus text-danger me-1"></i> Klik untuk perbesar QRIS
                             </div>
                         </div>
 
                         <div class="text-center small mb-3">
-                            <div class="fw-bold text-dark font-monospace fs-6">NMID: ID1026559758341</div>
-                            <small class="text-muted">Kompatibel dengan seluruh E-Wallet &amp; Mobile Banking</small>
-                            <div class="text-muted mt-1" style="font-size: 0.72rem;">
-                                BRImo • Livin' Mandiri • BCA Mobile • BSI Mobile • GoPay • OVO • DANA • ShopeePay • LinkAja
-                            </div>
+                            <div class="fw-bold text-dark font-monospace" style="font-size: 0.85rem;">NMID: ID1026559758341</div>
+                            <small class="text-muted" style="font-size: 0.75rem;">Semua E-Wallet &amp; Mobile Banking (BRImo, Livin', BCA, BSI, GoPay, OVO, DANA, dll)</small>
+                        </div>
+
+                        <div class="d-flex justify-content-center gap-2">
+                            <button type="button" class="btn btn-outline-danger rounded-pill fw-bold px-3 py-1 btn-sm" data-bs-toggle="modal" data-bs-target="#modalQrisBri">
+                                <i class="fa-solid fa-expand me-1"></i> Perbesar
+                            </button>
+                            <a href="{{ asset('qris_lazisnu_bri.jpg') }}" download="QRIS_LAZISNU_BRI_LAMONGAN.jpg" class="btn btn-danger rounded-pill fw-bold px-3 py-1 btn-sm shadow-sm" style="background: #cf152d;">
+                                <i class="fa-solid fa-download me-1"></i> Unduh QR
+                            </a>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
 
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-danger rounded-pill fw-bold w-50 py-2 btn-sm" data-bs-toggle="modal" data-bs-target="#modalQris">
-                            <i class="fa-solid fa-expand me-1"></i> Perbesar
-                        </button>
-                        <a href="{{ asset('qris_lazisnu_bri.jpg') }}" download="QRIS_LAZISNU_BRI_LAMONGAN.jpg" class="btn btn-danger rounded-pill fw-bold w-50 py-2 btn-sm shadow-sm" style="background: #cf152d;">
-                            <i class="fa-solid fa-download me-1"></i> Unduh QR
-                        </a>
+        <!-- PASANGAN 2: BANK BSI / BNI BERSANDING DENGAN QRIS BANK BSI -->
+        <div class="rekening-pair-card card-pair-bsi mb-4">
+            <div class="row g-4 align-items-center">
+                <!-- Sisi Kiri: Rekening Resmi Bank BSI / BNI -->
+                <div class="col-lg-7 col-md-12">
+                    <div class="pe-lg-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-success text-white fw-bold px-3 py-1 rounded-pill">
+                                <i class="fa-solid fa-hand-holding-heart me-1"></i> KHUSUS ZAKAT (8 ASNAF)
+                            </span>
+                            <span class="fw-bold text-success fs-5">
+                                <i class="fa-solid fa-building-columns me-1"></i> Bank BSI / BNI Syariah
+                            </span>
+                        </div>
+
+                        <div class="mb-3">
+                            <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.75rem;">Nomor Rekening Khusus Zakat:</small>
+                            <div class="fs-2 fw-extrabold text-dark tracking-wide my-1 font-monospace" id="rek-bsi-zakat">
+                                2026070708
+                            </div>
+                            <div class="small text-muted">
+                                Atas Nama: <strong class="text-dark">Lazisnu Lamongan</strong>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-white rounded-3 border border-success-subtle mb-3 small text-muted">
+                            <i class="fa-solid fa-circle-check text-success me-1"></i>
+                            Dikhususkan murni untuk penerimaan dana <strong>Zakat Mal, Zakat Fitrah, Zakat Perniagaan, dan Zakat Profesi</strong> yang disalurkan murni kepada 8 Asnaf mustahik sesuai syariat Islam.
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success rounded-pill fw-bold py-2 px-4 shadow-sm" onclick="copyToClipboard('2026070708', 'btn-bsi-zakat')" id="btn-bsi-zakat" style="background: var(--nu-green);">
+                                <i class="fa-regular fa-copy me-1"></i> Salin No. Rekening BSI
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sisi Kanan: QRIS Bank BSI Bersanding Langsung -->
+                <div class="col-lg-5 col-md-12 text-center">
+                    <div class="ps-lg-3 border-start-lg">
+                        <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
+                            <span class="badge bg-success text-white fw-bold px-3 py-1 rounded-pill">
+                                <i class="fa-solid fa-qrcode me-1"></i> SCAN QRIS BANK BSI
+                            </span>
+                            <span class="badge text-bg-warning text-dark fw-bold">Khusus Zakat</span>
+                        </div>
+
+                        <div class="qris-preview-box mb-2 mx-auto" data-bs-toggle="modal" data-bs-target="#modalQrisBsi" title="Klik untuk memperbesar QR Code" style="cursor: pointer; max-width: 270px;">
+                            <img src="{{ asset('qris_lazisnu_bsi.jpg') }}" alt="QRIS Bank BSI Khusus Zakat LAZISNU PCNU Lamongan" class="qris-img shadow-sm rounded-2" style="max-height: 220px; width: 100%; object-fit: contain;">
+                            <div class="text-muted small mt-1" style="font-size: 0.75rem;">
+                                <i class="fa-solid fa-magnifying-glass-plus text-success me-1"></i> Klik untuk perbesar QRIS
+                            </div>
+                        </div>
+
+                        <div class="text-center small mb-3">
+                            <div class="fw-bold text-dark font-monospace" style="font-size: 0.85rem;">QRIS Zakat LAZISNU Lamongan</div>
+                            <small class="text-muted" style="font-size: 0.75rem;">Kompatibel dengan seluruh Mobile Banking &amp; E-Wallet Nasional</small>
+                        </div>
+
+                        <div class="d-flex justify-content-center gap-2">
+                            <button type="button" class="btn btn-outline-success rounded-pill fw-bold px-3 py-1 btn-sm" data-bs-toggle="modal" data-bs-target="#modalQrisBsi">
+                                <i class="fa-solid fa-expand me-1"></i> Perbesar
+                            </button>
+                            <a href="{{ asset('qris_lazisnu_bsi.jpg') }}" download="QRIS_LAZISNU_BSI_ZAKAT_LAMONGAN.jpg" class="btn btn-success rounded-pill fw-bold px-3 py-1 btn-sm shadow-sm" style="background: var(--nu-green);">
+                                <i class="fa-solid fa-download me-1"></i> Unduh QR
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1193,57 +1218,56 @@
     </div>
 </section>
 
-<!-- Modal Zoom QRIS Resmi (Bank BRI & BSI) -->
-<div class="modal fade" id="modalQris" tabindex="-1" aria-labelledby="modalQrisLabel" aria-hidden="true">
+<!-- 1. Modal Zoom QRIS Bank BRI (Langsung, Tanpa Tab) -->
+<div class="modal fade" id="modalQrisBri" tabindex="-1" aria-labelledby="modalQrisBriLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
-            <div class="modal-header bg-danger text-white border-0 py-3" style="background: linear-gradient(135deg, #cf152d, #9a0e20);">
-                <h6 class="modal-title fw-bold" id="modalQrisLabel">
-                    <i class="fa-solid fa-qrcode me-2"></i> QRIS Resmi LAZISNU PCNU Lamongan
+            <div class="modal-header text-white border-0 py-3" style="background: linear-gradient(135deg, #cf152d, #9a0e20);">
+                <h6 class="modal-title fw-bold" id="modalQrisBriLabel">
+                    <i class="fa-solid fa-qrcode me-2"></i> QRIS Resmi Bank BRI (Infaq &amp; Koin) - LAZISNU Lamongan
                 </h6>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center p-4">
-                <!-- Nav Tabs Pilihan QRIS -->
-                <ul class="nav nav-pills justify-content-center mb-3" id="pills-tab-qris" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active rounded-pill fw-bold px-3 py-1 btn-sm" id="pills-bri-tab" data-bs-toggle="pill" data-bs-target="#pills-bri" type="button" role="tab">
-                            <i class="fa-solid fa-building-columns me-1"></i> QRIS BRI (Infaq &amp; Koin)
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link rounded-pill fw-bold px-3 py-1 btn-sm" id="pills-bsi-tab" data-bs-toggle="pill" data-bs-target="#pills-bsi" type="button" role="tab">
-                            <i class="fa-solid fa-hand-holding-dollar me-1"></i> QRIS BSI (Zakat)
-                        </button>
-                    </li>
-                </ul>
+                <div class="p-2 border rounded-3 bg-white shadow-sm mb-3">
+                    <img src="{{ asset('qris_lazisnu_bri.jpg') }}" alt="QRIS Bank BRI LAZISNU Lamongan" class="img-fluid rounded" style="max-height: 480px;">
+                </div>
+                <div class="font-monospace fw-bold text-dark fs-6 mb-1">NMID: ID1026559758341</div>
+                <div class="small text-muted mb-3">Penyelenggara: PT Bank Rakyat Indonesia (Persero) Tbk &bull; LAZISNU PCNU LAMONGAN</div>
+                <p class="small text-muted mb-3">Pindai kode QR di atas menggunakan aplikasi E-Wallet (GoPay, OVO, DANA, ShopeePay, LinkAja) atau Mobile Banking (BRImo, Livin', BCA, dll).</p>
+                <div class="d-flex justify-content-center gap-2">
+                    <a href="{{ asset('qris_lazisnu_bri.jpg') }}" download="QRIS_LAZISNU_BRI_LAMONGAN.jpg" class="btn btn-danger btn-sm rounded-pill fw-bold px-4 py-2" style="background: #cf152d;">
+                        <i class="fa-solid fa-download me-1"></i> Simpan Gambar QRIS BRI
+                    </a>
+                    <button type="button" class="btn btn-secondary btn-sm rounded-pill px-3 py-2" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                <div class="tab-content" id="pills-tabContentQris">
-                    <!-- Tab BRI (Default) -->
-                    <div class="tab-pane fade show active" id="pills-bri" role="tabpanel">
-                        <img src="{{ asset('qris_lazisnu_bri.jpg') }}" alt="QRIS Bank BRI LAZISNU Lamongan" class="img-fluid rounded shadow-sm mb-2" style="max-height: 440px;">
-                        <div class="font-monospace fw-bold text-dark small mb-1">NMID: ID1026559758341</div>
-                        <div class="small text-muted mb-3">Penyelenggara: PT Bank Rakyat Indonesia (Persero) Tbk</div>
-                        <div class="d-flex justify-content-center gap-2">
-                            <a href="{{ asset('qris_lazisnu_bri.jpg') }}" download="QRIS_LAZISNU_BRI_LAMONGAN.jpg" class="btn btn-outline-danger btn-sm rounded-pill fw-bold">
-                                <i class="fa-solid fa-download me-1"></i> Simpan QRIS BRI
-                            </a>
-                            <button type="button" class="btn btn-secondary btn-sm rounded-pill" data-bs-dismiss="modal">Tutup</button>
-                        </div>
-                    </div>
-
-                    <!-- Tab BSI -->
-                    <div class="tab-pane fade" id="pills-bsi" role="tabpanel">
-                        <img src="{{ asset('qris_lazisnu_bsi.jpg') }}" alt="QRIS Bank BSI LAZISNU Lamongan" class="img-fluid rounded shadow-sm mb-2" style="max-height: 440px;">
-                        <div class="font-monospace fw-bold text-dark small mb-1">NMID: ID1026582784843</div>
-                        <div class="small text-muted mb-3">Penyelenggara: PT Bank Syariah Indonesia Tbk</div>
-                        <div class="d-flex justify-content-center gap-2">
-                            <a href="{{ asset('qris_lazisnu_bsi.jpg') }}" download="QRIS_LAZISNU_BSI_LAMONGAN.jpg" class="btn btn-outline-success btn-sm rounded-pill fw-bold">
-                                <i class="fa-solid fa-download me-1"></i> Simpan QRIS BSI
-                            </a>
-                            <button type="button" class="btn btn-secondary btn-sm rounded-pill" data-bs-dismiss="modal">Tutup</button>
-                        </div>
-                    </div>
+<!-- 2. Modal Zoom QRIS Bank BSI (Langsung, Tanpa Tab) -->
+<div class="modal fade" id="modalQrisBsi" tabindex="-1" aria-labelledby="modalQrisBsiLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header text-white border-0 py-3" style="background: linear-gradient(135deg, #0a6b38, #054825);">
+                <h6 class="modal-title fw-bold" id="modalQrisBsiLabel">
+                    <i class="fa-solid fa-qrcode me-2"></i> QRIS Resmi Bank BSI (Khusus Zakat) - LAZISNU Lamongan
+                </h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <div class="p-2 border rounded-3 bg-white shadow-sm mb-3">
+                    <img src="{{ asset('qris_lazisnu_bsi.jpg') }}" alt="QRIS Bank BSI Khusus Zakat LAZISNU Lamongan" class="img-fluid rounded" style="max-height: 480px;">
+                </div>
+                <div class="font-monospace fw-bold text-dark fs-6 mb-1">NMID: ID1026582784843</div>
+                <div class="small text-muted mb-3">Penyelenggara: PT Bank Syariah Indonesia Tbk &bull; LAZISNU PCNU LAMONGAN</div>
+                <p class="small text-muted mb-3">Pindai kode QR di atas untuk penyaluran Zakat Mal, Fitrah &amp; Profesi murni kepada 8 Asnaf Mustahik melalui E-Wallet / Mobile Banking apa pun.</p>
+                <div class="d-flex justify-content-center gap-2">
+                    <a href="{{ asset('qris_lazisnu_bsi.jpg') }}" download="QRIS_LAZISNU_BSI_LAMONGAN.jpg" class="btn btn-success btn-sm rounded-pill fw-bold px-4 py-2" style="background: var(--nu-green);">
+                        <i class="fa-solid fa-download me-1"></i> Simpan Gambar QRIS BSI
+                    </a>
+                    <button type="button" class="btn btn-secondary btn-sm rounded-pill px-3 py-2" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>
