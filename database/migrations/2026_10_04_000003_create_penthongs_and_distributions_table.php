@@ -64,34 +64,40 @@ return new class extends Migration
 
         // 3. Revisi tabel koin_transactions: Tambahkan foreign key penthong_id
         Schema::table('koin_transactions', function (Blueprint $table) {
-            $table->foreignId('penthong_id')
-                  ->nullable()
-                  ->after('amount')
-                  ->constrained('penthongs')
-                  ->nullOnDelete();
-            $table->index('penthong_id');
+            if (!Schema::hasColumn('koin_transactions', 'penthong_id')) {
+                $table->foreignId('penthong_id')
+                      ->nullable()
+                      ->after('amount')
+                      ->constrained('penthongs')
+                      ->nullOnDelete();
+            }
+            if (!Schema::hasIndex('koin_transactions', ['penthong_id'])) {
+                $table->index('penthong_id');
+            }
         });
 
         // 4. Tabel Rincian Distribusi Bagi Hasil per Ranting untuk Penthong Tertutup
-        Schema::create('penthong_distributions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('penthong_id')->constrained('penthongs')->cascadeOnDelete();
-            $table->foreignId('ranting_id')->constrained('rantings')->cascadeOnDelete();
-            $table->foreignId('mwc_id')->constrained('mwcs')->cascadeOnDelete();
-            
-            $table->decimal('gross_amount', 15, 2)->default(0);
-            $table->decimal('operasional_amount', 15, 2)->default(0);
-            $table->decimal('net_amount', 15, 2)->default(0);
-            $table->decimal('ranting_amount', 15, 2)->default(0);
-            $table->decimal('mwc_amount', 15, 2)->default(0);
-            $table->decimal('pc_amount', 15, 2)->default(0);
-            $table->decimal('pw_amount', 15, 2)->default(0);
-            $table->decimal('pb_amount', 15, 2)->default(0);
-            $table->timestamps();
+        if (!Schema::hasTable('penthong_distributions')) {
+            Schema::create('penthong_distributions', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('penthong_id')->constrained('penthongs')->cascadeOnDelete();
+                $table->foreignId('ranting_id')->constrained('rantings')->cascadeOnDelete();
+                $table->foreignId('mwc_id')->constrained('mwcs')->cascadeOnDelete();
+                
+                $table->decimal('gross_amount', 15, 2)->default(0);
+                $table->decimal('operasional_amount', 15, 2)->default(0);
+                $table->decimal('net_amount', 15, 2)->default(0);
+                $table->decimal('ranting_amount', 15, 2)->default(0);
+                $table->decimal('mwc_amount', 15, 2)->default(0);
+                $table->decimal('pc_amount', 15, 2)->default(0);
+                $table->decimal('pw_amount', 15, 2)->default(0);
+                $table->decimal('pb_amount', 15, 2)->default(0);
+                $table->timestamps();
 
-            $table->unique(['penthong_id', 'ranting_id']);
-            $table->index(['penthong_id', 'mwc_id']);
-        });
+                $table->unique(['penthong_id', 'ranting_id']);
+                $table->index(['penthong_id', 'mwc_id']);
+            });
+        }
     }
 
     /**
@@ -102,9 +108,15 @@ return new class extends Migration
         Schema::dropIfExists('penthong_distributions');
 
         Schema::table('koin_transactions', function (Blueprint $table) {
-            $table->dropForeign(['penthong_id']);
-            $table->dropIndex(['penthong_id']);
-            $table->dropColumn('penthong_id');
+            if (Schema::hasColumn('koin_transactions', 'penthong_id')) {
+                $table->dropForeign(['penthong_id']);
+            }
+            if (Schema::hasIndex('koin_transactions', ['penthong_id'])) {
+                $table->dropIndex(['penthong_id']);
+            }
+            if (Schema::hasColumn('koin_transactions', 'penthong_id')) {
+                $table->dropColumn('penthong_id');
+            }
         });
 
         Schema::dropIfExists('penthongs');

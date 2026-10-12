@@ -12,14 +12,18 @@ use App\Models\Slider;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class FrontendPortalSeeder extends Seeder
 {
     public function run(): void
     {
-        $adminUser = User::first();
-        $adminId = $adminUser ? $adminUser->id : null;
+        Schema::disableForeignKeyConstraints();
+
+        try {
+            $adminUser = User::first();
+            $adminId = $adminUser ? $adminUser->id : null;
 
         // 1. Program Categories (5 Pilar NU Care)
         $categoriesData = [
@@ -183,6 +187,7 @@ class FrontendPortalSeeder extends Seeder
             ],
         ];
 
+        OnlineDonation::truncate();
         Campaign::truncate();
         foreach ($campaigns as $camp) {
             $createdCamp = Campaign::create($camp);
@@ -346,6 +351,9 @@ class FrontendPortalSeeder extends Seeder
 
         foreach ($settings as $key => $val) {
             SiteSetting::updateOrCreate(['key' => $key], ['value' => $val, 'group_name' => 'general']);
+        }
+        } finally {
+            Schema::enableForeignKeyConstraints();
         }
     }
 }

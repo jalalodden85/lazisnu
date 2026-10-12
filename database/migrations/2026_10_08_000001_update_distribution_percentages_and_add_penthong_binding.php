@@ -87,7 +87,7 @@ return new class extends Migration
 
         // Recreate view vw_saldo_pentasyarufan
         DB::statement("
-            CREATE VIEW vw_saldo_pentasyarufan AS
+            CREATE OR REPLACE VIEW vw_saldo_pentasyarufan AS
             SELECT 
                 p.penthong_id,
                 pt.nama_periode,
