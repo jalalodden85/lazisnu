@@ -348,7 +348,35 @@
         border: 2px solid rgba(10, 107, 56, 0.15);
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
     }
+
+    /* DataTables Transparansi Custom Styling */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        padding: 0.35rem 0.75rem !important;
+        border-radius: 8px !important;
+        margin: 0 2px !important;
+    }
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: var(--nu-green) !important;
+        color: white !important;
+        border-color: var(--nu-green) !important;
+    }
+    .dataTables_wrapper .dataTables_filter input {
+        border-radius: 10px;
+        border: 1px solid #cbd5e1;
+        padding: 6px 12px;
+        font-size: 0.88rem;
+    }
+    .dataTables_wrapper .dataTables_length select {
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        padding: 4px 10px;
+        font-weight: 600;
+    }
+    #transparencyDataTable tbody tr:hover {
+        background-color: #f6fbf7;
+    }
 </style>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
 @endpush
 
 @section('content')
@@ -472,6 +500,15 @@
                             </div>
                             <div class="col-6">
                                 <input type="tel" name="donor_phone" class="form-control form-control-sm" placeholder="No. WhatsApp (08xx)" required>
+                            </div>
+                        </div>
+
+                        <!-- Alamat Lengkap Donatur -->
+                        <div class="mb-2">
+                            <input type="text" name="alamat" class="form-control form-control-sm" placeholder="Alamat (Desa / Kecamatan / Kabupaten)" autocomplete="off">
+                            <div class="form-text text-muted" style="font-size: 0.70rem;">
+                                <i class="fa-solid fa-shield-halved text-success me-1"></i>
+                                RT/RW atau nomor rumah otomatis dirahasiakan untuk transparansi publik.
                             </div>
                         </div>
 
@@ -1000,6 +1037,68 @@
 </section>
 
 <!-- =========================================================================
+     6.5 TRANSPARANSI PENERIMAAN ZIS & KOIN NU (DATATABLES SERVER-SIDE)
+========================================================================== -->
+<section class="py-5" id="transparansi" style="background-color: #f1f5f9;">
+    <div class="container">
+        <!-- Section Header -->
+        <div class="text-center max-w-700 mx-auto mb-4">
+            <span class="badge text-bg-success bg-opacity-10 text-success fw-bold px-3 py-2 rounded-pill mb-2">
+                <i class="fa-solid fa-shield-heart me-1 text-warning"></i> AKUNTABILITAS &amp; TRANSPARANSI PUBLIK
+            </span>
+            <h2 class="fw-bold text-dark">Transparansi Penerimaan ZIS &amp; KOIN NU</h2>
+            <p class="text-muted small">
+                Data mutasi donasi real-time yang telah diverifikasi oleh tim LAZISNU Lamongan. Dilengkapi pencarian nama/alamat serta filter kategori jenis dana secara instan.
+            </p>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+            <!-- Filter Kategori Dropdown Toolbar -->
+            <div class="row g-3 align-items-center mb-3">
+                <div class="col-md-5 col-lg-4">
+                    <label class="form-label small fw-bold text-muted mb-1">
+                        <i class="fa-solid fa-filter text-success me-1"></i> Filter Kategori Dana:
+                    </label>
+                    <select id="filterKategori" class="form-select form-select-sm fw-semibold border-secondary-subtle">
+                        <option value="Semua" selected>-- Semua Jenis Dana --</option>
+                        <option value="Zakat">Zakat</option>
+                        <option value="Infaq">Infaq</option>
+                        <option value="Shadaqah">Shadaqah</option>
+                        <option value="Wakaf">Wakaf</option>
+                        <option value="KOIN NU">KOIN NU</option>
+                        <option value="Kampanye Bencana">Kampanye Bencana</option>
+                    </select>
+                </div>
+                <div class="col-md-7 col-lg-8 text-md-end pt-md-3">
+                    <span class="badge bg-light text-muted border px-3 py-2 small">
+                        <i class="fa-solid fa-lock text-success me-1"></i> Privasi Terjaga: Alamat terbatas pada Desa &amp; Kecamatan.
+                    </span>
+                </div>
+            </div>
+
+            <!-- Tabel DataTables Responsif -->
+            <div class="table-responsive">
+                <table id="transparencyDataTable" class="table table-hover align-middle mb-0 w-100" style="font-size: 0.88rem;">
+                    <thead style="background: var(--nu-green); color: #ffffff;">
+                        <tr class="text-nowrap" style="font-size: 0.82rem; letter-spacing: 0.3px;">
+                            <th class="py-3 px-3 rounded-start" style="width: 50px;">NO</th>
+                            <th class="py-3">TANGGAL</th>
+                            <th class="py-3">NAMA DONATUR</th>
+                            <th class="py-3">KATEGORI</th>
+                            <th class="py-3">ALAMAT (WILAYAH)</th>
+                            <th class="py-3 px-3 text-end rounded-end">NOMINAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- DataTables Server-Side Population -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================================
      7. REKENING RESMI & METODE PENYALURAN DONASI
 ========================================================================== -->
 <section class="py-5" id="rekening-resmi">
@@ -1379,6 +1478,64 @@
                 this.value = raw > 0 ? formatRupiah(raw) : '';
                 customInput.value = raw;
                 document.querySelectorAll('.amount-pill').forEach(el => el.classList.remove('active'));
+            });
+        }
+    });
+</script>
+
+<!-- jQuery & DataTables JS CDN -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        if ($('#transparencyDataTable').length) {
+            let transparencyTable = $('#transparencyDataTable').DataTable({
+                processing: true,
+                serverSide: true,
+                responsive: true,
+                ajax: {
+                    url: "{{ route('api.transparency') }}",
+                    type: "GET",
+                    data: function (d) {
+                        d.category = $('#filterKategori').val();
+                    }
+                },
+                columns: [
+                    { data: 'no', orderable: false, className: 'text-center text-muted fw-bold' },
+                    { data: 'tanggal', orderable: false, className: 'text-nowrap' },
+                    { data: 'nama_donatur', orderable: false },
+                    { data: 'kategori', orderable: false },
+                    { data: 'alamat', orderable: false },
+                    { data: 'nominal', orderable: false, className: 'text-end' }
+                ],
+                lengthMenu: [
+                    [10, 100, -1],
+                    ['10 Baris per halaman', '100 Baris per halaman', 'Semua Baris (All)']
+                ],
+                pageLength: 10,
+                language: {
+                    processing: '<div class="py-2 text-center text-success"><div class="spinner-border spinner-border-sm me-2" role="status"></div>Memuat data donasi...</div>',
+                    lengthMenu: "Tampilkan: _MENU_",
+                    zeroRecords: '<div class="py-4 text-center text-muted"><i class="fa-regular fa-folder-open fs-2 mb-2 d-block text-secondary"></i>Data donasi tidak ditemukan. Coba gunakan kata kunci pencarian atau kategori lain.</div>',
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data donasi",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 data donasi",
+                    infoFiltered: "(disaring dari _MAX_ total data donasi)",
+                    search: "Cari Donatur / Alamat:",
+                    searchPlaceholder: "Nama atau Desa/Kecamatan...",
+                    paginate: {
+                        first: '<i class="fa-solid fa-angles-left"></i>',
+                        last: '<i class="fa-solid fa-angles-right"></i>',
+                        previous: '<i class="fa-solid fa-chevron-left"></i>',
+                        next: '<i class="fa-solid fa-chevron-right"></i>'
+                    }
+                }
+            });
+
+            // Filter Kategori Real-Time
+            $('#filterKategori').on('change', function() {
+                transparencyTable.ajax.reload();
             });
         }
     });

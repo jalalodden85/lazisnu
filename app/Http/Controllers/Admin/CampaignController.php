@@ -28,6 +28,7 @@ class CampaignController extends Controller
             $q = $request->q;
             $query->where(function ($w) use ($q) {
                 $w->where('title', 'like', "%{$q}%")
+                  ->orWhere('kategori_judul', 'like', "%{$q}%")
                   ->orWhere('short_description', 'like', "%{$q}%");
             });
         }
@@ -50,6 +51,7 @@ class CampaignController extends Controller
     {
         $validated = $request->validate([
             'category_id' => 'required|exists:program_categories,id',
+            'kategori_judul' => 'required|string|max:150',
             'mwc_id' => 'nullable|exists:mwcs,id',
             'title' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:campaigns,slug',
@@ -99,6 +101,7 @@ class CampaignController extends Controller
     {
         $validated = $request->validate([
             'category_id' => 'required|exists:program_categories,id',
+            'kategori_judul' => 'required|string|max:150',
             'mwc_id' => 'nullable|exists:mwcs,id',
             'title' => 'required|string|max:255',
             'slug' => 'required|string|max:255|unique:campaigns,slug,' . $campaign->id,

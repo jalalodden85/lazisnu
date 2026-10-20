@@ -27,7 +27,11 @@ class OnlineDonationAdminController extends Controller
             $query->where(function ($w) use ($q) {
                 $w->where('donor_name', 'like', "%{$q}%")
                   ->orWhere('donation_code', 'like', "%{$q}%")
-                  ->orWhere('donor_phone', 'like', "%{$q}%");
+                  ->orWhere('donor_phone', 'like', "%{$q}%")
+                  ->orWhere('alamat', 'like', "%{$q}%")
+                  ->orWhereHas('campaign', function ($c) use ($q) {
+                      $c->where('kategori_judul', 'like', "%{$q}%");
+                  });
             });
         }
 

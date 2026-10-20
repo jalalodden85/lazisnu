@@ -25,12 +25,18 @@
                 @csrf
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-8 form-group">
+                        <div class="col-md-4 form-group">
+                            <label>Kategori Judul <span class="text-danger">*</span></label>
+                            <input type="text" name="kategori_judul" class="form-control @error('kategori_judul') is-invalid @enderror" value="{{ old('kategori_judul') }}" placeholder="Contoh: Beasiswa Santri / Sedekah Ambulans" required>
+                            @error('kategori_judul')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                            <small class="form-text text-muted">Kategori ringkas yang ditampilkan pada rekap donasi.</small>
+                        </div>
+                        <div class="col-md-5 form-group">
                             <label>Judul Kampanye Donasi <span class="text-danger">*</span></label>
                             <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title') }}" placeholder="Contoh: Bantuan Beasiswa Santri Tahfidz Dhuafa" required>
                             @error('title')<span class="invalid-feedback">{{ $message }}</span>@enderror
                         </div>
-                        <div class="col-md-4 form-group">
+                        <div class="col-md-3 form-group">
                             <label>Pilar NU Care <span class="text-danger">*</span></label>
                             <select name="category_id" class="form-control" required>
                                 <option value="">-- Pilih Pilar --</option>

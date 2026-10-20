@@ -14,6 +14,7 @@ class Campaign extends Model
 
     protected $fillable = [
         'category_id',
+        'kategori_judul',
         'mwc_id',
         'title',
         'slug',
@@ -60,6 +61,14 @@ class Campaign extends Model
     public function donations(): HasMany
     {
         return $this->hasMany(OnlineDonation::class);
+    }
+
+    /**
+     * Tampilan Kategori Judul (Fallback ke Kategori Pilar jika kosong)
+     */
+    public function getKategoriJudulDisplayAttribute(): string
+    {
+        return $this->kategori_judul ?: ($this->category?->name ?: $this->title);
     }
 
     /**

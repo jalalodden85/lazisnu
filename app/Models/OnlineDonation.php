@@ -14,15 +14,19 @@ class OnlineDonation extends Model
     protected $fillable = [
         'donation_code',
         'campaign_id',
+        'kategori',
         'donor_name',
         'donor_phone',
         'donor_email',
+        'alamat',
         'is_anonymous',
         'amount',
         'unique_code',
         'total_amount',
         'nominal_terverifikasi',
         'payment_method',
+        'qris_url',
+        'payment_gateway_payload',
         'payment_status',
         'prayer_message',
         'payment_proof',
@@ -63,6 +67,50 @@ class OnlineDonation extends Model
     public function getDisplayNameAttribute(): string
     {
         return $this->is_anonymous ? 'Hamba Allah' : $this->donor_name;
+    }
+
+    /**
+     * Sanitasi Alamat Publik:
+     * Menyaring nomor rumah, blok, RT/RW, dan hanya menampilkan Desa/Kecamatan/Kabupaten
+     */
+    public function getPublicAlamatAttribute(): string
+    {
+        if (empty($this->alamat)) {
+            return 'Lamongan';
+        }
+
+        $raw = $this->alamat;
+
+        // Bersihkan pola RT/RW (contoh: RT 01 RW 02, RT.01/02, RT/RW 03)
+        $clean = preg_replace('/(rt\s*\.?\s*\d+|rw\s*\.?\s*\d+|rt\s*\/\s*rw\s*\d+(\/\d+)?)/i', '', $raw);
+
+        // Bersihkan no rumah / blok / gang (contoh: No. 12, Gang Mawar, Blok B3, Jl. Veteran No 5)
+        $clean = preg_replace('/(no\.\s*\d+[a-zA-Z]?|jl\.\s*[^,]+|jalan\s*[^,]+|gang\s*[^,]+|blok\s*[^,]+)/i', '', $clean);
+
+        // Hapus koma ganda atau spasi berlebih
+        $clean = preg_replace('/\s+,/', ',', $clean);
+        $clean = preg_replace('/,{2,}/', ',', $clean);
+        $clean = preg_replace('/,\s*/', ', ', $clean);
+        $clean = preg_replace('/\s{2,}/', ' ', $clean);
+        $clean = trim(trim($clean), ', -');
+
+        return !empty($clean) ? $clean : 'Kab. Lamongan';
+    }
+
+    /**
+     * Label Kategori Donasi (Prioritas: Kategori Judul Kampanye -> Kolom Kategori -> Kategori Pilar)
+     */
+    public function getKategoriLabelAttribute(): string
+    {
+        if (!empty($this->campaign?->kategori_judul)) {
+            return $this->campaign->kategori_judul;
+        }
+
+        if (!empty($this->kategori)) {
+            return $this->kategori;
+        }
+
+        return $this->campaign?->category?->name ?? 'Infaq';
     }
 
     /**
