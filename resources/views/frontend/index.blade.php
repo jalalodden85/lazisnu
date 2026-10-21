@@ -375,6 +375,33 @@
     #transparencyDataTable tbody tr:hover {
         background-color: #f6fbf7;
     }
+
+    /* Stat Cards Widget Total Transparansi */
+    .stat-card-widget {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        border-radius: 18px;
+    }
+    .stat-card-widget:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.08) !important;
+    }
+    .stat-card-widget-highlight {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        border-radius: 18px;
+        box-shadow: 0 10px 25px rgba(10, 107, 56, 0.25) !important;
+    }
+    .stat-card-widget-highlight:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 36px rgba(10, 107, 56, 0.35) !important;
+    }
+    .stat-icon-wrapper {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 </style>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
 @endpush
@@ -541,7 +568,218 @@
 </section>
 
 <!-- =========================================================================
-     2. REAL-TIME IMPACT COUNTERS (TERKONEKSI DATABASE APLIKASI)
+     2. PROGRAM & KAMPANYE DONASI TERKINI (UNGGULAN AKTIF)
+========================================================================== -->
+<section class="py-5 bg-white" id="program-pilihan">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+            <div>
+                <span class="badge text-bg-warning text-dark fw-bold px-3 py-1 rounded-pill mb-2">
+                    <i class="fa-solid fa-hand-holding-heart me-1"></i> MARI BERBAGI
+                </span>
+                <h2 class="fw-bold text-dark mb-0">Program &amp; Kampanye Terkini</h2>
+            </div>
+            <a href="{{ route('programs.index') }}" class="btn btn-outline-success fw-bold rounded-pill mt-3 mt-md-0">
+                Lihat Semua Program <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            @foreach($featuredCampaigns as $campaign)
+                <div class="col-lg-4 col-md-6">
+                    <div class="campaign-card">
+                        <div class="campaign-img-wrap">
+                            <img src="{{ $campaign->banner_image }}" class="campaign-img" alt="{{ $campaign->title }}">
+                            @if($campaign->is_emergency)
+                                <div class="badge-emergency"><i class="fa-solid fa-fire me-1"></i> TANGGAP DARURAT</div>
+                            @endif
+                            <div class="badge-category">{{ $campaign->category->name ?? 'NU Care' }}</div>
+                        </div>
+                        <div class="p-4 d-flex flex-column flex-grow-1">
+                            <h5 class="fw-bold mb-2 text-dark">
+                                <a href="{{ route('programs.detail', $campaign->slug) }}" class="text-decoration-none text-dark hover-green">
+                                    {{ Str::limit($campaign->title, 55) }}
+                                </a>
+                            </h5>
+                            <p class="small text-muted mb-3 flex-grow-1">
+                                {{ Str::limit($campaign->short_description, 100) }}
+                            </p>
+
+                            <!-- Progress Bar -->
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between small text-muted mb-1">
+                                    <span>Terkumpul: <strong>Rp {{ number_format($campaign->collected_amount, 0, ',', '.') }}</strong></span>
+                                    <span class="fw-bold text-success">{{ $campaign->progress_percentage }}%</span>
+                                </div>
+                                <div class="progress-custom">
+                                    <div class="progress-bar-nu h-100" style="width: {{ $campaign->progress_percentage }}%"></div>
+                                </div>
+                                <div class="d-flex justify-content-between small text-muted mt-2">
+                                    <span>Target: Rp {{ number_format($campaign->target_amount, 0, ',', '.') }}</span>
+                                    <span>{{ $campaign->days_left !== null ? $campaign->days_left . ' hari lagi' : 'Program Abadi' }}</span>
+                                </div>
+                            </div>
+
+                            <a href="{{ route('programs.detail', $campaign->slug) }}" class="btn btn-success fw-bold py-2 rounded-pill w-100" style="background: var(--nu-green);">
+                                <i class="fa-solid fa-heart me-1"></i> Donasi Sekarang
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================================
+     3. TRANSPARANSI PENERIMAAN ZIS & KOIN NU (4 WIDGET TOTAL & LIVE MUTASI)
+========================================================================== -->
+<section class="py-5" id="transparansi" style="background-color: #f8fafc;">
+    <div class="container">
+        <!-- Section Header -->
+        <div class="text-center max-w-700 mx-auto mb-4">
+            <span class="badge text-bg-success bg-opacity-10 text-success fw-bold px-3 py-2 rounded-pill mb-2">
+                <i class="fa-solid fa-shield-heart me-1 text-warning"></i> AKUNTABILITAS &amp; TRANSPARANSI PUBLIK
+            </span>
+            <h2 class="fw-bold text-dark">Transparansi Penerimaan ZIS &amp; KOIN NU</h2>
+            <p class="text-muted small">
+                Rekapitulasi 3 kategori penerimaan dana serta mutasi donasi real-time yang telah diverifikasi sah oleh tim LAZISNU PCNU Lamongan.
+            </p>
+        </div>
+
+        <!-- 4 WIDGET CARD STATISTIK TOTAL PEMASUKAN -->
+        <div class="row g-3 mb-4">
+            <!-- Card 1: Total Penerimaan Zakat -->
+            <div class="col-xl-3 col-md-6 col-12">
+                <div class="card border-0 shadow-sm rounded-4 h-100 p-3 bg-white stat-card-widget border-top border-4 border-info">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="badge bg-info bg-opacity-10 text-info fw-bold px-2.5 py-1 rounded-pill small">
+                            <i class="fa-solid fa-wheat-awn me-1"></i> ZAKAT MAAL &amp; FITRAH
+                        </span>
+                        <div class="stat-icon-wrapper bg-info bg-opacity-10 text-info">
+                            <i class="fa-solid fa-calculator fs-5"></i>
+                        </div>
+                    </div>
+                    <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Total Penerimaan Zakat</div>
+                    <div class="fs-4 fw-extrabold text-dark my-1 font-monospace">Rp {{ number_format($totalZakat, 0, ',', '.') }}</div>
+                    <div class="d-flex align-items-center small text-muted mt-auto pt-2" style="font-size: 0.75rem;">
+                        <i class="fa-solid fa-circle-check text-success me-1"></i>
+                        <span>Terverifikasi Real-Time</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Total Infaq / Sedekah / Donasi Program -->
+            <div class="col-xl-3 col-md-6 col-12">
+                <div class="card border-0 shadow-sm rounded-4 h-100 p-3 bg-white stat-card-widget border-top border-4 border-warning">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="badge bg-warning bg-opacity-10 text-warning-emphasis fw-bold px-2.5 py-1 rounded-pill small">
+                            <i class="fa-solid fa-hand-holding-heart me-1"></i> INFAQ &amp; PROGRAM
+                        </span>
+                        <div class="stat-icon-wrapper bg-warning bg-opacity-10 text-warning-emphasis">
+                            <i class="fa-solid fa-box-heart fs-5"></i>
+                        </div>
+                    </div>
+                    <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Total Infaq / Sedekah / Donasi</div>
+                    <div class="fs-4 fw-extrabold text-dark my-1 font-monospace">Rp {{ number_format($totalInfaqSedekah, 0, ',', '.') }}</div>
+                    <div class="d-flex align-items-center small text-muted mt-auto pt-2" style="font-size: 0.75rem;">
+                        <i class="fa-solid fa-circle-check text-success me-1"></i>
+                        <span>Kampanye &amp; Program 5 Pilar</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Total Perolehan KOIN NU -->
+            <div class="col-xl-3 col-md-6 col-12">
+                <div class="card border-0 shadow-sm rounded-4 h-100 p-3 bg-white stat-card-widget border-top border-4 border-primary">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-2.5 py-1 rounded-pill small">
+                            <i class="fa-solid fa-coins me-1"></i> KALENG KOIN NU
+                        </span>
+                        <div class="stat-icon-wrapper bg-primary bg-opacity-10 text-primary">
+                            <i class="fa-solid fa-sack-dollar fs-5"></i>
+                        </div>
+                    </div>
+                    <div class="text-muted small fw-bold text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.5px;">Total Perolehan KOIN NU</div>
+                    <div class="fs-4 fw-extrabold text-dark my-1 font-monospace">Rp {{ number_format($totalKoinNu, 0, ',', '.') }}</div>
+                    <div class="d-flex align-items-center small text-muted mt-auto pt-2" style="font-size: 0.75rem;">
+                        <i class="fa-solid fa-circle-check text-success me-1"></i>
+                        <span>Penerimaan Seluruh Ranting &amp; MWC</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4 (Paling Menonjol / Highlight): Grand Total -->
+            <div class="col-xl-3 col-md-6 col-12">
+                <div class="card border-0 shadow rounded-4 h-100 p-3 text-white stat-card-widget-highlight position-relative overflow-hidden" style="background: linear-gradient(135deg, #064d27 0%, #0a6b38 60%, #0d8345 100%);">
+                    <i class="fa-solid fa-shield-halved position-absolute" style="right: -10px; bottom: -15px; font-size: 5.5rem; opacity: 0.12; pointer-events: none;"></i>
+                    <div class="d-flex align-items-center justify-content-between mb-2 position-relative">
+                        <span class="badge bg-warning text-dark fw-bold px-2.5 py-1 rounded-pill small">
+                            <i class="fa-solid fa-star me-1"></i> GRAND TOTAL
+                        </span>
+                        <div class="stat-icon-wrapper bg-white bg-opacity-20 text-white">
+                            <i class="fa-solid fa-vault fs-5"></i>
+                        </div>
+                    </div>
+                    <div class="text-white-50 small fw-bold text-uppercase position-relative" style="font-size: 0.75rem; letter-spacing: 0.5px;">Grand Total Penerimaan ZIS &amp; KOIN</div>
+                    <div class="fs-4 fw-extrabold text-warning my-1 font-monospace position-relative" style="font-size: 1.55rem !important;">Rp {{ number_format($grandTotal, 0, ',', '.') }}</div>
+                    <div class="d-flex align-items-center small text-white-50 mt-auto pt-2 position-relative" style="font-size: 0.75rem;">
+                        <i class="fa-solid fa-check-double text-warning me-1"></i>
+                        <span class="text-white fw-semibold">100% Akumulasi Sah &amp; Syar'i</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Tabel Live Transparansi Donatur -->
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+            <!-- Filter Kategori Dropdown Toolbar -->
+            <div class="row g-3 align-items-center mb-3">
+                <div class="col-md-5 col-lg-4">
+                    <label class="form-label small fw-bold text-muted mb-1">
+                        <i class="fa-solid fa-filter text-success me-1"></i> Filter Kategori Dana:
+                    </label>
+                    <select id="filterKategori" class="form-select form-select-sm fw-semibold border-secondary-subtle">
+                        <option value="Semua" selected>-- Semua Jenis Dana --</option>
+                        <option value="Zakat">Zakat</option>
+                        <option value="Infaq">Infaq</option>
+                        <option value="Shadaqah">Shadaqah</option>
+                        <option value="Wakaf">Wakaf</option>
+                        <option value="KOIN NU">KOIN NU</option>
+                        <option value="Kampanye Bencana">Kampanye Bencana</option>
+                    </select>
+                </div>
+                <div class="col-md-7 col-lg-8 text-md-end pt-md-3">
+                    <span class="badge bg-light text-muted border px-3 py-2 small">
+                        <i class="fa-solid fa-lock text-success me-1"></i> Privasi Terjaga: Alamat terbatas pada Desa &amp; Kecamatan.
+                    </span>
+                </div>
+            </div>
+
+            <!-- Tabel DataTables Responsif -->
+            <div class="table-responsive">
+                <table id="transparencyDataTable" class="table table-hover align-middle mb-0 w-100" style="font-size: 0.88rem;">
+                    <thead style="background: var(--nu-green); color: #ffffff;">
+                        <tr class="text-nowrap" style="font-size: 0.82rem; letter-spacing: 0.3px;">
+                            <th class="py-3 px-3 rounded-start" style="width: 50px;">NO</th>
+                            <th class="py-3">TANGGAL</th>
+                            <th class="py-3">NAMA DONATUR</th>
+                            <th class="py-3">KATEGORI</th>
+                            <th class="py-3">ALAMAT (WILAYAH)</th>
+                            <th class="py-3 px-3 text-end rounded-end">NOMINAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- DataTables Server-Side Population -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =========================================================================
+     4. REAL-TIME IMPACT COUNTERS (TERKONEKSI DATABASE APLIKASI)
 ========================================================================== -->
 <section class="counter-section">
     <div class="container">
@@ -776,69 +1014,7 @@
     </div>
 </section>
 
-<!-- =========================================================================
-     4. KAMPANYE DONASI & PENGGALANGAN DANA AKTIF
-========================================================================== -->
-<section class="py-5 bg-light" id="program-pilihan">
-    <div class="container">
-        <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
-            <div>
-                <span class="badge text-bg-warning text-dark fw-bold px-3 py-1 rounded-pill mb-2">
-                    <i class="fa-solid fa-hand-holding-heart me-1"></i> MARI BERBAGI
-                </span>
-                <h2 class="fw-bold text-dark mb-0">Program & Kampanye Terkini</h2>
-            </div>
-            <a href="{{ route('programs.index') }}" class="btn btn-outline-success fw-bold rounded-pill mt-3 mt-md-0">
-                Lihat Semua Program <i class="fa-solid fa-arrow-right ms-1"></i>
-            </a>
-        </div>
 
-        <div class="row g-4">
-            @foreach($featuredCampaigns as $campaign)
-                <div class="col-lg-4 col-md-6">
-                    <div class="campaign-card">
-                        <div class="campaign-img-wrap">
-                            <img src="{{ $campaign->banner_image }}" class="campaign-img" alt="{{ $campaign->title }}">
-                            @if($campaign->is_emergency)
-                                <div class="badge-emergency"><i class="fa-solid fa-fire me-1"></i> TANGGAP DARURAT</div>
-                            @endif
-                            <div class="badge-category">{{ $campaign->category->name ?? 'NU Care' }}</div>
-                        </div>
-                        <div class="p-4 d-flex flex-column flex-grow-1">
-                            <h5 class="fw-bold mb-2 text-dark">
-                                <a href="{{ route('programs.detail', $campaign->slug) }}" class="text-decoration-none text-dark hover-green">
-                                    {{ Str::limit($campaign->title, 55) }}
-                                </a>
-                            </h5>
-                            <p class="small text-muted mb-3 flex-grow-1">
-                                {{ Str::limit($campaign->short_description, 100) }}
-                            </p>
-
-                            <!-- Progress Bar -->
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between small text-muted mb-1">
-                                    <span>Terkumpul: <strong>Rp {{ number_format($campaign->collected_amount, 0, ',', '.') }}</strong></span>
-                                    <span class="fw-bold text-success">{{ $campaign->progress_percentage }}%</span>
-                                </div>
-                                <div class="progress-custom">
-                                    <div class="progress-bar-nu h-100" style="width: {{ $campaign->progress_percentage }}%"></div>
-                                </div>
-                                <div class="d-flex justify-content-between small text-muted mt-2">
-                                    <span>Target: Rp {{ number_format($campaign->target_amount, 0, ',', '.') }}</span>
-                                    <span>{{ $campaign->days_left !== null ? $campaign->days_left . ' hari lagi' : 'Program Abadi' }}</span>
-                                </div>
-                            </div>
-
-                            <a href="{{ route('programs.detail', $campaign->slug) }}" class="btn btn-success fw-bold py-2 rounded-pill w-100" style="background: var(--nu-green);">
-                                <i class="fa-solid fa-heart me-1"></i> Donasi Sekarang
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    </div>
-</section>
 
 <!-- =========================================================================
      5. KABAR PENTASYARUFAN & BERITA TERKINI
@@ -1036,67 +1212,7 @@
     </div>
 </section>
 
-<!-- =========================================================================
-     6.5 TRANSPARANSI PENERIMAAN ZIS & KOIN NU (DATATABLES SERVER-SIDE)
-========================================================================== -->
-<section class="py-5" id="transparansi" style="background-color: #f1f5f9;">
-    <div class="container">
-        <!-- Section Header -->
-        <div class="text-center max-w-700 mx-auto mb-4">
-            <span class="badge text-bg-success bg-opacity-10 text-success fw-bold px-3 py-2 rounded-pill mb-2">
-                <i class="fa-solid fa-shield-heart me-1 text-warning"></i> AKUNTABILITAS &amp; TRANSPARANSI PUBLIK
-            </span>
-            <h2 class="fw-bold text-dark">Transparansi Penerimaan ZIS &amp; KOIN NU</h2>
-            <p class="text-muted small">
-                Data mutasi donasi real-time yang telah diverifikasi oleh tim LAZISNU Lamongan. Dilengkapi pencarian nama/alamat serta filter kategori jenis dana secara instan.
-            </p>
-        </div>
 
-        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
-            <!-- Filter Kategori Dropdown Toolbar -->
-            <div class="row g-3 align-items-center mb-3">
-                <div class="col-md-5 col-lg-4">
-                    <label class="form-label small fw-bold text-muted mb-1">
-                        <i class="fa-solid fa-filter text-success me-1"></i> Filter Kategori Dana:
-                    </label>
-                    <select id="filterKategori" class="form-select form-select-sm fw-semibold border-secondary-subtle">
-                        <option value="Semua" selected>-- Semua Jenis Dana --</option>
-                        <option value="Zakat">Zakat</option>
-                        <option value="Infaq">Infaq</option>
-                        <option value="Shadaqah">Shadaqah</option>
-                        <option value="Wakaf">Wakaf</option>
-                        <option value="KOIN NU">KOIN NU</option>
-                        <option value="Kampanye Bencana">Kampanye Bencana</option>
-                    </select>
-                </div>
-                <div class="col-md-7 col-lg-8 text-md-end pt-md-3">
-                    <span class="badge bg-light text-muted border px-3 py-2 small">
-                        <i class="fa-solid fa-lock text-success me-1"></i> Privasi Terjaga: Alamat terbatas pada Desa &amp; Kecamatan.
-                    </span>
-                </div>
-            </div>
-
-            <!-- Tabel DataTables Responsif -->
-            <div class="table-responsive">
-                <table id="transparencyDataTable" class="table table-hover align-middle mb-0 w-100" style="font-size: 0.88rem;">
-                    <thead style="background: var(--nu-green); color: #ffffff;">
-                        <tr class="text-nowrap" style="font-size: 0.82rem; letter-spacing: 0.3px;">
-                            <th class="py-3 px-3 rounded-start" style="width: 50px;">NO</th>
-                            <th class="py-3">TANGGAL</th>
-                            <th class="py-3">NAMA DONATUR</th>
-                            <th class="py-3">KATEGORI</th>
-                            <th class="py-3">ALAMAT (WILAYAH)</th>
-                            <th class="py-3 px-3 text-end rounded-end">NOMINAL</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- DataTables Server-Side Population -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</section>
 
 <!-- =========================================================================
      7. REKENING RESMI & METODE PENYALURAN DONASI

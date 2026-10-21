@@ -28,10 +28,16 @@ class FrontendController extends Controller
      */
     public function index()
     {
-        // 1. Data Statistik Riil & Terintegrasi
-        $koinTotal = KoinTransaction::where('status', 'confirmed')->sum('amount');
-        $onlineTotal = OnlineDonation::where('payment_status', 'verified')->sum('amount');
-        $totalDanaHimpunan = $koinTotal + $onlineTotal;
+        // 1. Data Statistik Riil & Rekapitulasi 3 Kategori Pemasukan + Grand Total
+        $pemasukanSummary  = app(\App\Services\DonationSummaryService::class)->getSummaryTotals();
+        $totalZakat        = $pemasukanSummary['total_zakat'];
+        $totalInfaqSedekah = $pemasukanSummary['total_infaq_sedekah'];
+        $totalKoinNu       = $pemasukanSummary['total_koin_nu'];
+        $grandTotal        = $pemasukanSummary['grand_total'];
+
+        $koinTotal         = $totalKoinNu;
+        $onlineTotal       = $totalZakat + $totalInfaqSedekah;
+        $totalDanaHimpunan = $grandTotal;
 
         $totalKotak = Donator::count();
         $totalRelawan = Relawan::where('status', 'active')->count();
@@ -90,6 +96,11 @@ class FrontendController extends Controller
         return view('frontend.index', compact(
             'koinTotal',
             'totalDanaHimpunan',
+            'totalZakat',
+            'totalInfaqSedekah',
+            'totalKoinNu',
+            'grandTotal',
+            'pemasukanSummary',
             'totalKotak',
             'totalRelawan',
             'totalRanting',
