@@ -102,3 +102,12 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/laporan/scope-options', [\App\Http\Controllers\LaporanCetakController::class, 'scopeOptions'])->name('api.laporan.scope-options');
 });
 
+// =========================================================================
+// RUTE PUBLIK PAYMENT GATEWAY (WEBHOOK & AUTO-VERIFIKASI REAL-TIME)
+// Bebas autentikasi session & bebas CSRF untuk menerima callback eksternal
+// =========================================================================
+Route::post('/payment/webhook', [\App\Http\Controllers\PaymentWebhookController::class, 'handleWebhook'])->name('api.payment.webhook');
+Route::get('/donasi/status/{code}', [\App\Http\Controllers\PaymentWebhookController::class, 'checkStatus'])->name('api.donation.check-status');
+Route::post('/donasi/simulate/{code}', [\App\Http\Controllers\PaymentWebhookController::class, 'simulatePayment'])->name('api.donation.simulate');
+
+

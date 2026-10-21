@@ -44,6 +44,8 @@ Route::get('/kalkulator-zakat', [FrontendController::class, 'calculator'])->name
 Route::get('/laporan-publik', [FrontendController::class, 'reports'])->name('reports.index');
 Route::post('/donasi/proses', [FrontendController::class, 'storeDonation'])->name('donation.store');
 Route::get('/donasi/sukses/{code}', [FrontendController::class, 'donationSuccess'])->name('donation.success');
+Route::get('/donasi/download-qris/{code}', [FrontendController::class, 'downloadQris'])->name('donation.download-qris');
+Route::get('/api/transparansi-donasi', [FrontendController::class, 'transparencyData'])->name('api.transparency');
 
 // =========================================================================
 // Autentikasi Login (Hanya untuk Tamu / Belum Login)

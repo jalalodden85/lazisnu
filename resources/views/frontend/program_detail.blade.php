@@ -102,6 +102,15 @@
                     </div>
 
                     <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Alamat Lengkap (Desa / Kecamatan):</label>
+                        <input type="text" name="alamat" class="form-control form-control-sm" placeholder="Contoh: Desa Plosowahyu, Kec. Lamongan" autocomplete="off">
+                        <div class="form-text text-muted" style="font-size: 0.72rem;">
+                            <i class="fa-solid fa-shield-halved text-success me-1"></i>
+                            RT/RW atau nomor rumah otomatis dirahasiakan untuk transparansi publik.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
                         <label class="form-label small fw-bold text-muted">Metode Pembayaran:</label>
                         <select name="payment_method" class="form-select form-select-sm fw-semibold" required>
                             <option value="transfer_bri">Transfer BRI (Selain Zakat: Infaq &amp; Koin - 00411001448562)</option>

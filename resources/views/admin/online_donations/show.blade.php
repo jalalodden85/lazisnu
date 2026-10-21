@@ -33,6 +33,10 @@
                                 <td><span class="badge badge-light border font-weight-bold fs-6">{{ $donation->donation_code }}</span></td>
                             </tr>
                             <tr>
+                                <th>Kategori Judul:</th>
+                                <td><span class="badge badge-info px-2 py-1 font-weight-bold">{{ $donation->campaign->kategori_judul ?? $donation->campaign->kategori_judul_display }}</span></td>
+                            </tr>
+                            <tr>
                                 <th>Program Kebaikan:</th>
                                 <td><strong>{{ $donation->campaign->title }}</strong></td>
                             </tr>
@@ -42,6 +46,16 @@
                                     {{ $donation->donor_name }}
                                     @if($donation->is_anonymous)
                                         <span class="badge badge-warning ml-1">Tampil Publik: Hamba Allah</span>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Alamat Donatur:</th>
+                                <td>
+                                    @if($donation->alamat)
+                                        <i class="fas fa-map-marker-alt text-danger mr-1"></i><strong>{{ $donation->alamat }}</strong>
+                                    @else
+                                        <span class="text-muted fst-italic">Tidak diisi</span>
                                     @endif
                                 </td>
                             </tr>

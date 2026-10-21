@@ -79,9 +79,11 @@
                     </div>
                     <div class="col-md-3">
                         <select name="campaign_id" class="form-control form-control-sm">
-                            <option value="">-- Semua Program --</option>
+                            <option value="">-- Semua Kategori Judul --</option>
                             @foreach($campaigns as $camp)
-                                <option value="{{ $camp->id }}" {{ request('campaign_id') == $camp->id ? 'selected' : '' }}>{{ Str::limit($camp->title, 35) }}</option>
+                                <option value="{{ $camp->id }}" {{ request('campaign_id') == $camp->id ? 'selected' : '' }}>
+                                    {{ $camp->kategori_judul ?: $camp->title }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -100,7 +102,8 @@
                         <tr>
                             <th>Kode Donasi</th>
                             <th>Donatur & Kontak</th>
-                            <th>Program Yang Dituju</th>
+                            <th>Alamat Donatur</th>
+                            <th>Kategori Judul</th>
                             <th>Nominal Transfer (Rp)</th>
                             <th>Metode Bayar</th>
                             <th class="text-center">Status</th>
@@ -128,7 +131,18 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <small class="font-weight-bold text-dark">{{ Str::limit($don->campaign->title, 40) }}</small>
+                                    @if($don->alamat)
+                                        <div class="small text-dark font-weight-bold">
+                                            <i class="fas fa-map-marker-alt text-danger mr-1"></i>{{ $don->alamat }}
+                                        </div>
+                                    @else
+                                        <span class="text-muted small fst-italic"><i class="fas fa-map-marker-alt text-secondary mr-1"></i>-</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <span class="badge badge-info px-2 py-1 font-weight-bold" style="font-size: 0.85rem;">
+                                        {{ $don->campaign->kategori_judul ?? $don->campaign->kategori_judul_display }}
+                                    </span>
                                 </td>
                                 <td>
                                     <strong class="text-success">Rp {{ number_format($don->total_amount, 0, ',', '.') }}</strong>
@@ -181,7 +195,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center text-muted py-4">Belum ada donasi online masuk.</td>
+                                <td colspan="9" class="text-center text-muted py-4">Belum ada donasi online masuk.</td>
                             </tr>
                         @endforelse
                     </tbody>

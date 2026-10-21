@@ -63,6 +63,7 @@
                     <thead class="bg-light">
                         <tr>
                             <th style="width: 80px;">Thumbnail</th>
+                            <th style="min-width: 150px;">Kategori Judul</th>
                             <th>Judul & Pilar</th>
                             <th>Target Dana (Rp)</th>
                             <th>Terkumpul (Rp)</th>
@@ -77,6 +78,17 @@
                             <tr>
                                 <td>
                                     <img src="{{ $camp->banner_image }}" style="width: 70px; height: 50px; object-fit: cover; border-radius: 6px;" alt="Banner">
+                                </td>
+                                <td>
+                                    @if($camp->kategori_judul)
+                                        <span class="badge badge-info px-2 py-1 font-weight-bold text-wrap text-left" style="font-size: 0.85rem; line-height: 1.3;">
+                                            <i class="fas fa-tag mr-1"></i>{{ $camp->kategori_judul }}
+                                        </span>
+                                    @else
+                                        <span class="badge badge-secondary px-2 py-1 font-weight-normal" style="font-size: 0.85rem;">
+                                            {{ $camp->category->name ?? '-' }}
+                                        </span>
+                                    @endif
                                 </td>
                                 <td>
                                     <strong>{{ $camp->title }}</strong>
@@ -138,7 +150,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center text-muted py-4">Belum ada kampanye ditemukan.</td>
+                                <td colspan="9" class="text-center text-muted py-4">Belum ada kampanye ditemukan.</td>
                             </tr>
                         @endforelse
                     </tbody>
