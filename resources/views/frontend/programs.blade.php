@@ -5,7 +5,7 @@
 @section('content')
 <div class="bg-success text-white py-5" style="background: linear-gradient(135deg, #064d27, #0a6b38) !important;">
     <div class="container text-center">
-        <h1 class="fw-bold mb-2">Program Kebaikan & Infaq KOIN NU</h1>
+        <h1 class="fw-bold mb-2">Program Kebaikan & Infaq</h1>
         <p class="text-white-50 max-w-700 mx-auto mb-0">
             Salurkan zakat, infaq, sedekah, dan partisipasi Koin NU Anda melalui program-program terverifikasi yang langsung menyentuh kaum dhuafa.
         </p>

@@ -140,8 +140,8 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <span class="badge badge-info px-2 py-1 font-weight-bold" style="font-size: 0.85rem;">
-                                        {{ $don->campaign->kategori_judul ?? $don->campaign->kategori_judul_display }}
+                                    <span class="badge {{ strtolower($don->kategori ?? '') === 'zakat' ? 'badge-primary' : 'badge-info' }} px-2 py-1 font-weight-bold" style="font-size: 0.85rem;">
+                                        {{ $don->kategori_label }}
                                     </span>
                                 </td>
                                 <td>

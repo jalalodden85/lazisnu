@@ -446,52 +446,50 @@
             <div class="col-lg-5" id="donasi-cepat">
                 <div class="widget-donation-card">
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <h5 class="fw-bold mb-0 text-success"><i class="fa-solid fa-hand-holding-dollar me-2 text-warning"></i> Infaq & Sedekah Kilat</h5>
-                        <span class="badge bg-success bg-opacity-10 text-success fw-bold">Amanah & Syar'i</span>
+                        <h5 class="fw-bold mb-0 text-success"><i class="fa-solid fa-hand-holding-dollar me-2 text-warning"></i> Infaq &amp; Sedekah Kilat</h5>
+                        <span class="badge bg-success bg-opacity-10 text-success fw-bold">Amanah &amp; Syar'i</span>
                     </div>
 
-                    <!-- Tabs Pilihan -->
+                    <!-- Tabs Pilihan: Infaq & Zakat -->
                     <ul class="nav nav-tabs nav-tabs-donation mb-3" id="donationTabs" role="tablist">
                         <li class="nav-item flex-fill" role="presentation">
-                            <button class="nav-link active w-100" id="infaq-tab" data-bs-toggle="tab" data-bs-target="#infaq-pane" type="button" role="tab">
-                                <i class="fa-solid fa-coins me-1"></i> Infaq KOIN NU
+                            <button class="nav-link active w-100 fw-bold" id="infaq-tab" data-bs-toggle="tab" data-bs-target="#infaq-pane" type="button" role="tab" aria-controls="infaq-pane" aria-selected="true">
+                                <i class="fa-solid fa-coins me-1"></i> Infaq
                             </button>
                         </li>
                         <li class="nav-item flex-fill" role="presentation">
-                            <button class="nav-link w-100" id="program-tab" data-bs-toggle="tab" data-bs-target="#program-pane" type="button" role="tab">
-                                <i class="fa-solid fa-handshake-angle me-1"></i> Program 5 Pilar
+                            <button class="nav-link w-100 fw-bold" id="zakat-tab" data-bs-toggle="tab" data-bs-target="#zakat-pane" type="button" role="tab" aria-controls="zakat-pane" aria-selected="false">
+                                <i class="fa-solid fa-hand-holding-heart me-1"></i> Zakat
                             </button>
                         </li>
                     </ul>
 
                     <form action="{{ route('donation.store') }}" method="POST" id="quickDonationForm">
                         @csrf
+                        <input type="hidden" name="kategori" id="kategori_donasi" value="infaq">
+                        <input type="hidden" name="campaign_id" id="quickCampaignId" value="{{ $infaqCampaign?->id ?? ($featuredCampaigns->first()?->id ?? 1) }}">
+
                         <div class="tab-content" id="donationTabContent">
-                            <!-- Tab 1: Infaq Koin NU -->
-                            <div class="tab-pane fade show active" id="infaq-pane" role="tabpanel">
-                                <input type="hidden" name="campaign_id" value="{{ $featuredCampaigns->first()?->id ?? 1 }}">
+                            <!-- Tab 1: Infaq -->
+                            <div class="tab-pane fade show active" id="infaq-pane" role="tabpanel" aria-labelledby="infaq-tab">
                                 <div class="p-2 mb-3 bg-light rounded text-muted small border">
                                     <i class="fa-solid fa-circle-info text-success me-1"></i>
-                                    Infaq Anda langsung dialokasikan ke <strong>Gerakan Koin Kemandirian Umat</strong> tingkat Cabang/MWC/Ranting.
+                                    Infaq &amp; Sedekah dialokasikan langsung untuk <strong>Gerakan Koin &amp; Kemandirian Umat</strong> se-Kabupaten Lamongan.
                                 </div>
                             </div>
 
-                            <!-- Tab 2: Pilih Program Khusus -->
-                            <div class="tab-pane fade" id="program-pane" role="tabpanel">
-                                <div class="mb-3">
-                                    <label class="form-label small fw-bold text-muted">Pilih Kampanye Penyaluran:</label>
-                                    <select class="form-select form-select-sm" id="campaignSelector" onchange="document.querySelector('input[name=campaign_id]').value = this.value">
-                                        @foreach($featuredCampaigns as $c)
-                                            <option value="{{ $c->id }}">{{ $c->title }}</option>
-                                        @endforeach
-                                    </select>
+                            <!-- Tab 2: Zakat -->
+                            <div class="tab-pane fade" id="zakat-pane" role="tabpanel" aria-labelledby="zakat-tab">
+                                <div class="p-2 mb-3 bg-success bg-opacity-10 rounded text-success small border border-success-subtle">
+                                    <i class="fa-solid fa-shield-halved text-success me-1"></i>
+                                    Zakat Mal, Profesi &amp; Fitrah disalurkan 100% secara syar'i kepada <strong>8 Asnaf Mustahik</strong> terverifikasi.
                                 </div>
                             </div>
                         </div>
 
                         <!-- Pilih Nominal Cepat -->
                         <div class="mb-3">
-                            <label class="form-label small fw-bold text-muted">Pilih Nominal Infaq:</label>
+                            <label class="form-label small fw-bold text-muted">Pilih Nominal Donasi:</label>
                             <div class="row g-2 mb-2">
                                 <div class="col-4">
                                     <div class="amount-pill" onclick="setNominal(10000, this)">Rp 10.000</div>
@@ -539,13 +537,12 @@
                             </div>
                         </div>
 
-                        <!-- Metode Pembayaran Sesuai Rekening & QRIS Resmi -->
+                        <!-- Metode Pembayaran Sesuai Rekening & QRIS Resmi (Kondisional Dinamis) -->
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-muted">Metode Penyaluran:</label>
-                            <select name="payment_method" class="form-select form-select-sm fw-semibold" required>
-                                <option value="transfer_bri">Transfer BRI (Selain Zakat: Infaq, Shadaqah & Koin - 00411001448562)</option>
-                                <option value="transfer_bsi">Transfer BSI (Khusus Zakat Mal / Profesi / Fitrah - 2026070708)</option>
-                                <option value="qris">QRIS Bank BRI (Semua E-Wallet & Mobile Banking)</option>
+                            <select name="payment_method" id="quickPaymentMethod" class="form-select form-select-sm fw-semibold" required>
+                                <option value="transfer_bri">Transfer BRI (Infaq &amp; Koin - 00411001448562)</option>
+                                <option value="qris">QRIS BRI (Semua E-Wallet &amp; Mobile Banking)</option>
                             </select>
                         </div>
 
@@ -557,7 +554,7 @@
                             </label>
                         </div>
 
-                        <button type="submit" class="btn btn-success w-100 fw-bold py-2 rounded-pill shadow-sm" style="background: var(--nu-green);">
+                        <button type="submit" id="quickSubmitBtn" class="btn btn-success w-100 fw-bold py-2 rounded-pill shadow-sm" style="background: var(--nu-green);">
                             <i class="fa-solid fa-heart me-1 text-warning"></i> Lanjutkan Infaq Sekarang
                         </button>
                     </form>
@@ -779,71 +776,6 @@
 </section>
 
 <!-- =========================================================================
-     4. REAL-TIME IMPACT COUNTERS (TERKONEKSI DATABASE APLIKASI)
-========================================================================== -->
-<section class="counter-section">
-    <div class="container">
-        <div class="row g-3">
-            <!-- Counter 1: Total Dana Terhimpun -->
-            <div class="col-lg-3 col-md-6">
-                <div class="counter-card">
-                    <div class="counter-icon bg-success bg-opacity-10 text-success">
-                        <i class="fa-solid fa-vault"></i>
-                    </div>
-                    <div>
-                        <div class="text-muted small fw-bold text-uppercase">Total Dana Terhimpun</div>
-                        <div class="fs-5 fw-extrabold text-success mb-0">Rp {{ number_format($totalDanaHimpunan, 0, ',', '.') }}</div>
-                        <small class="text-muted" style="font-size: 0.72rem;">*Akumulasi Koin & ZIS</small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Counter 2: Kotak Koin Terdistribusi -->
-            <div class="col-lg-3 col-md-6">
-                <div class="counter-card">
-                    <div class="counter-icon bg-warning bg-opacity-10 text-warning">
-                        <i class="fa-solid fa-coins"></i>
-                    </div>
-                    <div>
-                        <div class="text-muted small fw-bold text-uppercase">Kotak Koin Beredar</div>
-                        <div class="fs-5 fw-extrabold text-dark mb-0">{{ number_format($totalKotak) }} Kotak</div>
-                        <small class="text-muted" style="font-size: 0.72rem;">*Donatur Warga Aktif</small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Counter 3: Penerima Manfaat -->
-            <div class="col-lg-3 col-md-6">
-                <div class="counter-card">
-                    <div class="counter-icon bg-danger bg-opacity-10 text-danger">
-                        <i class="fa-solid fa-hands-holding-child"></i>
-                    </div>
-                    <div>
-                        <div class="text-muted small fw-bold text-uppercase">Penerima Manfaat</div>
-                        <div class="fs-5 fw-extrabold text-danger mb-0">{{ number_format($penerimaManfaat, 0, ',', '.') }} Jiwa</div>
-                        <small class="text-muted" style="font-size: 0.72rem;">*Dhuafa, Santri, Yatim</small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Counter 4: Jaringan Ranting & MWC -->
-            <div class="col-lg-3 col-md-6">
-                <div class="counter-card">
-                    <div class="counter-icon bg-primary bg-opacity-10 text-primary">
-                        <i class="fa-solid fa-sitemap"></i>
-                    </div>
-                    <div>
-                        <div class="text-muted small fw-bold text-uppercase">Jaringan Pelayanan</div>
-                        <div class="fs-5 fw-extrabold text-primary mb-0">{{ $totalMwc }} MWC / {{ $totalRanting }} Rtg</div>
-                        <small class="text-muted" style="font-size: 0.72rem;">*Didukung {{ $totalRelawan }} Relawan</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- =========================================================================
      2.1 HIGHLIGHT PROGRAM KOIN NU (RINGKAS, INFORMATIF & TRANSPARAN)
 ========================================================================== -->
 <section class="py-5" style="background: linear-gradient(135deg, #064d27 0%, #0a6b38 60%, #08552d 100%); color: #ffffff;" id="highlight-koin-nu">
@@ -851,7 +783,7 @@
         <!-- Section Header -->
         <div class="text-center max-w-700 mx-auto mb-4">
             <span class="badge text-bg-warning text-dark fw-bold px-3 py-1 rounded-pill mb-2">
-                <i class="fa-solid fa-coins me-1"></i> AKUNTABILITAS & KEMANDIRIAN UMAT
+                <i class="fa-solid fa-coins me-1"></i> AKUNTABILITAS &amp; KEMANDIRIAN UMAT
             </span>
             <h2 class="fw-bold text-white mb-2">Highlight Gerakan KOIN NU Lamongan</h2>
             <p class="text-white-50 small mb-0">
@@ -859,67 +791,88 @@
             </p>
         </div>
 
-        <!-- 3 Metrik Utama KOIN NU -->
-        <div class="row g-4 mb-4">
-            <!-- 1. Total Koin Terhimpun -->
-            <div class="col-lg-4 col-md-6">
+        <!-- 4 Pilar Informasi Gerakan KOIN NU Lamongan -->
+        <div class="row g-3 g-lg-4 mb-4">
+            <!-- 1. AKUMULASI TERVERIFIKASI -->
+            <div class="col-lg-3 col-md-6">
                 <div class="p-4 rounded-4 bg-white bg-opacity-10 border border-white-20 h-100 shadow-sm" style="backdrop-filter: blur(8px);">
                     <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="bg-warning text-dark rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 52px; height: 52px; font-size: 1.5rem;">
+                        <div class="bg-warning text-dark rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px; font-size: 1.35rem;">
                             <i class="fa-solid fa-vault"></i>
                         </div>
                         <div>
                             <span class="badge bg-warning bg-opacity-25 text-warning fw-bold small">AKUMULASI TERVERIFIKASI</span>
-                            <div class="text-white-50 small">Total Perolehan Koin Terhimpun</div>
+                            <div class="text-white-50 small">Total Perolehan Koin</div>
                         </div>
                     </div>
-                    <div class="fs-2 fw-extrabold text-white mb-2 tracking-tight">
+                    <div class="fs-3 fw-extrabold text-white mb-2 tracking-tight">
                         Rp {{ number_format($koinTotal ?? $totalDanaHimpunan, 0, ',', '.') }}
                     </div>
                     <p class="small text-white-50 mb-0">
-                        Akumulasi koin infaq warga terkonfirmasi dari 15 MWC & seluruh Ranting NU se-Kabupaten Lamongan secara akuntabel.
+                        Akumulasi koin infaq warga terkonfirmasi dari 15 MWC &amp; Ranting NU se-Kabupaten Lamongan.
                     </p>
                 </div>
             </div>
 
-            <!-- 2. Kotak / Kaleng Aktif -->
-            <div class="col-lg-4 col-md-6">
+            <!-- 2. TERSEBAR DI KELUARGA -->
+            <div class="col-lg-3 col-md-6">
                 <div class="p-4 rounded-4 bg-white bg-opacity-10 border border-white-20 h-100 shadow-sm" style="backdrop-filter: blur(8px);">
                     <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="text-white rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 52px; height: 52px; font-size: 1.5rem; background: #16a34a !important;">
+                        <div class="text-white rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px; font-size: 1.35rem; background: #16a34a !important;">
                             <i class="fa-solid fa-boxes-stacked"></i>
                         </div>
                         <div>
                             <span class="badge bg-success bg-opacity-50 text-white fw-bold small">TERSEBAR DI KELUARGA</span>
-                            <div class="text-white-50 small">Jumlah Kaleng Koin Aktif</div>
+                            <div class="text-white-50 small">Kotak Kaleng Aktif</div>
                         </div>
                     </div>
-                    <div class="fs-2 fw-extrabold text-white mb-2 tracking-tight">
-                        {{ number_format($totalKotak) }} Kotak Donatur
+                    <div class="fs-3 fw-extrabold text-white mb-2 tracking-tight">
+                        {{ number_format($totalKotak) }} Kotak
                     </div>
                     <p class="small text-white-50 mb-0">
-                        Kaleng KOIN NU aktif yang dipercayakan di rumah donatur, pertokoan, dan madrasah dengan barcode nomor kotak unik.
+                        Kaleng KOIN NU aktif di rumah donatur, pertokoan, dan madrasah dengan identifikasi unik.
                     </p>
                 </div>
             </div>
 
-            <!-- 3. Sebaran Realisasi Manfaat -->
-            <div class="col-lg-4 col-md-12">
+            <!-- 3. PENYALURAN TEREALISASI -->
+            <div class="col-lg-3 col-md-6">
                 <div class="p-4 rounded-4 bg-white bg-opacity-10 border border-white-20 h-100 shadow-sm" style="backdrop-filter: blur(8px);">
                     <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="text-white rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 52px; height: 52px; font-size: 1.5rem; background: #0284c7 !important;">
+                        <div class="text-white rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px; font-size: 1.35rem; background: #0284c7 !important;">
                             <i class="fa-solid fa-hands-holding-child"></i>
                         </div>
                         <div>
                             <span class="badge bg-info bg-opacity-50 text-white fw-bold small">PENYALURAN TEREALISASI</span>
-                            <div class="text-white-50 small">Penerima Manfaat Langsung</div>
+                            <div class="text-white-50 small">Penerima Manfaat</div>
                         </div>
                     </div>
-                    <div class="fs-2 fw-extrabold text-white mb-2 tracking-tight">
-                        {{ number_format($penerimaManfaat, 0, ',', '.') }} Jiwa Mustahik
+                    <div class="fs-3 fw-extrabold text-white mb-2 tracking-tight">
+                        {{ number_format($penerimaManfaat, 0, ',', '.') }} Jiwa
                     </div>
                     <p class="small text-white-50 mb-0">
-                        Santri dhuafa, guru ngaji, pasien dhuafa pengguna ambulans, dan fakir miskin yang terbantu langsung dari koin umat.
+                        Santri dhuafa, guru ngaji, pasien dhuafa pengguna ambulans, dan fakir miskin terbantu langsung.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 4. JARINGAN PELAYANAN -->
+            <div class="col-lg-3 col-md-6">
+                <div class="p-4 rounded-4 bg-white bg-opacity-10 border border-white-20 h-100 shadow-sm" style="backdrop-filter: blur(8px);">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="text-white rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px; font-size: 1.35rem; background: #8b5cf6 !important;">
+                            <i class="fa-solid fa-sitemap"></i>
+                        </div>
+                        <div>
+                            <span class="badge bg-primary bg-opacity-50 text-white fw-bold small">JARINGAN PELAYANAN</span>
+                            <div class="text-white-50 small">Struktur &amp; Relawan</div>
+                        </div>
+                    </div>
+                    <div class="fs-3 fw-extrabold text-white mb-2 tracking-tight">
+                        {{ $totalMwc }} MWC / {{ $totalRanting }} Rtg
+                    </div>
+                    <p class="small text-white-50 mb-0">
+                        Jaringan khidmah terintegrasi didukung {{ $totalRelawan }} Relawan &amp; Petugas Lapangan aktif.
                     </p>
                 </div>
             </div>
@@ -1596,6 +1549,70 @@
                 document.querySelectorAll('.amount-pill').forEach(el => el.classList.remove('active'));
             });
         }
+
+        // =========================================================================
+        // KONDISIONAL METODE PENYALURAN (BANK & QRIS) SESUAI TAB INFAQ & ZAKAT
+        // =========================================================================
+        const infaqTabBtn = document.getElementById('infaq-tab');
+        const zakatTabBtn = document.getElementById('zakat-tab');
+        const kategoriDonasi = document.getElementById('kategori_donasi');
+        const quickCategory = document.getElementById('quickCategory');
+        const quickCampaignId = document.getElementById('quickCampaignId');
+        const quickPaymentMethod = document.getElementById('quickPaymentMethod');
+        const quickSubmitBtn = document.getElementById('quickSubmitBtn');
+        const quickDonationForm = document.getElementById('quickDonationForm');
+
+        const infaqCampaignId = "{{ $infaqCampaign?->id ?? ($featuredCampaigns->first()?->id ?? 1) }}";
+        const zakatCampaignId = "{{ $zakatCampaign?->id ?? ($featuredCampaigns->first()?->id ?? 1) }}";
+
+        const infaqPaymentOptions = `
+            <option value="transfer_bri">Transfer BRI (Infaq &amp; Koin - 00411001448562)</option>
+            <option value="qris">QRIS BRI (Semua E-Wallet &amp; Mobile Banking)</option>
+        `;
+
+        const zakatPaymentOptions = `
+            <option value="transfer_bsi">Transfer BSI (Khusus Zakat Mal / Profesi - 2026070708)</option>
+            <option value="qris_bsi">QRIS BSI (Khusus Zakat - Semua E-Wallet &amp; M-Banking)</option>
+        `;
+
+        function switchQuickDonationTab(category) {
+            if (category === 'zakat') {
+                if (kategoriDonasi) kategoriDonasi.value = 'zakat';
+                if (quickCategory) quickCategory.value = 'zakat';
+                if (quickCampaignId) quickCampaignId.value = zakatCampaignId;
+                if (quickPaymentMethod) quickPaymentMethod.innerHTML = zakatPaymentOptions;
+                if (quickSubmitBtn) quickSubmitBtn.innerHTML = '<i class="fa-solid fa-hand-holding-heart me-1 text-warning"></i> Lanjutkan Zakat Sekarang';
+            } else {
+                if (kategoriDonasi) kategoriDonasi.value = 'infaq';
+                if (quickCategory) quickCategory.value = 'infaq';
+                if (quickCampaignId) quickCampaignId.value = infaqCampaignId;
+                if (quickPaymentMethod) quickPaymentMethod.innerHTML = infaqPaymentOptions;
+                if (quickSubmitBtn) quickSubmitBtn.innerHTML = '<i class="fa-solid fa-heart me-1 text-warning"></i> Lanjutkan Infaq Sekarang';
+            }
+        }
+
+        if (infaqTabBtn) {
+            infaqTabBtn.addEventListener('shown.bs.tab', () => switchQuickDonationTab('infaq'));
+            infaqTabBtn.addEventListener('click', () => switchQuickDonationTab('infaq'));
+        }
+
+        if (zakatTabBtn) {
+            zakatTabBtn.addEventListener('shown.bs.tab', () => switchQuickDonationTab('zakat'));
+            zakatTabBtn.addEventListener('click', () => switchQuickDonationTab('zakat'));
+        }
+
+        // Pastikan saat form disubmit, nilai kategori_donasi sinkron dengan tab aktif
+        if (quickDonationForm) {
+            quickDonationForm.addEventListener('submit', function () {
+                const isZakatActive = zakatTabBtn && (zakatTabBtn.classList.contains('active') || zakatTabBtn.getAttribute('aria-selected') === 'true');
+                if (kategoriDonasi) {
+                    kategoriDonasi.value = isZakatActive ? 'zakat' : 'infaq';
+                }
+                if (quickCategory) {
+                    quickCategory.value = isZakatActive ? 'zakat' : 'infaq';
+                }
+            });
+        }
     });
 </script>
 
@@ -1605,6 +1622,9 @@
 <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
 <script>
+    // Nonaktifkan alert popup bawaan DataTables (tn/7) agar tidak mengganggu pengunjung
+    $.fn.dataTable.ext.errMode = 'none';
+
     $(document).ready(function() {
         if ($('#transparencyDataTable').length) {
             let transparencyTable = $('#transparencyDataTable').DataTable({
@@ -1616,6 +1636,16 @@
                     type: "GET",
                     data: function (d) {
                         d.category = $('#filterKategori').val();
+                    },
+                    error: function (xhr, error, thrown) {
+                        console.warn('Transparency DataTable AJAX Notice:', error, thrown);
+                        $('#transparencyDataTable tbody').html(
+                            '<tr><td colspan="6" class="text-center py-4 text-muted">' +
+                            '<i class="fa-solid fa-circle-exclamation text-warning me-2 fs-5 d-block mb-2"></i>' +
+                            'Gagal memuat data donasi. Silakan refresh halaman atau coba beberapa saat lagi.' +
+                            '</td></tr>'
+                        );
+                        $('#transparencyDataTable_processing').hide();
                     }
                 },
                 columns: [
