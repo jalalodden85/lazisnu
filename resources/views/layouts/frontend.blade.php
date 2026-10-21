@@ -337,7 +337,7 @@
 
                 <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
                     <a href="{{ route('home') }}#donasi-cepat" class="btn-gold-cta">
-                        <i class="fa-solid fa-hand-holding-dollar"></i> Infaq Koin
+                        <i class="fa-solid fa-hand-holding-dollar"></i> Infaq
                     </a>
 
                     @guest

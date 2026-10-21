@@ -33,8 +33,8 @@
                                 <td><span class="badge badge-light border font-weight-bold fs-6">{{ $donation->donation_code }}</span></td>
                             </tr>
                             <tr>
-                                <th>Kategori Judul:</th>
-                                <td><span class="badge badge-info px-2 py-1 font-weight-bold">{{ $donation->campaign->kategori_judul ?? $donation->campaign->kategori_judul_display }}</span></td>
+                                <th>Kategori Donasi:</th>
+                                <td><span class="badge {{ strtolower($donation->kategori ?? '') === 'zakat' ? 'badge-primary' : 'badge-info' }} px-2 py-1 font-weight-bold">{{ $donation->kategori_label }}</span></td>
                             </tr>
                             <tr>
                                 <th>Program Kebaikan:</th>

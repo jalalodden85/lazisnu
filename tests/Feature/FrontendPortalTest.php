@@ -58,6 +58,7 @@ class FrontendPortalTest extends TestCase
 
         $response = $this->post('/donasi/proses', [
             'campaign_id' => $campaign->id,
+            'kategori' => 'zakat',
             'donor_name' => 'Ahmad Test',
             'donor_phone' => '081234567890',
             'donor_email' => 'ahmad@test.com',

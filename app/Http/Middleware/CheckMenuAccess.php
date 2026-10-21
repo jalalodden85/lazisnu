@@ -29,6 +29,11 @@ class CheckMenuAccess
             'reports.index',
             'donation.store',
             'donation.success',
+            'donation.download-qris',
+            'api.transparency',
+            'api.donation.check-status',
+            'api.payment.webhook',
+            'api.donation.simulate',
             'login',
             'login.post',
             'quick-login',
@@ -80,6 +85,11 @@ class CheckMenuAccess
             'reports.index',
             'donation.store',
             'donation.success',
+            'donation.download-qris',
+            'api.transparency',
+            'api.donation.check-status',
+            'api.payment.webhook',
+            'api.donation.simulate',
         ];
 
         if ($routeName && in_array($routeName, $whitelistedRoutes, true)) {

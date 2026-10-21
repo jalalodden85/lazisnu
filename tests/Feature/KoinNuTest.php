@@ -25,6 +25,20 @@ class KoinNuTest extends TestCase
         $response = $this->get('/');
         $response->assertStatus(200);
         $response->assertSee('NU CARE - LAZISNU');
+        $response->assertSee('Infaq');
+        $response->assertDontSee('Infaq KOIN NU');
+    }
+
+    public function test_transparency_api_is_accessible_to_guests(): void
+    {
+        $response = $this->getJson('/api/transparansi-donasi');
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'draw',
+            'recordsTotal',
+            'recordsFiltered',
+            'data',
+        ]);
     }
 
     public function test_pc_dashboard_renders_with_15_mwcs_comparison(): void

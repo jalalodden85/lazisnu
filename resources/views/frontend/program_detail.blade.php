@@ -79,7 +79,21 @@
 
                 <form action="{{ route('donation.store') }}" method="POST">
                     @csrf
+                    @php
+                        $campaignCategory = $campaign->kategori_judul ?: ($campaign->category?->name ?: 'Infaq');
+                        $isZakatCampaign = (bool) preg_match('/zakat/i', $campaignCategory);
+                    @endphp
                     <input type="hidden" name="campaign_id" value="{{ $campaign->id }}">
+                    <input type="hidden" name="kategori" id="kategori_donasi" value="{{ $campaignCategory }}">
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Kategori Program:</label>
+                        <div>
+                            <span class="badge {{ $isZakatCampaign ? 'bg-primary-subtle text-primary border border-primary-subtle' : 'bg-success-subtle text-success border border-success-subtle' }} px-3 py-2 fw-bold">
+                                <i class="fa-solid fa-tag me-1"></i> {{ $campaignCategory }}
+                            </span>
+                        </div>
+                    </div>
 
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-muted">Nominal Donasi (Rp):</label>
@@ -111,11 +125,15 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label small fw-bold text-muted">Metode Pembayaran:</label>
+                        <label class="form-label small fw-bold text-muted">Metode Penyaluran:</label>
                         <select name="payment_method" class="form-select form-select-sm fw-semibold" required>
-                            <option value="transfer_bri">Transfer BRI (Selain Zakat: Infaq &amp; Koin - 00411001448562)</option>
-                            <option value="transfer_bsi">Transfer BSI (Khusus Zakat Mal/Profesi/Fitrah - 2026070708)</option>
-                            <option value="qris">QRIS Bank BRI (Semua E-Wallet &amp; Mobile Banking)</option>
+                            @if($isZakatCampaign)
+                                <option value="transfer_bsi">Transfer BSI (Khusus Zakat Mal / Profesi - 2026070708)</option>
+                                <option value="qris_bsi">QRIS BSI (Khusus Zakat - Semua E-Wallet &amp; M-Banking)</option>
+                            @else
+                                <option value="transfer_bri">Transfer BRI (Infaq &amp; Shadaqah - 00411001448562)</option>
+                                <option value="qris">QRIS BRI (Semua E-Wallet &amp; Mobile Banking)</option>
+                            @endif
                         </select>
                     </div>
 

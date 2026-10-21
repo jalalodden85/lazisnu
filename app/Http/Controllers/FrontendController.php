@@ -76,6 +76,21 @@ class FrontendController extends Controller
             ->take(6)
             ->get();
 
+        $infaqCampaign = Campaign::where('status', 'active')
+            ->where(function ($q) {
+                $q->where('kategori_judul', 'like', '%infaq%')
+                  ->orWhere('title', 'like', '%infaq%');
+            })->first() ?? $featuredCampaigns->first() ?? Campaign::first();
+
+        $zakatCampaign = Campaign::where('status', 'active')
+            ->where(function ($q) {
+                $q->where('kategori_judul', 'like', '%zakat%')
+                  ->orWhere('title', 'like', '%zakat%')
+                  ->orWhereHas('category', function ($c) {
+                      $c->where('name', 'like', '%zakat%');
+                  });
+            })->first() ?? $featuredCampaigns->first() ?? Campaign::first();
+
         // 5. Kabar Pentasyarufan & Berita Terkini (5 default, dan daftar kabar untuk filter)
         $allArticles = Article::with('category')
             ->where('status', 'published')
@@ -109,6 +124,8 @@ class FrontendController extends Controller
             'sliders',
             'categories',
             'featuredCampaigns',
+            'infaqCampaign',
+            'zakatCampaign',
             'latestArticles',
             'allArticles',
             'financialReports',
@@ -240,7 +257,7 @@ class FrontendController extends Controller
     }
 
     /**
-     * Proses Donasi Online Cepat (Infaq / Crowdfunding)
+     * Proses Donasi Online Cepat (Infaq / Zakat / Crowdfunding)
      */
     public function storeDonation(Request $request)
     {
@@ -250,12 +267,49 @@ class FrontendController extends Controller
             'donor_phone'    => 'required|string|max:20',
             'donor_email'    => 'nullable|email|max:120',
             'alamat'         => 'nullable|string|max:255',
-            'kategori'       => 'nullable|string|max:50',
+            'kategori'       => 'nullable|string|max:150',
             'amount'         => 'required|numeric|min:10000',
-            'payment_method' => 'required|string|in:transfer_bsi,transfer_bri,transfer_mandiri,transfer_bca,qris',
+            'payment_method' => 'required|string|in:transfer_bsi,transfer_bri,transfer_mandiri,transfer_bca,qris,qris_bri,qris_bni,qris_bsi',
             'prayer_message' => 'nullable|string|max:500',
             'is_anonymous'   => 'nullable|boolean',
         ]);
+
+        $campaign = Campaign::with('category')->findOrFail($validated['campaign_id']);
+
+        // Kategori Dinamis:
+        // 1. Jika berasal dari halaman kampanye/program spesifik, ambil kategori judul kampanye (contoh: "Donasi NTT", "Masjid Gus Dur").
+        // 2. Jika dari form donasi kilat: prioritaskan input tab 'Zakat' / 'Infaq'.
+        // 3. Fallback ke judul kampanye atau kategori pilar.
+        $rawKategori = !empty($validated['kategori']) ? trim((string) $validated['kategori']) : '';
+
+        if (!empty($rawKategori) && !in_array(strtolower($rawKategori), ['infaq', 'zakat'])) {
+            // Kategori kustom dari kampanye spesifik (contoh: "Donasi NTT", "Masjid Gus Dur")
+            $kategori = $rawKategori;
+        } elseif (!empty($rawKategori)) {
+            // Berasal dari tab donasi kilat ("zakat" atau "infaq")
+            $kategori = strtolower($rawKategori);
+        } else {
+            // Fallback ditarik langsung dari data kampanye admin
+            $kategori = $campaign->kategori_judul ?: ($campaign->category?->name ?: 'infaq');
+        }
+
+        $isZakat = (bool) preg_match('/zakat/i', $kategori);
+        $method = $validated['payment_method'];
+
+        // Aturan Validasi Rekening Backend: Tolak manipulasi rekening silang antara Zakat dan Infaq
+        if ($isZakat) {
+            if (!in_array($method, ['transfer_bsi', 'qris_bsi'], true)) {
+                return back()->withInput()->withErrors([
+                    'payment_method' => 'Penyaluran Zakat wajib menggunakan rekening khusus Zakat (Transfer Bank BSI atau QRIS BSI).'
+                ]);
+            }
+        } else {
+            if (!in_array($method, ['transfer_bri', 'qris', 'qris_bri', 'qris_bni'], true)) {
+                return back()->withInput()->withErrors([
+                    'payment_method' => 'Penyaluran program donasi & infaq wajib menggunakan rekening selain zakat (Transfer Bank BRI atau QRIS BRI).'
+                ]);
+            }
+        }
 
         $uniqueCode = rand(101, 899);
         $totalAmount = $validated['amount'] + $uniqueCode;
@@ -263,8 +317,8 @@ class FrontendController extends Controller
 
         $donation = OnlineDonation::create([
             'donation_code'   => $donationCode,
-            'campaign_id'     => $validated['campaign_id'],
-            'kategori'        => $validated['kategori'] ?? 'Infaq',
+            'campaign_id'     => $campaign->id,
+            'kategori'        => $kategori,
             'donor_name'      => $validated['donor_name'],
             'donor_phone'     => $validated['donor_phone'],
             'donor_email'     => $validated['donor_email'] ?? null,
@@ -273,15 +327,10 @@ class FrontendController extends Controller
             'amount'          => $validated['amount'],
             'unique_code'     => $uniqueCode,
             'total_amount'    => $totalAmount,
-            'payment_method'  => $validated['payment_method'],
+            'payment_method'  => $method,
             'payment_status'  => 'pending',
             'prayer_message'  => $validated['prayer_message'] ?? null,
         ]);
-
-        // Generate Dynamic QRIS jika metode pembayaran QRIS
-        if ($donation->payment_method === 'qris') {
-            app(\App\Services\PaymentGatewayService::class)->generateDynamicQris($donation);
-        }
 
         return redirect()->route('donation.success', ['code' => $donation->donation_code])
             ->with('success', 'Niat donasi Anda telah tercatat. Silakan selesaikan pembayaran.');
@@ -293,49 +342,31 @@ class FrontendController extends Controller
     public function donationSuccess($code)
     {
         $donation = OnlineDonation::with('campaign')->where('donation_code', $code)->firstOrFail();
-        
-        // Pastikan QRIS dinamis di-generate jika belum ada
-        if ($donation->payment_method === 'qris' && empty($donation->qris_url) && $donation->payment_status === 'pending') {
-            app(\App\Services\PaymentGatewayService::class)->generateDynamicQris($donation);
-            $donation->refresh();
-        }
-
         $settings = SiteSetting::pluck('value', 'key')->toArray();
 
         return view('frontend.donation_success', compact('donation', 'settings'));
     }
 
     /**
-     * Download File Gambar QRIS Dinamis
+     * Download File Gambar QRIS Statis Bank BRI / BSI Sesuai Kategori
      */
     public function downloadQris($code)
     {
-        $donation = OnlineDonation::where('donation_code', $code)->firstOrFail();
-        $fileName = 'QRIS-LAZISNU-' . $donation->donation_code . '.png';
+        $donation = OnlineDonation::where('donation_code', $code)->first();
+        $isZakat = $donation && ($donation->payment_method === 'qris_bsi' || preg_match('/zakat/i', $donation->kategori));
 
-        $qrisUrl = $donation->qris_url;
-
-        if (!empty($qrisUrl)) {
-            try {
-                if (filter_var($qrisUrl, FILTER_VALIDATE_URL)) {
-                    $response = Http::timeout(10)->get($qrisUrl);
-                    if ($response->successful()) {
-                        $contentType = $response->header('Content-Type') ?: 'image/png';
-                        return response($response->body(), 200, [
-                            'Content-Type'        => $contentType,
-                            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
-                        ]);
-                    }
-                }
-            } catch (\Throwable $e) {
-                Log::warning("Gagal fetch QRIS url untuk download [{$code}]: " . $e->getMessage());
+        if ($isZakat) {
+            $bsiPath = public_path('qris_lazisnu_bsi.jpg');
+            if (file_exists($bsiPath)) {
+                return response()->download($bsiPath, 'QRIS_LAZISNU_BSI_ZAKAT_LAMONGAN.jpg', [
+                    'Content-Type' => 'image/jpeg',
+                ]);
             }
         }
 
-        // Fallback jika file lokal
-        $localPath = public_path('qris_lazisnu_bri.jpg');
-        if (file_exists($localPath)) {
-            return response()->download($localPath, 'QRIS-LAZISNU-' . $donation->donation_code . '.jpg', [
+        $briPath = public_path('qris_lazisnu_bri.jpg');
+        if (file_exists($briPath)) {
+            return response()->download($briPath, 'QRIS_LAZISNU_BRI_LAMONGAN.jpg', [
                 'Content-Type' => 'image/jpeg',
             ]);
         }
@@ -432,15 +463,23 @@ class FrontendController extends Controller
                 ? '<span class="badge bg-light text-secondary border px-2 py-1"><i class="fa-solid fa-user-secret me-1"></i> Hamba Allah</span>'
                 : '<span class="fw-semibold text-dark"><i class="fa-solid fa-circle-user text-success me-1"></i> ' . e($item->donor_name) . '</span>';
 
-            // Kolom KATEGORI: Judul kolom tetap "KATEGORI", tapi isinya menampilkan kategori_judul
-            $kategoriJudul = $item->campaign?->kategori_judul 
-                ?: ($item->campaign?->kategori_judul_display 
-                ?: ($item->kategori ?: 'Infaq'));
+            // Kolom KATEGORI: Prioritaskan kategori judul kampanye spesifik (contoh: "Donasi NTT", "Masjid Gus Dur"), lalu kategori transaksi (Zakat / Infaq)
+            if (!empty($item->campaign?->kategori_judul) 
+                && !in_array(strtolower($item->campaign->kategori_judul), ['infaq', 'infaq nu', 'koin nu', 'zakat'])
+                && strtolower((string) $item->kategori) !== 'zakat') {
+                $kategoriJudul = $item->campaign->kategori_judul;
+            } elseif (!empty($item->kategori)) {
+                $kategoriJudul = ucfirst($item->kategori);
+            } else {
+                $kategoriJudul = $item->campaign?->kategori_judul 
+                    ?: ($item->campaign?->kategori_judul_display 
+                    ?: 'Infaq');
+            }
 
             $badgeClass = match (strtolower($kategoriJudul)) {
                 'zakat', 'zakat maal', 'zakat fitrah' => 'bg-info bg-opacity-10 text-info border border-info-subtle',
                 'koin nu', 'koin', 'koin kemandirian' => 'bg-warning bg-opacity-10 text-warning-emphasis border border-warning-subtle',
-                'kampanye bencana', 'bencana', 'darurat' => 'bg-danger bg-opacity-10 text-danger border border-danger-subtle',
+                'kampanye bencana', 'bencana', 'darurat', 'donasi ntt' => 'bg-danger bg-opacity-10 text-danger border border-danger-subtle',
                 default => 'bg-success bg-opacity-10 text-success border border-success-subtle',
             };
             $kategoriHtml = '<span class="badge ' . $badgeClass . ' px-2 py-1 rounded-pill fw-semibold">' . e($kategoriJudul) . '</span>';

@@ -126,7 +126,7 @@
                 </div>
 
                 <div class="alert alert-info small mb-0">
-                    <i class="fa-solid fa-info-circle me-1"></i> Jika penghasilan bersih belum mencapai batas nisab, Anda tidak dibebankan kewajiban zakat, namun sangat dianjurkan menyisihkan <strong>Infaq KOIN NU</strong> secara sukarela.
+                    <i class="fa-solid fa-info-circle me-1"></i> Jika penghasilan bersih belum mencapai batas nisab, Anda tidak dibebankan kewajiban zakat, namun sangat dianjurkan menyisihkan <strong>Infaq</strong> secara sukarela.
                 </div>
             </div>
         </div>

@@ -98,16 +98,25 @@ class OnlineDonation extends Model
     }
 
     /**
-     * Label Kategori Donasi (Prioritas: Kategori Judul Kampanye -> Kolom Kategori -> Kategori Pilar)
+     * Label Kategori Donasi (Prioritas: Kategori Judul Kampanye Spesifik -> Kategori Transaksi -> Fallback)
      */
     public function getKategoriLabelAttribute(): string
     {
-        if (!empty($this->campaign?->kategori_judul)) {
+        // 1. Jika terikat kampanye dengan kategori judul khusus (selain infaq umum/koin), contoh "Donasi NTT", "Masjid Gus Dur":
+        if (!empty($this->campaign?->kategori_judul) 
+            && !in_array(strtolower($this->campaign->kategori_judul), ['infaq', 'infaq nu', 'koin nu', 'zakat'])
+            && strtolower((string) $this->kategori) !== 'zakat') {
             return $this->campaign->kategori_judul;
         }
 
+        // 2. Jika kolom kategori transaksi terisi:
         if (!empty($this->kategori)) {
-            return $this->kategori;
+            return ucfirst($this->kategori);
+        }
+
+        // 3. Fallback ke kategori judul kampanye atau kategori pilar
+        if (!empty($this->campaign?->kategori_judul)) {
+            return $this->campaign->kategori_judul;
         }
 
         return $this->campaign?->category?->name ?? 'Infaq';
