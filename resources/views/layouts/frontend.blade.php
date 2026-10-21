@@ -327,10 +327,9 @@
                     <li class="nav-item">
                         <a class="nav-link nav-link-custom {{ request()->routeIs('articles.*') ? 'active' : '' }}" href="{{ route('articles.index') }}">Kabar Penyaluran</a>
                     </li>
-                    {{-- Sembunyikan sementara fitur Transparansi sesuai instruksi --}}
-                    {{-- <li class="nav-item">
-                        <a class="nav-link nav-link-custom {{ request()->routeIs('reports.*') ? 'active' : '' }}" href="{{ route('reports.index') }}">Transparansi</a>
-                    </li> --}}
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-custom" href="{{ route('home') }}#transparansi">Transparansi</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link nav-link-custom {{ request()->routeIs('zakat.calculator') ? 'active' : '' }}" href="{{ route('zakat.calculator') }}">Kalkulator Zakat</a>
                     </li>
