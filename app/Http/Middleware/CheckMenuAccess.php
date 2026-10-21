@@ -29,6 +29,8 @@ class CheckMenuAccess
             'reports.index',
             'donation.store',
             'donation.success',
+            'donation.download-qris',
+            'api.transparency',
             'login',
             'login.post',
             'quick-login',
@@ -80,6 +82,8 @@ class CheckMenuAccess
             'reports.index',
             'donation.store',
             'donation.success',
+            'donation.download-qris',
+            'api.transparency',
         ];
 
         if ($routeName && in_array($routeName, $whitelistedRoutes, true)) {
