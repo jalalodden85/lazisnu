@@ -25,7 +25,7 @@ services:
       - DB_DATABASE=${DB_DATABASE:-lazisnu}
       - DB_USERNAME=${DB_USERNAME:-AmirSulaiman@2022}
       - DB_PASSWORD=${DB_PASSWORD:-AmirSulaiman@2022}
-    command: php-fpm
+    command: php artisan serve --host=0.0.0.0 --port=8000
     networks:
       - lazisnu_network
 
