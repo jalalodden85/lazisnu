@@ -13,7 +13,7 @@ Konfigurasi Docker ini dibuat dengan konsep **Bind Mount Volume (`.:/var/www/htm
 
 | Service | Container Name | Port Host | Fungsi |
 | :--- | :--- | :--- | :--- |
-| **`app`** | `lazisnu_app` | **8080** | Laravel development server di PHP 8.2 (tanpa Nginx) |
+| **`app`** | `lazisnu_app` | **8080** | Laravel di PHP 8.5.12 (tanpa Nginx) |
 | **`phpmyadmin`** | `lazisnu_phpmyadmin` | **8081** | Web UI phpMyAdmin |
 
 ---
@@ -40,8 +40,11 @@ Pastikan MySQL host berjalan dan database yang diatur pada `DB_DATABASE` sudah t
 ### Langkah 2: Jalankan Container
 Jalankan perintah berikut di root folder project:
 ```bash
-docker compose up -d --build
+docker compose build --pull app
+docker compose up -d
 ```
+
+Image PHP dipatok pada versi 8.5.12, yang memperbaiki CVE-2026-109618 dan CVE-2026-109619. Saat rilis patch PHP berikutnya tersedia, perbarui versi pada `docker/php/Dockerfile` lalu rebuild image.
 
 ### Langkah 3: Install Dependensi & Setup Laravel
 Jalankan perintah ini di terminal:
@@ -79,13 +82,17 @@ Karena seluruh file di-mount langsung dari host, alur update sangat cepat:
 # 1. Tarik pembaruan kode terbaru dari git
 git pull origin main
 
-# 2. Update dependensi jika ada perubahan composer.json
+# 2. Rebuild image PHP yang dipatok pada versi aman di Dockerfile
+docker compose build --pull app
+docker compose up -d
+
+# 3. Update dependensi jika ada perubahan composer.json
 docker compose exec app composer install
 
-# 3. Jalankan migrasi jika ada migrasi database baru
+# 4. Jalankan migrasi jika ada migrasi database baru
 docker compose exec app php artisan migrate --force
 
-# 4. Bersihkan cache Laravel
+# 5. Bersihkan cache Laravel
 docker compose exec app php artisan optimize:clear
 ```
 

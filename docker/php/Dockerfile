@@ -1,4 +1,4 @@
-FROM php:8.2-fpm
+FROM php:8.5.12-fpm
 
 # Arguments for user / permissions
 ARG user=www-data
