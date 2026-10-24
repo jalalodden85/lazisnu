@@ -93,7 +93,7 @@
                                 </div>
                                 <div class="col-md-3 form-group">
                                     <label>Website Resmi</label>
-                                    <input type="text" name="website_url" class="form-control" value="{{ $settings['website_url'] ?? 'https://lazispcnulamongan.com' }}">
+                                    <input type="text" name="website_url" class="form-control" value="{{ $settings['website_url'] ?? 'https://lazisnulamongan.or.id' }}">
                                 </div>
                                 <div class="col-md-3 form-group">
                                     <label>Jam Kerja Operasional</label>
@@ -133,7 +133,7 @@
                                     </div>
                                     <div class="mb-2">
                                         <label class="small text-muted mb-0">Nomor Rekening BRI:</label>
-                                        <input type="text" name="bank_bri_infaq" class="form-control font-weight-bold font-monospace" value="{{ $settings['bank_bri_infaq'] ?? '00411001448562' }}">
+                                        <input type="text" name="bank_bri_infaq" class="form-control font-weight-bold font-monospace" value="{{ $settings['bank_bri_infaq'] ?? '004101001448562' }}">
                                     </div>
                                     <div>
                                         <label class="small text-muted mb-0">Atas Nama Rekening:</label>
@@ -161,6 +161,15 @@
                                         <div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-envelope"></i></span></div>
                                         <input type="email" name="email_support" class="form-control" value="{{ $settings['email_support'] ?? 'lazisnu.center@gmail.com' }}">
                                     </div>
+                                </div>
+
+                                <div class="col-md-12 form-group">
+                                    <label>URL Akun Instagram Resmi</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend"><span class="input-group-text"><i class="fab fa-instagram text-danger"></i></span></div>
+                                        <input type="text" name="instagram_url" class="form-control" value="{{ $settings['instagram_url'] ?? 'https://www.instagram.com/lazisnulamongan?xtok=MXN1aXRja2MxM3Ricw==' }}" placeholder="https://www.instagram.com/lazisnulamongan?xtok=...">
+                                    </div>
+                                    <small class="text-muted">Digunakan untuk ikon Instagram di header & portal publik.</small>
                                 </div>
                             </div>
                         </div>

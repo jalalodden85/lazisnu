@@ -76,6 +76,7 @@ class CheckMenuAccess
             'profile.password.update',
             'mustahiqs.search',
             'mustahiqs.foto',
+            'pentasyarufan.hasil-koin.index',
             'home',
             'programs.index',
             'programs.detail',
@@ -93,6 +94,11 @@ class CheckMenuAccess
         ];
 
         if ($routeName && in_array($routeName, $whitelistedRoutes, true)) {
+            return $next($request);
+        }
+
+        // Modul Hasil Koin dibuka untuk seluruh tingkatan (PC, MWC, Ranting)
+        if ($routeName === 'pentasyarufan.hasil-koin.index' || $request->is('pentasyarufan/hasil-koin*')) {
             return $next($request);
         }
 

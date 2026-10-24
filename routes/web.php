@@ -15,6 +15,7 @@ use App\Http\Controllers\PenthongController;
 use App\Http\Controllers\PilarProgramController;
 use App\Http\Controllers\ProgramKerjaController;
 use App\Http\Controllers\PentasyarufanController;
+use App\Http\Controllers\HasilKoinController;
 use App\Http\Controllers\MustahiqController;
 use App\Http\Controllers\KontribusiStrukturController;
 use App\Http\Controllers\BkuController;
@@ -204,6 +205,10 @@ Route::middleware(['auth'])->group(function () {
     // Modul Pentasyarufan & Penyaluran Dana (5 Pilar & Proker Berjenjang)
     // =========================================================================
     Route::prefix('pentasyarufan')->group(function () {
+        // 0. Sub-Menu Baru: Hasil Koin (Simplifikasi Direct Split: 80% Ranting, 13% MWC, 5% PC, 1.5% PW, 0.5% PB)
+        Route::get('hasil-koin', [HasilKoinController::class, 'index'])->name('pentasyarufan.hasil-koin.index');
+        Route::post('hasil-koin/proses', [HasilKoinController::class, 'prosesHasilKoin'])->name('pentasyarufan.hasil-koin.proses');
+
         // 1. 5 Pilar Program & Pagu Anggaran
         Route::get('pilar', [PilarProgramController::class, 'index'])->name('pilar-program.index');
         Route::post('pilar/update', [PilarProgramController::class, 'update'])->name('pilar-program.update');
@@ -243,6 +248,7 @@ Route::middleware(['auth'])->group(function () {
     // 9. Buku Kas Umum (BKU) T-Account KOIN NU
     Route::prefix('bku')->group(function () {
         Route::get('/', [BkuController::class, 'index'])->name('bku.index');
+        Route::post('/pengeluaran', [BkuController::class, 'storePengeluaran'])->name('bku.pengeluaran.store');
         Route::get('/cetak', [BkuController::class, 'cetak'])->name('bku.cetak');
         Route::get('/excel', [BkuController::class, 'exportExcel'])->name('bku.excel');
     });

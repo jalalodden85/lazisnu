@@ -73,14 +73,15 @@
         /* TABEL T-ACCOUNT RESMI */
         .table-bku-cetak {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
-            font-size: 9pt;
+            font-size: 8.5pt;
             margin-bottom: 20px;
         }
         .table-bku-cetak th, .table-bku-cetak td {
             border: 1px solid #000 !important;
-            padding: 4px 6px;
-            vertical-align: middle;
+            padding: 4px 5px;
+            vertical-align: top;
         }
         .table-bku-cetak thead th {
             text-align: center;
@@ -89,12 +90,20 @@
             background-color: #f0f0f0 !important;
             border-top: 2px solid #000 !important;
             border-bottom: 2px solid #000 !important;
+            vertical-align: middle;
         }
         .table-bku-cetak tfoot td {
             border-top: 2px solid #000 !important;
             border-bottom: 3px double #000 !important;
             font-weight: bold;
             background-color: #f7f7f7 !important;
+            vertical-align: middle;
+        }
+        .table-bku-cetak .col-uraian {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
         }
 
         /* LEMBAR PENGESAHAN */
@@ -191,6 +200,19 @@
 
     <!-- TABEL T-ACCOUNT SPLIT SEIMBANG -->
     <table class="table-bku-cetak">
+        <colgroup>
+            <!-- Sisi Kiri (Pemasukan - 50%) -->
+            <col style="width: 4%;">
+            <col style="width: 9%;">
+            <col style="width: 22%;">
+            <col style="width: 15%;">
+
+            <!-- Sisi Kanan (Pengeluaran - 50%) -->
+            <col style="width: 4%;">
+            <col style="width: 9%;">
+            <col style="width: 22%;">
+            <col style="width: 15%;">
+        </colgroup>
         <thead>
             <tr>
                 <th colspan="4" style="width: 50%;">PEMASUKAN</th>
@@ -198,16 +220,16 @@
             </tr>
             <tr>
                 <!-- Sisi Kiri (Pemasukan) -->
-                <th style="width: 10%;">TANGGAL</th>
-                <th style="width: 11%;">KODE</th>
-                <th style="width: 59%;">URAIAN</th>
-                <th style="width: 20%;">JUMLAH (Rp)</th>
+                <th style="width: 4%;">NO</th>
+                <th style="width: 9%;">TANGGAL</th>
+                <th style="width: 22%;">URAIAN PEMASUKAN</th>
+                <th style="width: 15%;">NOMINAL (Rp)</th>
 
                 <!-- Sisi Kanan (Pengeluaran) -->
-                <th style="width: 10%;">TANGGAL</th>
-                <th style="width: 11%;">KODE</th>
-                <th style="width: 59%;">URAIAN</th>
-                <th style="width: 20%;">JUMLAH (Rp)</th>
+                <th style="width: 4%;">NO</th>
+                <th style="width: 9%;">TANGGAL</th>
+                <th style="width: 22%;">URAIAN PENGELUARAN</th>
+                <th style="width: 15%;">NOMINAL (Rp)</th>
             </tr>
         </thead>
         <tbody>
@@ -219,9 +241,9 @@
                 <tr>
                     <!-- SISI KIRI (PEMASUKAN) -->
                     @if($in)
+                        <td class="text-center">{{ $index + 1 }}</td>
                         <td class="text-center">{{ $in['tanggal'] }}</td>
-                        <td class="text-center font-weight-bold">{{ $in['kode'] }}</td>
-                        <td>
+                        <td class="col-uraian">
                             @if($in['is_saldo_awal'] ?? false)
                                 <strong>{{ $in['uraian'] }}</strong>
                             @else
@@ -235,9 +257,9 @@
 
                     <!-- SISI KANAN (PENGELUARAN) -->
                     @if($out)
+                        <td class="text-center">{{ $index + 1 }}</td>
                         <td class="text-center">{{ $out['tanggal'] }}</td>
-                        <td class="text-center font-weight-bold">{{ $out['kode'] }}</td>
-                        <td>{{ $out['uraian'] }}</td>
+                        <td class="col-uraian">{{ $out['uraian'] }}</td>
                         <td class="text-end font-weight-bold">{{ number_format($out['jumlah'], 0, ',', '.') }}</td>
                     @else
                         <td></td><td></td><td></td><td></td>

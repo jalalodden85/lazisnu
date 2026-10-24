@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Gate Hak Akses Memproses & Membagikan Hasil Koin (PC dan MWC)
+        Gate::define('proses-hasil-koin', function (User $user) {
+            return $user->isSuperAdmin() || $user->isPc() || $user->isMwc();
+        });
     }
 }

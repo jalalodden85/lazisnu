@@ -160,10 +160,10 @@
                                     <div>
                                         <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill mb-1">Selain Zakat (Infaq, Shadaqah, dll)</span>
                                         <div class="fw-bold fs-5 text-dark">Bank BRI</div>
-                                        <div class="text-muted small">No. Rekening: <strong class="fs-5 text-dark font-monospace" id="rekNo">{{ $settings['bank_bri_infaq'] ?? '00411001448562' }}</strong></div>
+                                        <div class="text-muted small">No. Rekening: <strong class="fs-5 text-dark font-monospace" id="rekNo">{{ $settings['bank_bri_infaq'] ?? '004101001448562' }}</strong></div>
                                         <small class="text-muted">Atas Nama: <strong>{{ $settings['bank_bri_infaq_name'] ?? 'LAZISNU LAMONGAN' }}</strong></small>
                                     </div>
-                                    <button class="btn btn-sm btn-outline-success rounded-pill fw-bold" onclick="copyToClipboard('{{ $settings['bank_bri_infaq'] ?? '00411001448562' }}', 'btnCopyRek')" id="btnCopyRek">
+                                    <button class="btn btn-sm btn-outline-success rounded-pill fw-bold" onclick="copyToClipboard('{{ $settings['bank_bri_infaq'] ?? '004101001448562' }}', 'btnCopyRek')" id="btnCopyRek">
                                         <i class="fa-regular fa-copy me-1"></i> Salin
                                     </button>
                                 </div>

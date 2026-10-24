@@ -290,7 +290,7 @@
                 <span class="text-white-50">|</span>
                 <div class="d-flex gap-2">
                     <a href="https://facebook.com" target="_blank" title="Facebook"><i class="fa-brands fa-facebook"></i></a>
-                    <a href="https://instagram.com" target="_blank" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="{{ $settings['instagram_url'] ?? 'https://www.instagram.com/lazisnulamongan?xtok=MXN1aXRja2MxM3Ricw==' }}" target="_blank" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
                     <a href="https://youtube.com" target="_blank" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
                     <a href="https://tiktok.com" target="_blank" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
                 </div>
@@ -493,7 +493,7 @@
                         <i class="fa-solid fa-envelope text-warning me-2"></i> <a href="mailto:lazisnulamongan@gmail.com" class="text-white-50 text-decoration-none">lazisnulamongan@gmail.com</a>
                     </p>
                     <p class="small text-white-50 mb-3">
-                        <i class="fa-solid fa-globe text-warning me-2"></i> <a href="https://lazispcnulamongan.com" target="_blank" class="text-white-50 text-decoration-underline">https://lazispcnulamongan.com</a>
+                        <i class="fa-solid fa-globe text-warning me-2"></i> <a href="{{ $settings['website_url'] ?? 'https://lazisnulamongan.or.id' }}" target="_blank" class="text-white-50 text-decoration-underline">{{ $settings['website_url'] ?? 'https://lazisnulamongan.or.id' }}</a>
                     </p>
                     <div class="p-2 bg-success bg-opacity-25 rounded border border-success text-center">
                         <span class="badge bg-danger mb-1"><i class="fa-solid fa-phone-volume"></i> RESPON CEPAT</span>

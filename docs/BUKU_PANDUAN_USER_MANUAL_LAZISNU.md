@@ -31,7 +31,7 @@
 * **Penerbit:** Lembaga Amil Zakat, Infaq, dan Shadaqah Nahdlatul Ulama (NU Care - LAZISNU) Cabang Lamongan
 * **Alamat Kantor:** Gedung PCNU Lamongan Lt. 1, Jl. Kyai Amin No. 9, Lamongan, Jawa Timur 62213
 * **Hotline Layanan:** 0851 8899 1926 | **Email:** lazisnulamongan@gmail.com
-* **Portal Resmi:** https://lazispcnulamongan.com
+* **Portal Resmi:** https://lazisnulamongan.or.id
 
 > Hak cipta dilindungi undang-undang. Dilarang menggandakan, mendistribusikan, atau memodifikasi sebagian atau seluruh isi dokumen ini tanpa izin tertulis dari Pengurus Cabang NU Care - LAZISNU Lamongan.
 
@@ -107,7 +107,7 @@ Buka Web ──> Pilih Program / Rekening ──> Scan QRIS / Transfer Bank ─�
 
 ### A. Cara Mengakses Portal Website Resmi
 1. Buka aplikasi peramban (*web browser*) di komputer atau ponsel pintar (seperti Google Chrome, Safari, atau Mozilla Firefox).
-2. Ketikkan alamat: **https://lazispcnulamongan.com** pada kolom URL lalu tekan **Enter**.
+2. Ketikkan alamat: **https://lazisnulamongan.or.id** pada kolom URL lalu tekan **Enter**.
 3. Halaman beranda interaktif NU Care - LAZISNU Lamongan akan tampil dengan nuansa warna hijau khas Nahdlatul Ulama.
 4. Pada perangkat ponsel pintar (*smartphone*), tampilan website otomatis menyesuaikan layar dengan navigasi menu praktis di pojok kanan atas.
 
@@ -124,7 +124,7 @@ LAZISNU Lamongan menerapkan pemisahan rekening bank penerimaan secara ketat sesu
    * **Atas Nama:** Lazisnu Lamongan
 2. **Selain Zakat (Infaq, Shadaqah, Kemanusiaan, Koin Peduli):**
    * **Bank:** Bank Rakyat Indonesia (BRI)
-   * **Nomor Rekening:** `00411001448562`
+   * **Nomor Rekening:** `004101001448562`
    * **Atas Nama:** LAZISNU LAMONGAN
 3. **Wakaf Produktif (Pembangunan Gedung & Masjid):**
    * Program Unggulan: *Wakaf Pembangunan Masjid Gus Dur*, Pondok Pesantren, & Sarana Umat.
@@ -181,7 +181,7 @@ Login Akun ──> Registrasi Kaleng Donatur ──> Penarikan Bulanan (Penthong
 ```
 
 ### A. Login Petugas Lapangan
-1. Buka peramban di ponsel/laptop, akses: **https://lazispcnulamongan.com/login**.
+1. Buka peramban di ponsel/laptop, akses: **https://lazisnulamongan.or.id/login**.
 2. Masukkan **Alamat Email / Username** akun Ranting Anda (contoh: `ranting.karenggeneng@koinnu.id`).
 3. Masukkan **Kata Sandi (Password)** Anda.
 4. Klik tombol hijau **Masuk ke Sistem**.
@@ -425,7 +425,7 @@ Untuk konsultasi syariah, permohonan layanan ambulans, asistensi teknis aplikasi
 * **Alamat Kantor:** Gedung PCNU Lamongan Lt. 1, Jl. Kyai Amin No. 9, Sidokumpul, Kec. Lamongan, Kabupaten Lamongan, Jawa Timur 62213
 * **Hotline WhatsApp Resmi (24 Jam Respon Cepat):** **0851 8899 1926**
 * **Surat Elektronik (Email):** lazisnulamongan@gmail.com
-* **Situs Web Resmi:** https://lazispcnulamongan.com
+* **Situs Web Resmi:** https://lazisnulamongan.or.id
 * **Media Sosial:** Facebook & Instagram: `@lazisnulamongan`
 
 ---

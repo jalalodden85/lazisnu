@@ -38,7 +38,7 @@ class FrontendRekeningQrisTest extends TestCase
         $response->assertStatus(200);
 
         // Pasangan 1: Rekening BRI dan QRIS BRI
-        $response->assertSee('00411001448562');
+        $response->assertSee('004101001448562');
         $response->assertSee('qris_lazisnu_bri.jpg');
         $response->assertSee('modalQrisBri');
 

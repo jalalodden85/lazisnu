@@ -131,7 +131,7 @@
                                 <option value="transfer_bsi">Transfer BSI (Khusus Zakat Mal / Profesi - 2026070708)</option>
                                 <option value="qris_bsi">QRIS BSI (Khusus Zakat - Semua E-Wallet &amp; M-Banking)</option>
                             @else
-                                <option value="transfer_bri">Transfer BRI (Infaq &amp; Shadaqah - 00411001448562)</option>
+                                <option value="transfer_bri">Transfer BRI (Infaq &amp; Shadaqah - {{ $settings['bank_bri_infaq'] ?? '004101001448562' }})</option>
                                 <option value="qris">QRIS BRI (Semua E-Wallet &amp; Mobile Banking)</option>
                             @endif
                         </select>

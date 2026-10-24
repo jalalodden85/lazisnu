@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BkuTransaction;
+use App\Models\KasMutasi;
 use App\Models\Mwc;
 use App\Models\Penthong;
 use App\Models\Ranting;
 use App\Services\BkuService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class BkuController extends Controller
@@ -333,5 +337,172 @@ class BkuController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Menyimpan data pengeluaran BKU baru dengan validasi anti-defisit kas dan upload bukti kwitansi
+     */
+    public function storePengeluaran(Request $request): RedirectResponse
+    {
+        $user = Auth::user();
+
+        // 1. Validasi Input Form
+        $request->validate([
+            'kategori'           => 'required|string|in:Pendidikan,Kesehatan,Ekonomi,Sosial,Dakwah,Biaya Operasional',
+            'tanggal'            => 'required|date',
+            'nominal'            => 'required',
+            'penerima_vendor'    => 'nullable|string|max:150',
+            'uraian'             => 'required|string|max:1000',
+            'bukti_kwitansi'     => 'nullable|file|mimes:jpeg,png,jpg,webp,pdf|max:2048',
+            'penthong_id'        => 'nullable|exists:penthongs,id',
+            'mwc_id'             => 'nullable|exists:mwcs,id',
+            'ranting_id'         => 'nullable|exists:rantings,id',
+        ], [
+            'kategori.required'        => 'Kategori pengeluaran wajib dipilih.',
+            'kategori.in'              => 'Kategori pengeluaran tidak valid.',
+            'tanggal.required'         => 'Tanggal pengeluaran wajib diisi.',
+            'nominal.required'         => 'Nominal pengeluaran wajib diisi.',
+            'uraian.required'          => 'Uraian keperluan belanja wajib diisi.',
+            'bukti_kwitansi.max'       => 'Ukuran file bukti kwitansi maksimal 2MB.',
+            'bukti_kwitansi.mimes'     => 'Format bukti kwitansi harus berupa gambar (JPG, PNG) atau PDF.',
+        ]);
+
+        // 2. Normalisasi & Konversi Nominal Ribuan
+        $rawNominal = preg_replace('/[^\d]/', '', (string) $request->input('nominal'));
+        $nominal = (float) $rawNominal;
+
+        if ($nominal <= 0) {
+            return back()->withInput()->with('error', 'Nominal pengeluaran harus lebih besar dari Rp 0.');
+        }
+
+        // 3. Resolusi Tingkatan & Data Scoping
+        $penthongId = $request->input('penthong_id') 
+            ?? Penthong::aktif()->value('id') 
+            ?? Penthong::latest('id')->value('id');
+
+        $filters = [];
+        $tingkat = 'ranting';
+        $mwcId = null;
+        $rantingId = null;
+
+        if ($user && $user->isRanting()) {
+            $tingkat = 'ranting';
+            $rantingId = (int) $user->ranting_id;
+            $mwcId = (int) ($user->ranting?->mwc_id ?? $user->mwc_id);
+            $filters['ranting_id'] = $rantingId;
+            $filters['mwc_id'] = $mwcId;
+            $filters['tingkat'] = 'ranting';
+        } elseif ($user && $user->isMwc()) {
+            $mwcId = (int) $user->mwc_id;
+            if ($request->filled('ranting_id')) {
+                $reqRantingId = (int) $request->input('ranting_id');
+                $isSubordinate = Ranting::where('mwc_id', $mwcId)->where('id', $reqRantingId)->exists();
+                if ($isSubordinate) {
+                    $rantingId = $reqRantingId;
+                    $tingkat = 'ranting';
+                    $filters['ranting_id'] = $rantingId;
+                } else {
+                    $tingkat = 'mwc';
+                }
+            } else {
+                $tingkat = 'mwc';
+            }
+            $filters['mwc_id'] = $mwcId;
+            $filters['tingkat'] = $tingkat;
+        } else {
+            // Level PC / Superadmin
+            if ($request->filled('ranting_id')) {
+                $rantingId = (int) $request->input('ranting_id');
+                $r = Ranting::find($rantingId);
+                $mwcId = $r?->mwc_id;
+                $tingkat = 'ranting';
+                $filters['ranting_id'] = $rantingId;
+                $filters['mwc_id'] = $mwcId;
+            } elseif ($request->filled('mwc_id')) {
+                $mwcId = (int) $request->input('mwc_id');
+                $tingkat = 'mwc';
+                $filters['mwc_id'] = $mwcId;
+            } else {
+                $tingkat = 'pc';
+            }
+            $filters['tingkat'] = $tingkat;
+        }
+        $filters['penthong_id'] = $penthongId;
+
+        // 4. Validasi Backend Anti-Defisit Kas (Saldo Kas Tidak Boleh Minus)
+        $bkuData = $this->bkuService->getBkuDataByPenthong($penthongId, $filters);
+        $sisaSaldoAkhir = (float) ($bkuData['saldo_buku'] ?? 0);
+
+        if ($nominal > $sisaSaldoAkhir) {
+            return back()
+                ->withInput()
+                ->with('error', "Saldo Kas tidak mencukupi! Sisa saldo saat ini: Rp " . number_format($sisaSaldoAkhir, 0, ',', '.') . ". Nominal pengeluaran Rp " . number_format($nominal, 0, ',', '.') . " melebihi sisa saldo kas.");
+        }
+
+        // 5. Penanganan File Upload Bukti Kwitansi / Nota Struk
+        $buktiPath = null;
+        if ($request->hasFile('bukti_kwitansi')) {
+            $file = $request->file('bukti_kwitansi');
+            $extension = $file->getClientOriginalExtension();
+            $fileName = 'kwitansi_' . date('Ymd_His') . '_' . uniqid() . '.' . $extension;
+            $buktiPath = $file->storeAs('kwitansi', $fileName, 'public');
+        }
+
+        // 6. Mapping Kategori ke COA Standar BKU
+        $coa = match ($request->input('kategori')) {
+            'Pendidikan'        => 'NU Cerdas',
+            'Kesehatan'         => 'NU Sehat',
+            'Ekonomi'           => 'NU Berdaya',
+            'Sosial'            => 'NU Damai',
+            'Dakwah'            => 'NU Hijau',
+            'Biaya Operasional' => 'NU-O',
+            default             => 'NU-O',
+        };
+
+        // 7. Generate Nomor Transaksi Unik
+        $prefix = 'BKU-OUT-' . date('Ym');
+        $countToday = BkuTransaction::where('nomor_transaksi', 'like', "{$prefix}%")->count() + 1;
+        $nomorTransaksi = sprintf('%s-%04d', $prefix, $countToday);
+
+        // 8. Simpan Transaksi secara Atomic (DB::transaction)
+        DB::transaction(function () use ($nomorTransaksi, $penthongId, $request, $coa, $nominal, $buktiPath, $tingkat, $mwcId, $rantingId, $user) {
+            $bkuTx = BkuTransaction::create([
+                'nomor_transaksi'    => $nomorTransaksi,
+                'periode_pentong_id' => $penthongId,
+                'jenis'              => 'pengeluaran',
+                'kategori'           => $request->input('kategori'),
+                'kode_transaksi'     => $coa,
+                'tanggal'            => $request->input('tanggal'),
+                'nominal'            => $nominal,
+                'penerima_vendor'    => $request->input('penerima_vendor'),
+                'uraian'             => $request->input('uraian'),
+                'bukti_kwitansi'     => $buktiPath,
+                'tingkat'            => $tingkat,
+                'mwc_id'             => $mwcId,
+                'ranting_id'         => $rantingId,
+                'user_id'            => $user?->id ?? 1,
+            ]);
+
+            // Sinkronkan ke KasMutasi sebagai catatan kredit
+            KasMutasi::create([
+                'nomor_bukti'        => $nomorTransaksi,
+                'periode_pentong_id' => $penthongId,
+                'penthong_id'        => $penthongId,
+                'jenis'              => 'kredit',
+                'kode_transaksi'     => $coa,
+                'uraian'             => $request->input('uraian') . ($request->filled('penerima_vendor') ? " ({$request->input('penerima_vendor')})" : ""),
+                'nominal'            => $nominal,
+                'tanggal_transaksi'  => $request->input('tanggal'),
+                'tingkat'            => $tingkat,
+                'ranting_id'         => $rantingId,
+                'mwc_id'             => $mwcId,
+                'user_id'            => $user?->id ?? 1,
+                'source_type'        => BkuTransaction::class,
+                'source_id'          => $bkuTx->id,
+                'keterangan'         => "Pengeluaran BKU Kategori {$request->input('kategori')}",
+            ]);
+        });
+
+        return back()->with('success', "Pengeluaran BKU sebesar Rp " . number_format($nominal, 0, ',', '.') . " berhasil dicatat ke dalam pembukuan kas.");
     }
 }

@@ -331,8 +331,8 @@
 
                     <!-- PENTASYARUFAN (PENGELUARAN DANA & PROKER 5 PILAR) -->
                     @if(!$currentUser || $currentUser->hasCategoryAccess('Pentasyarufan & Penyaluran'))
-                    <li class="nav-item has-treeview {{ request()->routeIs(['pilar-program.*', 'proker.*', 'pentasyarufan.*', 'bku.*', 'bku-operasional.*']) ? 'menu-open' : '' }}">
-                        <a href="#" class="nav-link {{ request()->routeIs(['pilar-program.*', 'proker.*', 'pentasyarufan.*', 'bku.*', 'bku-operasional.*']) ? 'active' : '' }}">
+                    <li class="nav-item has-treeview {{ request()->routeIs(['pentasyarufan.hasil-koin.*', 'pilar-program.*', 'proker.*', 'pentasyarufan.*', 'bku.*', 'bku-operasional.*']) ? 'menu-open' : '' }}">
+                        <a href="#" class="nav-link {{ request()->routeIs(['pentasyarufan.hasil-koin.*', 'pilar-program.*', 'proker.*', 'pentasyarufan.*', 'bku.*', 'bku-operasional.*']) ? 'active' : '' }}">
                             <i class="nav-icon fas fa-hand-holding-heart text-danger"></i>
                             <p>
                                 Pentasyarufan
@@ -340,6 +340,14 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
+                            <!-- 0. SUB-MENU BARU: HASIL KOIN (SIMPLIFIKASI DIRECT SPLIT) -->
+                            <li class="nav-item">
+                                <a href="{{ route('pentasyarufan.hasil-koin.index') }}" class="nav-link {{ request()->routeIs('pentasyarufan.hasil-koin.*') ? 'active' : '' }}">
+                                    <i class="fas fa-coins nav-icon text-warning"></i>
+                                    <p>Hasil Koin <span class="badge badge-success right">Baru</span></p>
+                                </a>
+                            </li>
+
                             @if(!$currentUser || $currentUser->hasMenuAccess('pilar-program.index'))
                             <li class="nav-item">
                                 <a href="{{ route('pilar-program.index') }}" class="nav-link {{ request()->routeIs('pilar-program.*') ? 'active' : '' }}">

@@ -111,6 +111,11 @@ class User extends Authenticatable
             return true;
         }
 
+        // Modul Hasil Koin dan BKU dapat diakses oleh semua tingkatan (PC, MWC, Ranting)
+        if (in_array($routeNameOrPattern, ['pentasyarufan.hasil-koin.index', 'bku.index', 'bku-operasional.index'], true)) {
+            return true;
+        }
+
         // 2. Cek apakah route_name atau url_pattern cocok dengan menu yang di-assign
         return $this->getAssignedMenus()->contains(function ($menu) use ($routeNameOrPattern) {
             if ($menu->route_name === $routeNameOrPattern) {
@@ -132,6 +137,11 @@ class User extends Authenticatable
     public function hasCategoryAccess(string $category): bool
     {
         if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        // Kategori Pentasyarufan & Penyaluran selalu terbuka untuk seluruh tingkatan (PC, MWC, Ranting)
+        if ($category === 'Pentasyarufan & Penyaluran') {
             return true;
         }
 

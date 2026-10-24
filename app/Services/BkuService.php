@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\BkuTransaction;
 use App\Models\DistributionSetting;
 use App\Models\KoinTransaction;
 use App\Models\KontribusiStruktur;
@@ -109,6 +110,7 @@ class BkuService
         $prevInQuery = KoinTransaction::where('status', KoinTransaction::STATUS_CONFIRMED);
         $prevOutQuery = Pentasyarufan::query();
         $prevKtrQuery = KontribusiStruktur::validDisetor();
+        $prevBkuOutQuery = BkuTransaction::pengeluaran();
 
         if ($currentPenthong) {
             $prevInQuery->where(function ($q) use ($currentPenthong, $startDate) {
@@ -131,10 +133,19 @@ class BkuService
                 $q->where('periode_pentong_id', '<', $currentPenthong->id)
                   ->orWhereDate('tanggal_setor', '<', $startDate->toDateString());
             });
+
+            $prevBkuOutQuery->where(function ($q) use ($currentPenthong, $startDate) {
+                $q->where('periode_pentong_id', '<', $currentPenthong->id)
+                  ->orWhere(function ($sub) use ($startDate) {
+                      $sub->whereNull('periode_pentong_id')
+                          ->whereDate('tanggal', '<', $startDate->toDateString());
+                  });
+            });
         } else {
             $prevInQuery->whereDate('collection_date', '<', $startDate->toDateString());
             $prevOutQuery->whereDate('tanggal_penyaluran', '<', $startDate->toDateString());
             $prevKtrQuery->whereDate('tanggal_setor', '<', $startDate->toDateString());
+            $prevBkuOutQuery->whereDate('tanggal', '<', $startDate->toDateString());
         }
 
         // Terapkan Data Scoping Ketat
@@ -147,10 +158,12 @@ class BkuService
             $prevInQuery->where('ranting_id', $rId);
             $prevOutQuery->where('ranting_id', $rId);
             $prevKtrQuery->where('ranting_id', $rId);
+            $prevBkuOutQuery->where('ranting_id', $rId);
 
-            $prevInTotal  = (float) $prevInQuery->sum('amount');
-            $prevOutTotal = (float) $prevOutQuery->sum('nominal_pencairan');
-            $prevKtrTotal = (float) $prevKtrQuery->sum('total_disetor');
+            $prevInTotal     = (float) $prevInQuery->sum('amount');
+            $prevOutTotal    = (float) $prevOutQuery->sum('nominal_pencairan');
+            $prevKtrTotal    = (float) $prevKtrQuery->sum('total_disetor');
+            $prevBkuOutTotal = (float) $prevBkuOutQuery->sum('nominal');
 
             // Jika untuk ranting dan belum ada manual kontribusi lalu, perhitungkan alokasi struktur lalu
             if ($prevKtrTotal <= 0 && $prevInTotal > 0) {
@@ -158,10 +171,10 @@ class BkuService
                 $prevKtrTotal = round($prevInTotal * 0.36);
             }
 
-            $saldoAwal = max(0, $prevInTotal - ($prevOutTotal + $prevKtrTotal));
+            $saldoAwal = max(0, $prevInTotal - ($prevOutTotal + $prevKtrTotal + $prevBkuOutTotal));
         } elseif ($isMwcScope) {
             $mId = (int) $filters['mwc_id'];
-            // Saldo Awal MWC = Kontribusi Masuk MWC Lalu - Pentasyarufan MWC Lalu
+            // Saldo Awal MWC = Kontribusi Masuk MWC Lalu - Pentasyarufan MWC Lalu - Pengeluaran BKU MWC Lalu
             $prevKtrQuery->where('mwc_id', $mId)->forTujuan('MWC');
             $prevInTotal = (float) $prevKtrQuery->sum('nominal_mwc');
 
@@ -178,11 +191,13 @@ class BkuService
 
             $prevOutQuery->where('mwc_id', $mId)->where('tingkat', 'mwc');
             $prevOutTotal = (float) $prevOutQuery->sum('nominal_pencairan');
+            $prevBkuOutQuery->where('mwc_id', $mId)->where('tingkat', 'mwc');
+            $prevBkuOutTotal = (float) $prevBkuOutQuery->sum('nominal');
 
-            $saldoAwal = max(0, $prevInTotal - $prevOutTotal);
+            $saldoAwal = max(0, $prevInTotal - ($prevOutTotal + $prevBkuOutTotal));
         } else {
             // Level PC Cabang
-            // Saldo Awal PC = Kontribusi Masuk PC Lalu - Pentasyarufan PC Lalu
+            // Saldo Awal PC = Kontribusi Masuk PC Lalu - Pentasyarufan PC Lalu - Pengeluaran BKU PC Lalu
             $prevKtrQuery->forTujuan('PC');
             $prevInTotal = (float) $prevKtrQuery->sum('nominal_pc');
 
@@ -199,8 +214,10 @@ class BkuService
 
             $prevOutQuery->where('tingkat', 'pc');
             $prevOutTotal = (float) $prevOutQuery->sum('nominal_pencairan');
+            $prevBkuOutQuery->where('tingkat', 'pc');
+            $prevBkuOutTotal = (float) $prevBkuOutQuery->sum('nominal');
 
-            $saldoAwal = max(0, $prevInTotal - $prevOutTotal);
+            $saldoAwal = max(0, $prevInTotal - ($prevOutTotal + $prevBkuOutTotal));
         }
 
         // ---------------------------------------------------------------------
@@ -376,13 +393,18 @@ class BkuService
 
                 if ($pcAmount > 0) {
                     $totalPemasukanPeriodeIni += $pcAmount;
-                    $mwcName = $ktr->mwc?->name ?? 'Kecamatan';
+                    $mwcName = preg_replace('/^(MWC\s+NU|MWCNU|MWC)\s+/i', '', trim($ktr->mwc?->name ?? 'Kecamatan'));
+                    $rantingName = preg_replace('/^(Ranting|PRNU)\s+/i', '', trim($ktr->ranting?->name ?? ''));
+
+                    $uraianText = $rantingName 
+                        ? "Bagi Hasil Koin NU - Ranting {$rantingName} MWC NU {$mwcName} Periode {$penthongTitle}"
+                        : "Bagi Hasil Koin NU - MWC NU {$mwcName} Periode {$penthongTitle}";
 
                     $pemasukanList[] = [
                         'tanggal'       => Carbon::parse($ktr->tanggal_setor)->format('d/m/Y'),
                         'raw_date'      => $ktr->tanggal_setor->toDateString(),
                         'kode'          => 'NU-KONTRIBUSI',
-                        'uraian'        => "Bagi Hasil Koin NU - MWC {$mwcName} Periode {$penthongTitle}",
+                        'uraian'        => $uraianText,
                         'jumlah'        => $pcAmount,
                         'is_saldo_awal' => false,
                         'is_auto'       => false,
@@ -425,11 +447,12 @@ class BkuService
                         $autoDate = $startDate->copy()->addDays(3)->format('d/m/Y');
                         $autoRawDate = $startDate->copy()->addDays(3)->toDateString();
 
+                        $mwcClean = preg_replace('/^(MWC\s+NU|MWCNU|MWC)\s+/i', '', trim($mwc->name));
                         $pemasukanList[] = [
                             'tanggal'       => $autoDate,
                             'raw_date'      => $autoRawDate,
                             'kode'          => 'NU-KONTRIBUSI',
-                            'uraian'        => "Bagi Hasil Koin NU - MWC {$mwc->name} Periode {$penthongTitle}",
+                            'uraian'        => "Bagi Hasil Koin NU - MWC NU {$mwcClean} Periode {$penthongTitle}",
                             'jumlah'        => (float) $pcShare,
                             'is_saldo_awal' => false,
                             'is_auto'       => true,
@@ -617,6 +640,56 @@ class BkuService
                 ];
                 $totalPengeluaranPeriodeIni += $operasional;
             }
+        }
+
+        // C. Transaksi Pengeluaran Kas BKU Manual (bku_transactions)
+        $bkuTxQuery = BkuTransaction::pengeluaran();
+
+        if ($currentPenthong) {
+            $bkuTxQuery->where(function ($q) use ($currentPenthong, $startDate, $endDate) {
+                $q->where('periode_pentong_id', $currentPenthong->id)
+                  ->orWhere(function ($sub) use ($startDate, $endDate) {
+                      $sub->whereNull('periode_pentong_id')
+                          ->whereBetween('tanggal', [$startDate->toDateString(), $endDate->toDateString()]);
+                  });
+            });
+        } else {
+            $bkuTxQuery->whereBetween('tanggal', [$startDate->toDateString(), $endDate->toDateString()]);
+        }
+
+        if ($isRantingScope) {
+            $bkuTxQuery->where('ranting_id', (int) $filters['ranting_id']);
+        } elseif ($isMwcScope) {
+            $bkuTxQuery->where('mwc_id', (int) $filters['mwc_id'])->where('tingkat', 'mwc');
+        } else {
+            $bkuTxQuery->where('tingkat', 'pc');
+        }
+
+        if (!empty($filters['tingkat']) && $filters['tingkat'] !== 'all') {
+            $bkuTxQuery->where('tingkat', $filters['tingkat']);
+        }
+
+        $bkuExpenses = $bkuTxQuery->orderBy('tanggal')->get();
+
+        foreach ($bkuExpenses as $tx) {
+            $nominal = (float) $tx->nominal;
+            $totalPengeluaranPeriodeIni += $nominal;
+
+            $vendor = $tx->penerima_vendor ? " ({$tx->penerima_vendor})" : "";
+            $uraian = "{$tx->uraian}{$vendor}";
+
+            $pengeluaranList[] = [
+                'id'              => $tx->id,
+                'tanggal'         => Carbon::parse($tx->tanggal)->format('d/m/Y'),
+                'raw_date'        => $tx->tanggal->toDateString(),
+                'kode'            => $tx->kode_transaksi,
+                'uraian'          => $uraian,
+                'jumlah'          => $nominal,
+                'kategori'        => $tx->kategori,
+                'bukti_kwitansi'  => $tx->bukti_kwitansi,
+                'penerima_vendor' => $tx->penerima_vendor,
+                'is_auto'         => false,
+            ];
         }
 
         // Urutkan pengeluaran berdasarkan tanggal transaksi

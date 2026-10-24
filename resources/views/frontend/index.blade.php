@@ -541,7 +541,7 @@
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-muted">Metode Penyaluran:</label>
                             <select name="payment_method" id="quickPaymentMethod" class="form-select form-select-sm fw-semibold" required>
-                                <option value="transfer_bri">Transfer BRI (Infaq &amp; Koin - 00411001448562)</option>
+                                <option value="transfer_bri">Transfer BRI (Infaq &amp; Koin - {{ $settings['bank_bri_infaq'] ?? '004101001448562' }})</option>
                                 <option value="qris">QRIS BRI (Semua E-Wallet &amp; Mobile Banking)</option>
                             </select>
                         </div>
@@ -1201,7 +1201,7 @@
                         <div class="mb-3">
                             <small class="text-muted text-uppercase fw-bold d-block" style="font-size: 0.75rem;">Nomor Rekening Infaq / Shadaqah:</small>
                             <div class="fs-2 fw-extrabold text-dark tracking-wide my-1 font-monospace" id="rek-bri-infaq">
-                                00411001448562
+                                {{ $settings['bank_bri_infaq'] ?? '004101001448562' }}
                             </div>
                             <div class="small text-muted">
                                 Atas Nama: <strong class="text-dark">LAZISNU LAMONGAN</strong>
@@ -1214,7 +1214,7 @@
                         </div>
 
                         <div class="d-flex gap-2">
-                            <button class="btn btn-primary rounded-pill fw-bold py-2 px-4 shadow-sm" onclick="copyToClipboard('00411001448562', 'btn-bri-infaq')" id="btn-bri-infaq">
+                            <button class="btn btn-primary rounded-pill fw-bold py-2 px-4 shadow-sm" onclick="copyToClipboard('{{ $settings['bank_bri_infaq'] ?? '004101001448562' }}', 'btn-bri-infaq')" id="btn-bri-infaq">
                                 <i class="fa-regular fa-copy me-1"></i> Salin No. Rekening BRI
                             </button>
                         </div>
@@ -1566,7 +1566,7 @@
         const zakatCampaignId = "{{ $zakatCampaign?->id ?? ($featuredCampaigns->first()?->id ?? 1) }}";
 
         const infaqPaymentOptions = `
-            <option value="transfer_bri">Transfer BRI (Infaq &amp; Koin - 00411001448562)</option>
+            <option value="transfer_bri">Transfer BRI (Infaq &amp; Koin - {{ $settings['bank_bri_infaq'] ?? '004101001448562' }})</option>
             <option value="qris">QRIS BRI (Semua E-Wallet &amp; Mobile Banking)</option>
         `;
 

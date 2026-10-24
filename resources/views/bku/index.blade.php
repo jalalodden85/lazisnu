@@ -10,6 +10,39 @@
 @endsection
 
 @section('content')
+{{-- Notifikasi Flash Message --}}
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="fas fa-check-circle mr-2"></i> <strong>Berhasil!</strong> {{ session('success') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="fas fa-exclamation-triangle mr-2"></i> <strong>Peringatan!</strong> {{ session('error') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
+
+@if($errors->any())
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="fas fa-times-circle mr-2"></i> <strong>Terdapat Kesalahan Input:</strong>
+        <ul class="mb-0 mt-1 pl-3">
+            @foreach($errors->all() as $err)
+                <li>{{ $err }}</li>
+            @endforeach
+        </ul>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+@endif
+
 <!-- Filter Parameter Periode BKU & Data Scoping -->
 <div class="card card-outline card-success shadow-sm mb-4">
     <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center flex-wrap">
@@ -22,12 +55,9 @@
             <span class="badge badge-success px-3 py-2 font-weight-bold">
                 <i class="fas fa-box-open mr-1"></i> Periode: {{ $bkuData['periode_title'] }}
             </span>
-            {{-- Sembunyikan sementara tombol Setor Kontribusi Struktur karena belum digunakan --}}
-            {{--
-            <a href="{{ route('pentasyarufan.kontribusi.create', ['penthong_id' => $selectedPenthongId]) }}" class="btn btn-sm btn-warning text-dark font-weight-bold shadow-xs ml-2">
-                <i class="fas fa-hand-holding-usd mr-1"></i> + Setor Kontribusi Struktur
-            </a>
-            --}}
+            <button type="button" class="btn btn-sm btn-danger font-weight-bold shadow-xs ml-2" data-toggle="modal" data-target="#modalTambahPengeluaran">
+                <i class="fas fa-plus-circle mr-1"></i> + Tambah Pengeluaran
+            </button>
         </div>
     </div>
     <div class="card-body bg-light py-3">
@@ -148,70 +178,100 @@
 </div>
 @endif
 
-<!-- 4 KPI Card Saldo Buku Kas -->
-<div class="row">
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-white border shadow-sm">
-            <div class="inner">
-                <h3 class="text-secondary font-weight-bold">Rp {{ number_format($bkuData['saldo_awal'], 0, ',', '.') }}</h3>
-                <p class="text-muted mb-0 font-weight-bold">Saldo Bulan Lalu (Awal)</p>
+<!-- 3 WIDGET CARD KALKULASI DASHBOARD BKU (TERHUBUNG SECARA MATEMATIS) -->
+<div class="row mb-4">
+    <!-- Card 1: Total Pemasukan -->
+    <div class="col-lg-4 col-12 mb-3 mb-lg-0">
+        <div class="card card-outline card-success shadow-sm h-100 mb-0 border-success">
+            <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
+                <span class="badge badge-success px-2 py-1 font-weight-bold">
+                    <i class="fas fa-sign-in-alt mr-1"></i> TOTAL PEMASUKAN
+                </span>
+                <span class="text-muted small font-weight-bold">DEBET [ + ]</span>
             </div>
-            <div class="icon text-secondary" style="opacity: 0.25;">
-                <i class="fas fa-history"></i>
+            <div class="card-body py-3 d-flex flex-column justify-content-between">
+                <div>
+                    <span class="text-muted text-uppercase small font-weight-bold">Akumulasi Kas Masuk</span>
+                    <h2 class="font-weight-bold text-success my-2">
+                        Rp {{ number_format($bkuData['jumlah_pemasukan'], 0, ',', '.') }}
+                    </h2>
+                    <p class="text-muted small mb-0">
+                        <i class="fas fa-coins text-warning mr-1"></i> SUM(nominal) transaksi berjenis pemasukan kas.
+                    </p>
+                </div>
+                <div class="mt-3 pt-2 border-top d-flex justify-content-between small text-muted">
+                    <span>Saldo Awal: <strong>Rp {{ number_format($bkuData['saldo_awal'], 0, ',', '.') }}</strong></span>
+                    <span>Masuk Periode Ini: <strong>Rp {{ number_format($bkuData['total_pemasukan_bulan_ini'], 0, ',', '.') }}</strong></span>
+                </div>
             </div>
-            <div class="small-box-footer bg-light text-muted border-top py-1 small">
-                Sisa Kas Per 1 {{ $bkuData['nama_bulan'] }} {{ $tahun }}
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-success shadow-sm">
-            <div class="inner">
-                <h3 class="font-weight-bold">Rp {{ number_format($bkuData['total_pemasukan_bulan_ini'], 0, ',', '.') }}</h3>
-                <p class="mb-0">Pemasukan Bulan Ini</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-arrow-down"></i>
-            </div>
-            <div class="small-box-footer py-1 small text-white" style="background: rgba(0,0,0,0.1);">
-                @if($bkuData['is_ranting_scope'] ?? false)
-                    Setoran Koin NU Munfiq (Bruto)
-                @elseif($bkuData['is_mwc_scope'] ?? false)
-                    Bagi Hasil Kontribusi Ranting ({{ $bkuData['mwc_pct'] ?? 13 }}% Netto)
-                @else
-                    Bagi Hasil Kontribusi Cabang ({{ $bkuData['pc_pct'] ?? 5 }}% Netto)
-                @endif
+            <div class="card-footer bg-light py-2 text-center small text-success font-weight-bold border-top">
+                <i class="fas fa-arrow-circle-down mr-1"></i> Total Kas Debet Tersedia
             </div>
         </div>
     </div>
 
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-danger shadow-sm">
-            <div class="inner">
-                <h3 class="font-weight-bold">Rp {{ number_format($bkuData['total_pengeluaran'], 0, ',', '.') }}</h3>
-                <p class="mb-0">Pengeluaran Bulan Ini</p>
+    <!-- Card 2: Total Pengeluaran -->
+    <div class="col-lg-4 col-12 mb-3 mb-lg-0">
+        <div class="card card-outline card-danger shadow-sm h-100 mb-0 border-danger">
+            <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
+                <span class="badge badge-danger px-2 py-1 font-weight-bold">
+                    <i class="fas fa-sign-out-alt mr-1"></i> TOTAL PENGELUARAN
+                </span>
+                <span class="text-muted small font-weight-bold">KREDIT [ &minus; ]</span>
             </div>
-            <div class="icon">
-                <i class="fas fa-arrow-up"></i>
+            <div class="card-body py-3 d-flex flex-column justify-content-between">
+                <div>
+                    <span class="text-muted text-uppercase small font-weight-bold">Akumulasi Kas Keluar</span>
+                    <h2 class="font-weight-bold text-danger my-2">
+                        Rp {{ number_format($bkuData['total_pengeluaran'], 0, ',', '.') }}
+                    </h2>
+                    <p class="text-muted small mb-0">
+                        <i class="fas fa-receipt text-danger mr-1"></i> SUM(nominal) transaksi berjenis pengeluaran kas.
+                    </p>
+                </div>
+                <div class="mt-3 pt-2 border-top d-flex justify-content-between small text-muted">
+                    <span>Pentasyarufan & Operasional</span>
+                    <button type="button" class="btn btn-xs btn-outline-danger font-weight-bold" data-toggle="modal" data-target="#modalTambahPengeluaran">
+                        <i class="fas fa-plus mr-1"></i> Tambah Pengeluaran
+                    </button>
+                </div>
             </div>
-            <div class="small-box-footer py-1 small text-white" style="background: rgba(0,0,0,0.1);">
-                Pentasyarufan & Penyaluran Proker
+            <div class="card-footer bg-light py-2 text-center small text-danger font-weight-bold border-top">
+                <i class="fas fa-arrow-circle-up mr-1"></i> Total Kas Kredit Dikeluarkan
             </div>
         </div>
     </div>
 
-    <div class="col-lg-3 col-6">
-        <div class="small-box {{ $bkuData['saldo_buku'] < 0 ? 'bg-warning text-dark' : 'bg-primary' }} shadow-sm">
-            <div class="inner">
-                <h3 class="font-weight-bold">Rp {{ number_format($bkuData['saldo_buku'], 0, ',', '.') }}</h3>
-                <p class="mb-0 font-weight-bold">Saldo Buku (Kas Akhir)</p>
+    <!-- Card 3: Sisa Saldo Akhir -->
+    <div class="col-lg-4 col-12 mb-3 mb-lg-0">
+        <div class="card card-outline {{ $bkuData['saldo_buku'] < 0 ? 'card-warning border-warning' : 'card-primary border-primary' }} shadow-sm h-100 mb-0">
+            <div class="card-header bg-white py-2 d-flex justify-content-between align-items-center">
+                <span class="badge {{ $bkuData['saldo_buku'] < 0 ? 'badge-warning text-dark' : 'badge-primary' }} px-2 py-1 font-weight-bold">
+                    <i class="fas fa-wallet mr-1"></i> SISA SALDO AKHIR
+                </span>
+                <span class="text-muted small font-weight-bold">HASIL [ = ]</span>
             </div>
-            <div class="icon">
-                <i class="fas fa-wallet"></i>
+            <div class="card-body py-3 d-flex flex-column justify-content-between">
+                <div>
+                    <span class="text-muted text-uppercase small font-weight-bold">Saldo Kas Tersedia</span>
+                    <h2 class="font-weight-bold {{ $bkuData['saldo_buku'] < 0 ? 'text-warning' : 'text-primary' }} my-2">
+                        Rp {{ number_format($bkuData['saldo_buku'], 0, ',', '.') }}
+                    </h2>
+                    <p class="text-muted small mb-0">
+                        <i class="fas fa-calculator text-primary mr-1"></i> <strong>(Total Pemasukan &minus; Total Pengeluaran)</strong>
+                    </p>
+                </div>
+                <div class="mt-3 pt-2 border-top d-flex justify-content-between small text-muted">
+                    <span>Status Kas:</span>
+                    @if($bkuData['saldo_buku'] < 0)
+                        <strong class="text-danger"><i class="fas fa-exclamation-triangle"></i> Defisit Kas!</strong>
+                    @else
+                        <strong class="text-success"><i class="fas fa-check-circle"></i> Kas Sehat & Seimbang</strong>
+                    @endif
+                </div>
             </div>
-            <div class="small-box-footer py-1 small text-white" style="background: rgba(0,0,0,0.1);">
-                Jumlah Pemasukan - Pengeluaran
+            <div class="card-footer bg-light py-2 text-center small {{ $bkuData['saldo_buku'] < 0 ? 'text-danger font-weight-bold' : 'text-primary font-weight-bold' }} border-top">
+                <i class="fas fa-shield-alt text-success mr-1"></i> Sisa Dana Riil Kas BKU
             </div>
         </div>
     </div>
@@ -337,6 +397,13 @@
                                         <i class="fas fa-magic text-info mr-1"></i>Otomatis
                                     </span>
                                 @endif
+                                @if(!empty($out['bukti_kwitansi']))
+                                    <div class="mt-1">
+                                        <a href="{{ asset('storage/' . $out['bukti_kwitansi']) }}" target="_blank" class="btn btn-xs btn-outline-info font-weight-bold shadow-xs" title="Lihat Bukti Kwitansi / Nota Struk">
+                                            <i class="fas fa-file-invoice mr-1"></i>Lihat Bukti
+                                        </a>
+                                    </div>
+                                @endif
                             </td>
                             <td class="text-right text-danger font-weight-bold">
                                 {{ number_format($out['jumlah'], 0, ',', '.') }}
@@ -406,6 +473,146 @@
         </div>
     </div>
 </div>
+
+{{-- MODAL POP-UP FORM INPUT PENGELUARAN BKU --}}
+<div class="modal fade" id="modalTambahPengeluaran" tabindex="-1" role="dialog" aria-labelledby="modalTambahPengeluaranLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content border-0 shadow">
+            <form action="{{ route('bku.pengeluaran.store') }}" method="POST" enctype="multipart/form-data" id="formTambahPengeluaran">
+                @csrf
+                <input type="hidden" name="penthong_id" value="{{ $selectedPenthongId }}">
+                @if(!empty($filters['mwc_id']))
+                    <input type="hidden" name="mwc_id" value="{{ $filters['mwc_id'] }}">
+                @endif
+                @if(!empty($filters['ranting_id']))
+                    <input type="hidden" name="ranting_id" value="{{ $filters['ranting_id'] }}">
+                @endif
+
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title font-weight-bold" id="modalTambahPengeluaranLabel">
+                        <i class="fas fa-plus-circle mr-2"></i> Tambah Pengeluaran Kas BKU
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body p-4">
+                    {{-- Alert Info Sisa Saldo Kas Kas Tersedia --}}
+                    <div class="alert alert-light border py-2 px-3 mb-3 d-flex justify-content-between align-items-center" style="border-left: 4px solid #007bff !important; background-color: #f7faff;">
+                        <div>
+                            <span class="text-muted small text-uppercase font-weight-bold d-block">Sisa Saldo Kas BKU Tersedia:</span>
+                            <span class="font-weight-bold text-primary" style="font-size: 1.25rem;">
+                                Rp {{ number_format($bkuData['saldo_buku'], 0, ',', '.') }}
+                            </span>
+                        </div>
+                        <div class="text-right small text-muted">
+                            Entitas: <strong class="text-dark">{{ $wilayahLabel }}</strong><br>
+                            Periode: <strong class="text-dark">{{ $bkuData['periode_title'] }}</strong>
+                        </div>
+                    </div>
+
+                    {{-- Dynamic Warning Alert if Nominal Exceeds Balance --}}
+                    <div id="alertNominalDefisit" class="alert alert-danger py-2 px-3 mb-3 small d-none shadow-xs">
+                        <i class="fas fa-exclamation-triangle mr-1"></i>
+                        <strong>Peringatan Defisit:</strong> Nominal yang Anda masukkan (<span id="txtNominalInput">0</span>) melebihi sisa saldo kas (Rp {{ number_format($bkuData['saldo_buku'], 0, ',', '.') }}). Sistem akan menolak transaksi ini karena saldo kas tidak mencukupi!
+                    </div>
+
+                    <div class="row">
+                        <!-- Kategori Pengeluaran (*) -->
+                        <div class="col-md-6 form-group mb-3">
+                            <label for="kategori" class="font-weight-bold small text-dark">
+                                Kategori Pengeluaran <span class="text-danger">*</span>
+                            </label>
+                            <select name="kategori" id="kategori" class="form-control font-weight-bold" required>
+                                <option value="">-- Pilih Kategori Pengeluaran --</option>
+                                <option value="Pendidikan" {{ old('kategori') == 'Pendidikan' ? 'selected' : '' }}>Pendidikan (NU Cerdas)</option>
+                                <option value="Kesehatan" {{ old('kategori') == 'Kesehatan' ? 'selected' : '' }}>Kesehatan (NU Sehat)</option>
+                                <option value="Ekonomi" {{ old('kategori') == 'Ekonomi' ? 'selected' : '' }}>Ekonomi (NU Berdaya)</option>
+                                <option value="Sosial" {{ old('kategori') == 'Sosial' ? 'selected' : '' }}>Sosial (NU Damai)</option>
+                                <option value="Dakwah" {{ old('kategori') == 'Dakwah' ? 'selected' : '' }}>Dakwah (NU Hijau)</option>
+                                <option value="Biaya Operasional" {{ old('kategori') == 'Biaya Operasional' ? 'selected' : '' }}>Biaya Operasional (NU-O)</option>
+                            </select>
+                            <small class="text-muted">Pilih bidang program pentasyarufan atau biaya operasional.</small>
+                        </div>
+
+                        <!-- Tanggal Pengeluaran (*) -->
+                        <div class="col-md-6 form-group mb-3">
+                            <label for="tanggal" class="font-weight-bold small text-dark">
+                                Tanggal Pengeluaran <span class="text-danger">*</span>
+                            </label>
+                            <input type="date" name="tanggal" id="tanggal" class="form-control font-weight-bold" 
+                                   value="{{ old('tanggal', date('Y-m-d')) }}" required>
+                            <small class="text-muted">Default tanggal hari ini.</small>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Nominal Pengeluaran (*) dengan Format Ribuan Otomatis -->
+                        <div class="col-md-6 form-group mb-3">
+                            <label for="nominal_mask" class="font-weight-bold small text-dark">
+                                Nominal Pengeluaran (Rp) <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text font-weight-bold bg-light">Rp</span>
+                                </div>
+                                <input type="text" name="nominal" id="nominal_mask" class="form-control font-weight-bold text-dark text-right" 
+                                       placeholder="0" value="{{ old('nominal') }}" required autocomplete="off">
+                            </div>
+                            <small class="text-muted">Format ribuan otomatis saat mengetik angka.</small>
+                        </div>
+
+                        <!-- Penerima / Nama Toko / Vendor (Opsional) -->
+                        <div class="col-md-6 form-group mb-3">
+                            <label for="penerima_vendor" class="font-weight-bold small text-dark">
+                                Penerima / Nama Toko / Vendor <span class="text-muted font-weight-normal">(Opsional)</span>
+                            </label>
+                            <input type="text" name="penerima_vendor" id="penerima_vendor" class="form-control" 
+                                   placeholder="Contoh: Toko Barokah / Klinik Sehat / Bpk. Fulan" 
+                                   value="{{ old('penerima_vendor') }}">
+                            <small class="text-muted">Pihak ketiga penyedia barang/jasa atau penerima manfaat.</small>
+                        </div>
+                    </div>
+
+                    <!-- Uraian Keperluan Belanja / Pentasyarufan (*) -->
+                    <div class="form-group mb-3">
+                        <label for="uraian" class="font-weight-bold small text-dark">
+                            Uraian Keperluan Belanja / Pentasyarufan <span class="text-danger">*</span>
+                        </label>
+                        <textarea name="uraian" id="uraian" class="form-control" rows="3" 
+                                  placeholder="Contoh: Bisyaroh petugas atau Bantuan biaya sekolah anak yatim" required>{{ old('uraian') }}</textarea>
+                        <small class="text-muted">Jelaskan keperluan dan rincian belanja secara jelas, transparan, dan akuntabel.</small>
+                    </div>
+
+                    <!-- Bukti Kwitansi / Nota Struk (Opsional, max 2MB) -->
+                    <div class="form-group mb-0">
+                        <label for="bukti_kwitansi" class="font-weight-bold small text-dark">
+                            Bukti Kwitansi / Nota Struk <span class="text-muted font-weight-normal">(Opsional, Maks 2MB)</span>
+                        </label>
+                        <div class="custom-file">
+                            <input type="file" name="bukti_kwitansi" id="bukti_kwitansi" class="custom-file-input" 
+                                   accept="image/jpeg,image/png,image/jpg,image/webp,application/pdf">
+                            <label class="custom-file-label" for="bukti_kwitansi">Pilih file foto nota atau kwitansi...</label>
+                        </div>
+                        <small class="text-muted d-block mt-1">
+                            <i class="fas fa-file-image text-info mr-1"></i> Format file didukung: Gambar (JPG, PNG) atau PDF (Maksimal 2 MB).
+                        </small>
+                    </div>
+                </div>
+
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times mr-1"></i> Batal
+                    </button>
+                    <button type="submit" id="btnSimpanPengeluaran" class="btn btn-danger font-weight-bold">
+                        <i class="fas fa-save mr-1"></i> Simpan Pengeluaran
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('styles')
@@ -428,4 +635,82 @@
     background-color: #fafbfc;
 }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const nominalInput = document.getElementById('nominal_mask');
+    const alertDefisit = document.getElementById('alertNominalDefisit');
+    const txtNominalInput = document.getElementById('txtNominalInput');
+    const btnSimpan = document.getElementById('btnSimpanPengeluaran');
+    const saldoKasTersedia = {{ (float) ($bkuData['saldo_buku'] ?? 0) }};
+
+    function formatRibuan(angka) {
+        return angka.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    if (nominalInput) {
+        nominalInput.addEventListener('input', function () {
+            let rawValue = this.value.replace(/\D/g, '');
+
+            if (rawValue === '') {
+                this.value = '';
+                if (alertDefisit) alertDefisit.classList.add('d-none');
+                this.classList.remove('is-invalid');
+                return;
+            }
+
+            this.value = formatRibuan(rawValue);
+
+            let numValue = parseFloat(rawValue) || 0;
+            if (numValue > saldoKasTersedia) {
+                if (alertDefisit) {
+                    alertDefisit.classList.remove('d-none');
+                    if (txtNominalInput) txtNominalInput.innerText = 'Rp ' + formatRibuan(rawValue);
+                }
+                this.classList.add('is-invalid');
+            } else {
+                if (alertDefisit) alertDefisit.classList.add('d-none');
+                this.classList.remove('is-invalid');
+            }
+        });
+    }
+
+    // Update label custom-file-input saat file dipilih
+    const fileInput = document.getElementById('bukti_kwitansi');
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            let fileName = e.target.files[0] ? e.target.files[0].name : 'Pilih file foto nota atau kwitansi...';
+            let nextSibling = e.target.nextElementSibling;
+            if (nextSibling && nextSibling.classList.contains('custom-file-label')) {
+                nextSibling.innerText = fileName;
+            }
+        });
+    }
+
+    // Validasi saat submit form
+    const formPengeluaran = document.getElementById('formTambahPengeluaran');
+    if (formPengeluaran) {
+        formPengeluaran.addEventListener('submit', function (e) {
+            let rawValue = nominalInput.value.replace(/\D/g, '');
+            let numValue = parseFloat(rawValue) || 0;
+
+            if (numValue <= 0) {
+                e.preventDefault();
+                alert('Nominal pengeluaran wajib diisi dan harus lebih besar dari Rp 0.');
+                nominalInput.focus();
+                return false;
+            }
+
+            if (numValue > saldoKasTersedia) {
+                e.preventDefault();
+                alert('Saldo Kas tidak mencukupi! Sisa saldo saat ini Rp ' + formatRibuan(saldoKasTersedia.toString()) + '. Pengeluaran sebesar Rp ' + formatRibuan(rawValue) + ' tidak dapat diproses.');
+                nominalInput.focus();
+                return false;
+            }
+        });
+    }
+});
+</script>
 @endpush
