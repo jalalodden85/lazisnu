@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         // 1. Tabel Master Data Mustahiq (Penerima Manfaat Berbasis Ranting)
-        Schema::create('mustahiqs', function (Blueprint $table) {
+        if (!Schema::hasTable('mustahiqs')) {
+            Schema::create('mustahiqs', function (Blueprint $table) {
             $table->id();
             $table->string('nik', 20)->unique()->comment('Nomor Induk Kependudukan (Unik Nasional)');
             $table->string('nama', 255)->comment('Nama Lengkap Mustahiq');
@@ -59,19 +60,22 @@ return new class extends Migration
             $table->index(['mwc_id', 'asnaf']);
             $table->index(['nama', 'nik']);
         });
+        }
 
         // 2. Tabel Pivot Relasi Pentasyarufan & Mustahiq (Many-to-Many Rekam Jejak Bantuan)
-        Schema::create('pentasyarufan_mustahiq', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('pentasyarufan_id')->constrained('pentasyarufans')->cascadeOnDelete();
-            $table->foreignId('mustahiq_id')->constrained('mustahiqs')->cascadeOnDelete();
-            $table->decimal('nominal_bantuan', 15, 2)->nullable()->comment('Nominal bantuan riil per penerima');
-            $table->string('keterangan', 255)->nullable()->comment('Bentuk bantuan (e.g. Sembako, Uang Tunai, Kursi Roda)');
-            $table->timestamps();
+        if (!Schema::hasTable('pentasyarufan_mustahiq')) {
+            Schema::create('pentasyarufan_mustahiq', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('pentasyarufan_id')->constrained('pentasyarufans')->cascadeOnDelete();
+                $table->foreignId('mustahiq_id')->constrained('mustahiqs')->cascadeOnDelete();
+                $table->decimal('nominal_bantuan', 15, 2)->nullable()->comment('Nominal bantuan riil per penerima');
+                $table->string('keterangan', 255)->nullable()->comment('Bentuk bantuan (e.g. Sembako, Uang Tunai, Kursi Roda)');
+                $table->timestamps();
 
-            $table->unique(['pentasyarufan_id', 'mustahiq_id'], 'pentasyarufan_mustahiq_unique');
-            $table->index('mustahiq_id');
-        });
+                $table->unique(['pentasyarufan_id', 'mustahiq_id'], 'pentasyarufan_mustahiq_unique');
+                $table->index('mustahiq_id');
+            });
+        }
 
         // Drop view jika ada untuk menghindari 'no such table' di SQLite saat rename __temp__pentasyarufans
         \Illuminate\Support\Facades\DB::statement("DROP VIEW IF EXISTS vw_saldo_pentasyarufan");
@@ -87,7 +91,7 @@ return new class extends Migration
 
         // Recreate view vw_saldo_pentasyarufan
         \Illuminate\Support\Facades\DB::statement("
-            CREATE VIEW IF NOT EXISTS vw_saldo_pentasyarufan AS
+            CREATE OR REPLACE VIEW vw_saldo_pentasyarufan AS
             SELECT 
                 p.penthong_id,
                 pt.nama_periode,
@@ -129,7 +133,7 @@ return new class extends Migration
         });
 
         \Illuminate\Support\Facades\DB::statement("
-            CREATE VIEW IF NOT EXISTS vw_saldo_pentasyarufan AS
+            CREATE OR REPLACE VIEW vw_saldo_pentasyarufan AS
             SELECT 
                 p.penthong_id,
                 pt.nama_periode,

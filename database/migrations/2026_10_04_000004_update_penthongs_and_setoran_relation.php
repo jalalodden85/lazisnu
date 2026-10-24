@@ -16,7 +16,9 @@ return new class extends Migration
         if (!Schema::hasColumn('penthongs', 'is_active')) {
             Schema::table('penthongs', function (Blueprint $table) {
                 $table->boolean('is_active')->default(false)->after('status');
-                $table->index(['is_active']);
+                if (!Schema::hasIndex('penthongs', ['is_active'])) {
+                    $table->index(['is_active']);
+                }
             });
 
             // Set is_active = true untuk penthong berstatus aktif/open
@@ -33,7 +35,9 @@ return new class extends Migration
                       ->after('penthong_id')
                       ->constrained('penthongs')
                       ->nullOnDelete();
-                $table->index('periode_pentong_id');
+                if (!Schema::hasIndex('koin_transactions', ['periode_pentong_id'])) {
+                    $table->index('periode_pentong_id');
+                }
             });
 
             // Sinkronisasi data awal periode_pentong_id = penthong_id
@@ -70,12 +74,18 @@ return new class extends Migration
         if (Schema::hasColumn('koin_transactions', 'periode_pentong_id')) {
             Schema::table('koin_transactions', function (Blueprint $table) {
                 $table->dropForeign(['periode_pentong_id']);
+                if (Schema::hasIndex('koin_transactions', ['periode_pentong_id'])) {
+                    $table->dropIndex(['periode_pentong_id']);
+                }
                 $table->dropColumn('periode_pentong_id');
             });
         }
 
         if (Schema::hasColumn('penthongs', 'is_active')) {
             Schema::table('penthongs', function (Blueprint $table) {
+                if (Schema::hasIndex('penthongs', ['is_active'])) {
+                    $table->dropIndex(['is_active']);
+                }
                 $table->dropColumn('is_active');
             });
         }

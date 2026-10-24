@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('rantings', function (Blueprint $table) {
-            $table->boolean('is_active')->default(true)->after('address')->comment('Status keikutsertaan ranting dalam program KOIN NU');
-            $table->index('is_active');
+            if (!Schema::hasColumn('rantings', 'is_active')) {
+                $table->boolean('is_active')->default(true)->after('address')->comment('Status keikutsertaan ranting dalam program KOIN NU');
+            }
+            if (!Schema::hasIndex('rantings', ['is_active'])) {
+                $table->index('is_active');
+            }
         });
     }
 
@@ -23,8 +27,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('rantings', function (Blueprint $table) {
-            $table->dropIndex(['is_active']);
-            $table->dropColumn('is_active');
+            if (Schema::hasIndex('rantings', ['is_active'])) {
+                $table->dropIndex(['is_active']);
+            }
+            if (Schema::hasColumn('rantings', 'is_active')) {
+                $table->dropColumn('is_active');
+            }
         });
     }
 };

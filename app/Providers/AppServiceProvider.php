@@ -2,8 +2,7 @@
 
 namespace App\Providers;
 
-use App\Models\User;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,5 +24,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('proses-hasil-koin', function (User $user) {
             return $user->isSuperAdmin() || $user->isPc() || $user->isMwc();
         });
+        //
+        URL::forceScheme('https');
     }
 }

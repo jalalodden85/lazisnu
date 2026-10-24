@@ -35,7 +35,9 @@ return new class extends Migration
                         ->nullOnDelete();
                 }
 
-                $table->index(['periode_pentong_id', 'tingkat'], 'idx_proker_pentong_tingkat');
+                if (!Schema::hasIndex('program_kerjas', 'idx_proker_pentong_tingkat')) {
+                    $table->index(['periode_pentong_id', 'tingkat'], 'idx_proker_pentong_tingkat');
+                }
             });
         }
 
@@ -178,6 +180,9 @@ return new class extends Migration
 
         if (Schema::hasTable('program_kerjas')) {
             Schema::table('program_kerjas', function (Blueprint $table) {
+                if (Schema::hasIndex('program_kerjas', 'idx_proker_pentong_tingkat')) {
+                    $table->dropIndex('idx_proker_pentong_tingkat');
+                }
                 if (Schema::hasColumn('program_kerjas', 'periode_pentong_id')) {
                     $table->dropForeign(['periode_pentong_id']);
                     $table->dropColumn('periode_pentong_id');
