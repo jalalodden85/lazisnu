@@ -271,5 +271,8 @@ class DatabaseSeeder extends Seeder
                 'notes'       => "Donatur baru mendaftar, perlu pembagian petugas relawan",
             ]);
         }
+
+        // 8. Daftarkan dan sinkronkan menu Buku Kas Umum (BKU)
+        $this->call(BkuMenuSeeder::class);
     }
 }

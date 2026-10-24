@@ -341,12 +341,14 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <!-- 0. SUB-MENU BARU: HASIL KOIN (SIMPLIFIKASI DIRECT SPLIT) -->
+                            @if(!$currentUser || $currentUser->hasMenuAccess('pentasyarufan.hasil-koin.index'))
                             <li class="nav-item">
                                 <a href="{{ route('pentasyarufan.hasil-koin.index') }}" class="nav-link {{ request()->routeIs('pentasyarufan.hasil-koin.*') ? 'active' : '' }}">
                                     <i class="fas fa-coins nav-icon text-warning"></i>
                                     <p>Hasil Koin <span class="badge badge-success right">Baru</span></p>
                                 </a>
                             </li>
+                            @endif
 
                             @if(!$currentUser || $currentUser->hasMenuAccess('pilar-program.index'))
                             <li class="nav-item">
@@ -380,18 +382,22 @@
                                 </a>
                             </li>
                             @endif
+                            @if(!$currentUser || $currentUser->hasMenuAccess('bku.index'))
                             <li class="nav-item">
                                 <a href="{{ route('bku.index') }}" class="nav-link {{ request()->routeIs('bku.*') ? 'active' : '' }}">
                                     <i class="fas fa-book nav-icon text-warning"></i>
                                     <p>Buku Kas Umum (BKU)</p>
                                 </a>
                             </li>
+                            @endif
+                            @if(!$currentUser || $currentUser->hasMenuAccess('bku-operasional.index'))
                             <li class="nav-item">
                                 <a href="{{ route('bku-operasional.index') }}" class="nav-link {{ request()->routeIs('bku-operasional.*') ? 'active' : '' }}">
                                     <i class="fas fa-wallet nav-icon text-info"></i>
                                     <p>BKU Operasional (Amil)</p>
                                 </a>
                             </li>
+                            @endif
                         </ul>
                     </li>
                     @endif

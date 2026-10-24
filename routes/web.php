@@ -263,6 +263,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export/excel', [BkuOperasionalController::class, 'exportExcel'])->name('export.excel');
     });
 
+    // Alias URL Manual jika pengguna mengetik via prefix pentasyarufan
+    Route::get('pentasyarufan/bku', fn() => redirect()->route('bku.index'));
+    Route::get('pentasyarufan/bku-operasional', fn() => redirect()->route('bku-operasional.index'));
+
     // 8. Buku Panduan Operasional Sistem (User Manual & PDF Ready)
     Route::get('/buku-panduan', function () {
         return response()->file(public_path('buku-panduan.html'));

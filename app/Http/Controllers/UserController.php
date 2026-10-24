@@ -155,6 +155,12 @@ class UserController extends Controller
             $user->menus()->sync($request->input('menus', []));
         }
 
+        $user->clearMenuCache();
+        \Illuminate\Support\Facades\Cache::flush();
+        if (class_exists(\Spatie\Permission\PermissionRegistrar::class)) {
+            app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+        }
+
         return redirect()->route('users.index')
             ->with('success', "Akun baru [{$user->name}] ({$user->username}) berhasil dibuat beserta hak akses menunya!");
     }
@@ -247,6 +253,13 @@ class UserController extends Controller
 
             // SINKRONISASI HAK AKSES MENU DINAMIS (MANY-TO-MANY SYNC)
             $user->menus()->sync($request->input('menus', []));
+
+            // CRITICAL FIX: Hapus cache hak akses & cache registrar seketika
+            $user->clearMenuCache();
+            \Illuminate\Support\Facades\Cache::flush();
+            if (class_exists(\Spatie\Permission\PermissionRegistrar::class)) {
+                app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+            }
         }
 
         $user->update($payload);
