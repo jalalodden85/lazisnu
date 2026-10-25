@@ -40,6 +40,14 @@ class WhatsAppHelper
     }
 
     /**
+     * Cek apakah nomor WhatsApp valid setelah dinormalisasi
+     */
+    public static function isValidNumber(?string $phone): bool
+    {
+        return self::formatNumber($phone) !== null;
+    }
+
+    /**
      * Susun Hyperlink wa.me dengan pesan template salam resmi NU Care - LAZISNU.
      */
     public static function generateLink(?string $phone, ?string $recipientName = null, ?string $jabatan = null, ?string $wilayah = null): ?string
@@ -65,5 +73,60 @@ class WhatsAppHelper
         ]);
 
         return "https://wa.me/{$formatted}?{$params}";
+    }
+
+    /**
+     * Susun link wa.me ucapan terima kasih untuk donasi online
+     */
+    public static function generateDonationThankYouLink(?string $phone, ?string $donorName = null, ?string $donationCode = null, ?float $amount = null): ?string
+    {
+        $formatted = self::formatNumber($phone);
+        if (!$formatted) {
+            return null;
+        }
+
+        $name = !empty($donorName) ? $donorName : 'Bapak/Ibu Donatur';
+        $text = "Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n";
+        $text .= "Yth. {$name},\n";
+        $text .= "Terima kasih banyak atas donasi/infaq yang telah disalurkan melalui PC NU Care - LAZISNU Lamongan";
+
+        if ($donationCode) {
+            $text .= " (Kode: {$donationCode})";
+        }
+
+        if ($amount && $amount > 0) {
+            $text .= " sebesar Rp " . number_format($amount, 0, ',', '.');
+        }
+
+        $text .= ".\n\nSemoga donasi Bapak/Ibu menjadi amal jariyah yang membawa keberkahan, kemuliaan, serta dibalas oleh Allah SWT dengan pahala berlipat ganda. Aamiin ya Rabbal 'Alamin.\n\n";
+        $text .= "- Manajemen PC NU Care - LAZISNU Lamongan";
+
+        return "https://wa.me/{$formatted}?text=" . rawurlencode($text);
+    }
+
+    /**
+     * Susun link wa.me ucapan terima kasih untuk donatur kaleng Koin NU
+     */
+    public static function generateKoinNuThankYouLink(?string $phone, ?string $donatorName = null, ?string $boxNumber = null): ?string
+    {
+        $formatted = self::formatNumber($phone);
+        if (!$formatted) {
+            return null;
+        }
+
+        $name = !empty($donatorName) ? $donatorName : 'Sahabat Donatur';
+        $text = "Assalamu'alaikum Warahmatullahi Wabarakatuh.\n\n";
+        $text .= "Yth. {$name},\n";
+        $text .= "Terima kasih atas keistiqomahan Bapak/Ibu dalam program Kaleng Koin NU";
+
+        if ($boxNumber) {
+            $text .= " (No. Kotak: #{$boxNumber})";
+        }
+
+        $text .= " LAZISNU PCNU Lamongan.\n\n";
+        $text .= "Semoga Allah SWT senantiasa memberikan keberkahan hidup, kesehatan, rezeki yang berlimpah, dan pahala berlipat ganda. Aamiin ya Rabbal 'Alamin.\n\n";
+        $text .= "- PC NU Care - LAZISNU Lamongan";
+
+        return "https://wa.me/{$formatted}?text=" . rawurlencode($text);
     }
 }

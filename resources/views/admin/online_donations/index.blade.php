@@ -120,9 +120,18 @@
                                 <td>
                                     <strong>{{ $don->display_name }}</strong>
                                     <div class="small text-muted">
-                                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $don->donor_phone) }}" target="_blank" class="text-success">
-                                            <i class="fab fa-whatsapp mr-1"></i>{{ $don->donor_phone }}
-                                        </a>
+                                        @php
+                                            $waLink = \App\Services\WhatsAppHelper::generateDonationThankYouLink($don->donor_phone, $don->display_name, $don->donation_code, (float) $don->total_amount);
+                                        @endphp
+                                        @if($waLink)
+                                            <a href="{{ $waLink }}" target="_blank" class="text-success font-weight-bold" title="Kirim WA Ucapan Terima Kasih">
+                                                <i class="fab fa-whatsapp mr-1"></i>{{ $don->donor_phone }}
+                                            </a>
+                                        @elseif($don->donor_phone)
+                                            <span class="text-muted"><i class="fas fa-phone mr-1"></i>{{ $don->donor_phone }}</span>
+                                        @else
+                                            <span class="text-muted fst-italic"><i class="fas fa-phone-slash mr-1"></i>Tanpa WA</span>
+                                        @endif
                                     </div>
                                     @if($don->prayer_message)
                                         <small class="text-secondary d-block fst-italic mt-1" style="max-width: 250px;">
@@ -179,6 +188,15 @@
                                                     <i class="fas fa-undo"></i>
                                                 </button>
                                             </form>
+                                        @endif
+                                        @if($waLink)
+                                            <a href="{{ $waLink }}" target="_blank" class="btn btn-success" title="Kirim WA Ucapan Terima Kasih">
+                                                <i class="fab fa-whatsapp"></i>
+                                            </a>
+                                        @else
+                                            <button type="button" class="btn btn-secondary" disabled title="Nomor WhatsApp tidak tersedia">
+                                                <i class="fab fa-whatsapp"></i>
+                                            </button>
                                         @endif
                                         <a href="{{ route('admin.online-donations.show', $don->id) }}" class="btn btn-info" title="Detail">
                                             <i class="fas fa-eye"></i>

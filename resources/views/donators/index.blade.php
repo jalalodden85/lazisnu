@@ -212,7 +212,16 @@
                                 <a href="{{ route('donators.show', $d->id) }}" class="font-weight-bold text-dark d-block">
                                     {{ $d->name }}
                                 </a>
-                                @if($d->phone)
+                                @php
+                                    $koinWaLink = \App\Services\WhatsAppHelper::generateKoinNuThankYouLink($d->phone, $d->name, $d->box_number);
+                                @endphp
+                                @if($koinWaLink)
+                                    <small class="text-success font-weight-bold d-inline-block">
+                                        <a href="{{ $koinWaLink }}" target="_blank" class="text-success" title="Kirim WA Ucapan Terima Kasih">
+                                            <i class="fab fa-whatsapp mr-1"></i>{{ $d->phone }}
+                                        </a>
+                                    </small>
+                                @elseif($d->phone)
                                     <small class="text-muted"><i class="fas fa-phone-alt mr-1"></i>{{ $d->phone }}</small>
                                 @endif
                                 @if($d->nik)
@@ -242,8 +251,8 @@
                                     <small class="badge badge-info mr-1">
                                         <i class="fas fa-map-pin mr-1"></i>{{ $d->relawan->area_tugas }}
                                     </small>
-                                    @if($d->relawan->no_hp)
-                                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $d->relawan->no_hp) }}" target="_blank" class="badge badge-light border text-success">
+                                    @if($d->relawan->no_hp && ($relWaNum = \App\Services\WhatsAppHelper::formatNumber($d->relawan->no_hp)))
+                                        <a href="https://wa.me/{{ $relWaNum }}" target="_blank" class="badge badge-light border text-success">
                                             <i class="fab fa-whatsapp"></i> WA
                                         </a>
                                     @endif
@@ -273,6 +282,15 @@
                             </td>
                             <td class="text-center">
                                 <div class="btn-group">
+                                    @if($koinWaLink)
+                                        <a href="{{ $koinWaLink }}" target="_blank" class="btn btn-xs btn-success" title="Kirim WA Ucapan Terima Kasih (Kotak #{{ $d->box_number }})">
+                                            <i class="fab fa-whatsapp"></i>
+                                        </a>
+                                    @else
+                                        <button type="button" class="btn btn-xs btn-secondary" disabled title="Nomor WhatsApp donatur tidak tersedia">
+                                            <i class="fab fa-whatsapp"></i>
+                                        </button>
+                                    @endif
                                     <a href="{{ route('donators.show', $d->id) }}" class="btn btn-xs btn-info" title="Detail Kotak">
                                         <i class="fas fa-eye"></i>
                                     </a>

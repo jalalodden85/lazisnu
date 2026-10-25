@@ -63,7 +63,16 @@
                                     <strong>{{ $rel->nama }}</strong>
                                 </td>
                                 <td>
-                                    <div><a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $rel->no_hp) }}" target="_blank" class="text-success"><i class="fab fa-whatsapp mr-1"></i>{{ $rel->no_hp }}</a></div>
+                                    @php
+                                        $relWa = \App\Services\WhatsAppHelper::formatNumber($rel->no_hp);
+                                    @endphp
+                                    @if($relWa)
+                                        <div><a href="https://wa.me/{{ $relWa }}" target="_blank" class="text-success font-weight-bold"><i class="fab fa-whatsapp mr-1"></i>{{ $rel->no_hp }}</a></div>
+                                    @elseif($rel->no_hp)
+                                        <div class="text-muted small"><i class="fas fa-phone mr-1"></i>{{ $rel->no_hp }}</div>
+                                    @else
+                                        <div class="text-muted small fst-italic"><i class="fas fa-phone-slash mr-1"></i>-</div>
+                                    @endif
                                     <small class="text-muted">NIK: {{ $rel->nik }}</small>
                                 </td>
                                 <td>

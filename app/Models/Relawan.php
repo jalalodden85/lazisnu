@@ -33,6 +33,23 @@ class Relawan extends Model
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::saving(function (Relawan $relawan) {
+            if (!empty($relawan->no_hp)) {
+                $relawan->no_hp = \App\Services\WhatsAppHelper::formatNumber($relawan->no_hp);
+            }
+        });
+    }
+
+    /**
+     * Mutator untuk memastikan nomor kontak relawan selalu berformat standar 62...
+     */
+    public function setNoHpAttribute($value): void
+    {
+        $this->attributes['no_hp'] = \App\Services\WhatsAppHelper::formatNumber($value);
+    }
+
     /**
      * Ranting tempat relawan bertugas
      */

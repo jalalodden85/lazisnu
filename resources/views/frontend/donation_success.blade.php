@@ -77,10 +77,16 @@
                         </p>
 
                         <!-- Box Nominal Transfer -->
+                        <!-- Box Nominal Transfer -->
                         <div class="p-3 bg-light rounded-4 text-center border mb-4">
                             <small class="text-muted text-uppercase fw-bold">Total Nominal Donasi / Transfer:</small>
-                            <div class="fs-2 fw-extrabold text-success my-1 font-monospace" id="totalAmount">
-                                Rp {{ number_format($donation->total_amount, 0, ',', '.') }}
+                            <div class="d-flex align-items-center justify-content-center gap-2 my-1">
+                                <span class="fs-2 fw-extrabold text-success font-monospace" id="totalAmount">
+                                    Rp {{ number_format($donation->total_amount, 0, ',', '.') }}
+                                </span>
+                                <button type="button" class="btn btn-sm btn-outline-success rounded-pill px-3 py-1 fw-bold" onclick="copyToClipboard('{{ (int)$donation->total_amount }}', 'btnCopyNominal')" id="btnCopyNominal" title="Salin Nominal Transfer">
+                                    <i class="fa-regular fa-copy me-1"></i> Salin
+                                </button>
                             </div>
                             <small class="text-danger fw-bold">
                                 *Termasuk kode unik Rp {{ $donation->unique_code }} untuk memudahkan verifikasi pencocokan mutasi.
@@ -153,36 +159,130 @@
                                 </ol>
                             </div>
                         @elseif($donation->payment_method === 'transfer_bri')
+                            @php
+                                $targetBank = 'Bank BRI';
+                                $targetRek = $settings['bank_bri_infaq'] ?? '004101001448562';
+                                $targetName = $settings['bank_bri_infaq_name'] ?? 'LAZISNU LAMONGAN';
+                            @endphp
                             {{-- Transfer Bank BRI --}}
-                            <div class="card bg-white border rounded-3 p-3 mb-4">
-                                <small class="text-muted fw-bold mb-2 d-block">Rekening Tujuan Penyaluran (Selain Zakat):</small>
-                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div class="card bg-white border border-success-subtle shadow-sm rounded-4 p-4 mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 fw-bold">
+                                        <i class="fa-solid fa-building-columns me-1"></i> Rekening Resmi Bank BRI
+                                    </span>
+                                    <span class="small text-muted fw-semibold">Selain Zakat (Infaq, Sedekah, dll)</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 p-3 bg-light rounded-3 border">
                                     <div>
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill mb-1">Selain Zakat (Infaq, Shadaqah, dll)</span>
-                                        <div class="fw-bold fs-5 text-dark">Bank BRI</div>
-                                        <div class="text-muted small">No. Rekening: <strong class="fs-5 text-dark font-monospace" id="rekNo">{{ $settings['bank_bri_infaq'] ?? '004101001448562' }}</strong></div>
-                                        <small class="text-muted">Atas Nama: <strong>{{ $settings['bank_bri_infaq_name'] ?? 'LAZISNU LAMONGAN' }}</strong></small>
+                                        <div class="fw-bold fs-5 text-dark mb-1">
+                                            <i class="fa-solid fa-money-check-dollar text-success me-1"></i> Bank BRI
+                                        </div>
+                                        <div class="text-muted small">No. Rekening: <strong class="fs-5 text-dark font-monospace text-primary" id="rekNo">{{ $targetRek }}</strong></div>
+                                        <small class="text-muted">Atas Nama: <strong class="text-dark">{{ $targetName }}</strong></small>
                                     </div>
-                                    <button class="btn btn-sm btn-outline-success rounded-pill fw-bold" onclick="copyToClipboard('{{ $settings['bank_bri_infaq'] ?? '004101001448562' }}', 'btnCopyRek')" id="btnCopyRek">
+                                    <button class="btn btn-sm btn-outline-success rounded-pill fw-bold px-3 py-2" onclick="copyToClipboard('{{ $targetRek }}', 'btnCopyRek')" id="btnCopyRek">
                                         <i class="fa-regular fa-copy me-1"></i> Salin
                                     </button>
                                 </div>
                             </div>
-                        @else
-                            {{-- Transfer BSI atau Khusus Zakat --}}
-                            <div class="card bg-white border rounded-3 p-3 mb-4">
-                                <small class="text-muted fw-bold mb-2 d-block">Rekening Tujuan Penyaluran (Khusus Zakat):</small>
-                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                                    <div>
-                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill mb-1">Khusus Zakat</span>
-                                        <div class="fw-bold fs-5 text-dark">Bank Syariah Indonesia (BSI)</div>
-                                        <div class="text-muted small">No. Rekening: <strong class="fs-5 text-dark font-monospace" id="rekNo">{{ $settings['bank_bsi_zakat'] ?? '2026070708' }}</strong></div>
-                                        <small class="text-muted">Atas Nama: <strong>{{ $settings['bank_bsi_zakat_name'] ?? 'Lazisnu Lamongan' }}</strong></small>
+
+                            <!-- ========================================================= -->
+                            <!-- PANDUAN PEMBAYARAN TRANSFER (TF)                         -->
+                            <!-- ========================================================= -->
+                            <div class="card bg-white border border-secondary-subtle shadow-sm rounded-4 p-4 text-start mb-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; min-width: 36px;">
+                                        <i class="fa-solid fa-list-ol"></i>
                                     </div>
-                                    <button class="btn btn-sm btn-outline-success rounded-pill fw-bold" onclick="copyToClipboard('{{ $settings['bank_bsi_zakat'] ?? '2026070708' }}', 'btnCopyRek')" id="btnCopyRek">
+                                    <div>
+                                        <h6 class="fw-bold mb-0 text-dark">Panduan Pembayaran</h6>
+                                        <small class="text-success fw-bold">Jika Lewat Transfer (TF)</small>
+                                    </div>
+                                </div>
+
+                                <ol class="ps-3 mb-0 text-secondary small" style="line-height: 1.85;">
+                                    <li class="mb-2">
+                                        Pilih tombol <strong>"Salin"</strong> untuk menyimpan Nomor Rekening LAZISNU Lamongan.
+                                    </li>
+                                    <li class="mb-2">
+                                        Buka Aplikasi <strong>Mobile Banking</strong> yang dimiliki kemudian Pilih menu <strong>Transfer ke {{ $targetBank }}</strong> di Nomor Rekening <strong class="text-dark font-monospace">{{ $targetRek }}</strong>.
+                                    </li>
+                                    <li class="mb-2">
+                                        Pastikan nama merchant penerima tertera: <strong>{{ $targetName }}</strong>.
+                                    </li>
+                                    <li class="mb-2">
+                                        Masukkan nominal transfer tepat sejumlah: <strong class="text-success font-monospace fs-6">Rp {{ number_format($donation->total_amount, 0, ',', '.') }}</strong> (sesuai total di atas).
+                                    </li>
+                                    <li class="mb-2">
+                                        Setelah transaksi berhasil, silakan klik tombol <strong>"Konfirmasi Donasi via WhatsApp"</strong> di bawah untuk mengirimkan bukti transfer kepada admin LAZISNU. Jika sudah sesuai, konfirmasi dan bayar.
+                                    </li>
+                                    <li class="mb-0">
+                                        Transaksi Berhasil.
+                                    </li>
+                                </ol>
+                            </div>
+                        @else
+                            @php
+                                $targetBank = 'Bank Syariah Indonesia (BSI)';
+                                $targetRek = $settings['bank_bsi_zakat'] ?? '2026070708';
+                                $targetName = $settings['bank_bsi_zakat_name'] ?? 'LAZISNU LAMONGAN';
+                            @endphp
+                            {{-- Transfer BSI atau Khusus Zakat --}}
+                            <div class="card bg-white border border-primary-subtle shadow-sm rounded-4 p-4 mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-3 py-1 fw-bold">
+                                        <i class="fa-solid fa-building-columns me-1"></i> Rekening Resmi Bank BSI
+                                    </span>
+                                    <span class="small text-muted fw-semibold">Khusus Zakat Mal &amp; Profesi</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 p-3 bg-light rounded-3 border">
+                                    <div>
+                                        <div class="fw-bold fs-5 text-dark mb-1">
+                                            <i class="fa-solid fa-money-check-dollar text-primary me-1"></i> Bank Syariah Indonesia (BSI)
+                                        </div>
+                                        <div class="text-muted small">No. Rekening: <strong class="fs-5 text-dark font-monospace text-primary" id="rekNo">{{ $targetRek }}</strong></div>
+                                        <small class="text-muted">Atas Nama: <strong class="text-dark">{{ $targetName }}</strong></small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill fw-bold px-3 py-2" onclick="copyToClipboard('{{ $targetRek }}', 'btnCopyRek')" id="btnCopyRek">
                                         <i class="fa-regular fa-copy me-1"></i> Salin
                                     </button>
                                 </div>
+                            </div>
+
+                            <!-- ========================================================= -->
+                            <!-- PANDUAN PEMBAYARAN TRANSFER (TF)                         -->
+                            <!-- ========================================================= -->
+                            <div class="card bg-white border border-secondary-subtle shadow-sm rounded-4 p-4 text-start mb-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px; min-width: 36px;">
+                                        <i class="fa-solid fa-list-ol"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-0 text-dark">Panduan Pembayaran</h6>
+                                        <small class="text-primary fw-bold">Jika Lewat Transfer (TF)</small>
+                                    </div>
+                                </div>
+
+                                <ol class="ps-3 mb-0 text-secondary small" style="line-height: 1.85;">
+                                    <li class="mb-2">
+                                        Pilih tombol <strong>"Salin"</strong> untuk menyimpan Nomor Rekening LAZISNU Lamongan.
+                                    </li>
+                                    <li class="mb-2">
+                                        Buka Aplikasi <strong>Mobile Banking</strong> yang dimiliki kemudian Pilih menu <strong>Transfer ke {{ $targetBank }}</strong> di Nomor Rekening <strong class="text-dark font-monospace">{{ $targetRek }}</strong>.
+                                    </li>
+                                    <li class="mb-2">
+                                        Pastikan nama merchant penerima tertera: <strong>{{ $targetName }}</strong>.
+                                    </li>
+                                    <li class="mb-2">
+                                        Masukkan nominal transfer tepat sejumlah: <strong class="text-primary font-monospace fs-6">Rp {{ number_format($donation->total_amount, 0, ',', '.') }}</strong> (sesuai total di atas).
+                                    </li>
+                                    <li class="mb-2">
+                                        Setelah transaksi berhasil, silakan klik tombol <strong>"Konfirmasi Donasi via WhatsApp"</strong> di bawah untuk mengirimkan bukti transfer kepada admin LAZISNU. Jika sudah sesuai, konfirmasi dan bayar.
+                                    </li>
+                                    <li class="mb-0">
+                                        Transaksi Berhasil.
+                                    </li>
+                                </ol>
                             </div>
                         @endif
 
@@ -203,14 +303,11 @@
                                 default => 'Transfer Bank',
                             };
                             $waText = urlencode("Assalamu'alaikum LAZISNU, saya ingin konfirmasi transfer donasi online:\n\nKode Transaksi: {$donation->donation_code}\nNama Donatur: {$donation->donor_name}\nNominal: Rp " . number_format($donation->total_amount, 0, ',', '.') . "\nMetode: {$waMethodLabel}\nProgram: {$donation->campaign->title}\n\nMohon diverifikasi, terima kasih.");
-                            $cleanWa = preg_replace('/[^0-9]/', '', $settings['phone_wa_hotline'] ?? '6285188991926');
-                            if (str_starts_with($cleanWa, '0')) {
-                                $cleanWa = '62' . substr($cleanWa, 1);
-                            }
+                            $cleanWa = \App\Services\WhatsAppHelper::formatNumber($settings['phone_wa_hotline'] ?? '6285188991926') ?? '6285188991926';
                         @endphp
                         <div class="d-grid gap-2">
                             <a href="https://wa.me/{{ $cleanWa }}?text={{ $waText }}" target="_blank" class="btn btn-success fw-bold py-3 rounded-pill shadow-sm" style="background: #25d366; border: none;">
-                                <i class="fa-brands fa-whatsapp fs-5 me-2"></i> Konfirmasi Transfer via WhatsApp
+                                <i class="fa-brands fa-whatsapp fs-5 me-2"></i> Konfirmasi Donasi via WhatsApp
                             </a>
 
                             <a href="{{ route('home') }}" class="btn btn-outline-secondary rounded-pill py-2">

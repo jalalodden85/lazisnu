@@ -45,6 +45,23 @@ class User extends Authenticatable
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::saving(function (User $user) {
+            if (!empty($user->phone)) {
+                $user->phone = \App\Services\WhatsAppHelper::formatNumber($user->phone);
+            }
+        });
+    }
+
+    /**
+     * Mutator untuk memastikan nomor kontak user selalu berformat standar 62...
+     */
+    public function setPhoneAttribute($value): void
+    {
+        $this->attributes['phone'] = \App\Services\WhatsAppHelper::formatNumber($value);
+    }
+
     /**
      * Role user (PC, MWC, Ranting)
      */
