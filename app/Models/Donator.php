@@ -48,6 +48,20 @@ class Donator extends Model
                 $donator->box_number = self::generateBoxNumber($donator->ranting_id, $donator->rt, $donator->rw);
             }
         });
+
+        static::saving(function (Donator $donator) {
+            if (!empty($donator->phone)) {
+                $donator->phone = \App\Services\WhatsAppHelper::formatNumber($donator->phone);
+            }
+        });
+    }
+
+    /**
+     * Mutator untuk memastikan nomor telepon donatur berformat standar 62...
+     */
+    public function setPhoneAttribute($value): void
+    {
+        $this->attributes['phone'] = \App\Services\WhatsAppHelper::formatNumber($value);
     }
 
     /**

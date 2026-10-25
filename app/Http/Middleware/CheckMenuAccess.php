@@ -97,11 +97,6 @@ class CheckMenuAccess
             return $next($request);
         }
 
-        // Modul Hasil Koin dibuka untuk seluruh tingkatan (PC, MWC, Ranting)
-        if ($routeName === 'pentasyarufan.hasil-koin.index' || $request->is('pentasyarufan/hasil-koin*')) {
-            return $next($request);
-        }
-
         // Izinkan user mengedit profil & ubah password akunnya sendiri
         if (in_array($routeName, ['users.edit', 'users.update'], true)) {
             $targetUser = $request->route('user');
@@ -112,29 +107,34 @@ class CheckMenuAccess
         }
 
         // 3. Periksa apakah rute / URL ini terdaftar dalam master menu sistem
-        $registeredMenu = Menu::where(function ($q) use ($routeName, $path) {
-            if ($routeName) {
-                $q->where('route_name', $routeName)
-                  ->orWhereRaw('? LIKE REPLACE(url_pattern, "*", "%")', [$routeName]);
-            }
-            if ($path) {
-                $q->orWhereRaw('? LIKE REPLACE(url_pattern, "*", "%")', [$path]);
-            }
-        })->first();
+        // Prioritaskan kecocokan eksak route_name terlebih dahulu
+        $registeredMenu = null;
+        if ($routeName) {
+            $registeredMenu = Menu::where('route_name', $routeName)->first();
+        }
 
-        // Jika rute ini terdaftar dalam proteksi menu, pastikan user memiliki izin
+        // Jika belum cocok, cari berdasarkan url_pattern terpanjang/paling spesifik
+        if (!$registeredMenu && $path) {
+            $registeredMenu = Menu::whereNotNull('url_pattern')
+                ->whereRaw('? LIKE REPLACE(url_pattern, "*", "%")', [$path])
+                ->orderByRaw('LENGTH(url_pattern) DESC')
+                ->first();
+        }
+
+        // Jika rute ini terdaftar dalam proteksi menu, pastikan status menu aktif dan user memiliki izin
         if ($registeredMenu) {
-            $hasAccess = $user->menus()->where('menus.id', $registeredMenu->id)->exists();
+            $hasAccess = (bool) $registeredMenu->is_active && $user->hasMenuAccess($registeredMenu->route_name ?? $routeName);
 
             if (!$hasAccess) {
-                if ($request->expectsJson() || $request->ajax()) {
+                if ($request->expectsJson() || $request->is('api/*') || $request->ajax()) {
                     return response()->json([
                         'success' => false,
-                        'message' => "Akses Ditolak (403 Forbidden): Anda tidak memiliki izin hak akses untuk menu [{$registeredMenu->name}]. Silakan hubungi Super Admin.",
+                        'message' => 'Fitur ini sedang dinonaktifkan oleh Administrator.',
                     ], 403);
                 }
 
-                abort(403, "Akses Ditolak (403 Forbidden): Anda tidak memiliki izin hak akses untuk modul [{$registeredMenu->name}]. Silakan hubungi Super Admin LAZISNU untuk mengaktifkan menu ini.");
+                return redirect()->route('dashboard')
+                    ->with('error', 'Fitur ini sedang dinonaktifkan oleh Administrator.');
             }
         }
 

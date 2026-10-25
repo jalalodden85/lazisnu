@@ -158,9 +158,9 @@
                                 <span class="badge badge-primary px-2 py-1" style="font-size: 0.9rem;">
                                     <i class="fas fa-boxes mr-1"></i>{{ $relawan->donators->count() }} Kotak Binaan
                                 </span>
-                                @if($relawan->no_hp)
+                                @if($relawan->no_hp && ($relWaNum = \App\Services\WhatsAppHelper::formatNumber($relawan->no_hp)))
                                     <div class="mt-1">
-                                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $relawan->no_hp) }}" target="_blank" class="badge badge-success text-white">
+                                        <a href="https://wa.me/{{ $relWaNum }}" target="_blank" class="badge badge-success text-white">
                                             <i class="fab fa-whatsapp mr-1"></i>{{ $relawan->no_hp }}
                                         </a>
                                     </div>

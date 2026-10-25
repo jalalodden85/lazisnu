@@ -99,6 +99,11 @@ class BkuPengeluaranTest extends TestCase
             'is_active'  => true,
         ]);
 
+        $bkuMenu = \App\Models\Menu::where('route_name', 'bku.index')->first();
+        if ($bkuMenu) {
+            $user->menus()->syncWithoutDetaching([$bkuMenu->id]);
+        }
+
         $relawan = \App\Models\Relawan::first();
 
         // Buat pemasukan koin agar ada saldo kas sebesar Rp 5.000.000

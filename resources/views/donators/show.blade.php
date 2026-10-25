@@ -44,12 +44,17 @@
                         <tr>
                             <th><i class="fas fa-phone-alt text-success mr-2"></i>No. HP / WhatsApp</th>
                             <td>
-                                @if($donator->phone)
-                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $donator->phone) }}" target="_blank" class="text-success font-weight-bold">
+                                @php
+                                    $donatorShowWa = \App\Services\WhatsAppHelper::generateKoinNuThankYouLink($donator->phone, $donator->name, $donator->box_number);
+                                @endphp
+                                @if($donatorShowWa)
+                                    <a href="{{ $donatorShowWa }}" target="_blank" class="text-success font-weight-bold" title="Kirim WA Ucapan Terima Kasih">
                                         <i class="fab fa-whatsapp mr-1"></i>{{ $donator->phone }}
                                     </a>
+                                @elseif($donator->phone)
+                                    <span class="text-muted"><i class="fas fa-phone mr-1"></i>{{ $donator->phone }}</span>
                                 @else
-                                    <span class="text-muted">-</span>
+                                    <span class="text-muted fst-italic">-</span>
                                 @endif
                             </td>
                         </tr>
@@ -124,12 +129,12 @@
                         <tr>
                             <td class="text-muted"><i class="fab fa-whatsapp mr-1 text-success"></i> WhatsApp:</td>
                             <td class="font-weight-bold text-right">
-                                @if($donator->relawan->no_hp)
-                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $donator->relawan->no_hp) }}" target="_blank" class="text-success">
+                                @if($donator->relawan->no_hp && ($relWaNum = \App\Services\WhatsAppHelper::formatNumber($donator->relawan->no_hp)))
+                                    <a href="https://wa.me/{{ $relWaNum }}" target="_blank" class="text-success font-weight-bold">
                                         {{ $donator->relawan->no_hp }}
                                     </a>
                                 @else
-                                    -
+                                    <span class="text-muted">{{ $donator->relawan->no_hp ?: '-' }}</span>
                                 @endif
                             </td>
                         </tr>

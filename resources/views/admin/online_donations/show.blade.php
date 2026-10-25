@@ -62,9 +62,18 @@
                             <tr>
                                 <th>No. Handphone / WA:</th>
                                 <td>
-                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $donation->donor_phone) }}" target="_blank" class="btn btn-xs btn-success">
-                                        <i class="fab fa-whatsapp mr-1"></i> {{ $donation->donor_phone }}
-                                    </a>
+                                    @php
+                                        $waShowLink = \App\Services\WhatsAppHelper::generateDonationThankYouLink($donation->donor_phone, $donation->donor_name, $donation->donation_code, (float) $donation->total_amount);
+                                    @endphp
+                                    @if($waShowLink)
+                                        <a href="{{ $waShowLink }}" target="_blank" class="btn btn-xs btn-success" title="Kirim WA Ucapan Terima Kasih">
+                                            <i class="fab fa-whatsapp mr-1"></i> {{ $donation->donor_phone }}
+                                        </a>
+                                    @elseif($donation->donor_phone)
+                                        <span class="badge badge-light border text-muted"><i class="fas fa-phone mr-1"></i>{{ $donation->donor_phone }}</span>
+                                    @else
+                                        <span class="text-muted fst-italic"><i class="fas fa-phone-slash mr-1"></i>Tidak diisi</span>
+                                    @endif
                                 </td>
                             </tr>
                             <tr>
@@ -147,9 +156,15 @@
                             </form>
                         @endif
 
-                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $donation->donor_phone) }}?text=Assalamu%27alaikum%20Bpk%2FIbu%20{{ urlencode($donation->donor_name) }},%20terima%20kasih%20telah%20berinfaq%20melalui%20LAZISNU%20dengan%20kode%20{{ $donation->donation_code }}." target="_blank" class="btn btn-outline-success btn-block font-weight-bold">
-                            <i class="fab fa-whatsapp mr-1"></i> Hubungi / Kirim Resi via WA
-                        </a>
+                        @if($waShowLink)
+                            <a href="{{ $waShowLink }}" target="_blank" class="btn btn-outline-success btn-block font-weight-bold">
+                                <i class="fab fa-whatsapp mr-1"></i> Kirim WA Ucapan Terima Kasih & Resi
+                            </a>
+                        @else
+                            <button type="button" class="btn btn-outline-secondary btn-block font-weight-bold" disabled title="Nomor WhatsApp donatur tidak tersedia atau format tidak valid">
+                                <i class="fab fa-whatsapp mr-1"></i> WA Tidak Tersedia
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>

@@ -45,6 +45,23 @@ class User extends Authenticatable
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::saving(function (User $user) {
+            if (!empty($user->phone)) {
+                $user->phone = \App\Services\WhatsAppHelper::formatNumber($user->phone);
+            }
+        });
+    }
+
+    /**
+     * Mutator untuk memastikan nomor kontak user selalu berformat standar 62...
+     */
+    public function setPhoneAttribute($value): void
+    {
+        $this->attributes['phone'] = \App\Services\WhatsAppHelper::formatNumber($value);
+    }
+
     /**
      * Role user (PC, MWC, Ranting)
      */
@@ -96,9 +113,19 @@ class User extends Authenticatable
     public function getAssignedMenus(): \Illuminate\Support\Collection
     {
         if ($this->cachedMenusCollection === null) {
-            $this->cachedMenusCollection = $this->menus()->get();
+            $this->cachedMenusCollection = $this->menus()->where('menus.is_active', true)->get();
         }
         return $this->cachedMenusCollection;
+    }
+
+    /**
+     * Hapus cache menu user (in-memory dan cache driver)
+     */
+    public function clearMenuCache(): void
+    {
+        $this->cachedMenusCollection = null;
+        $this->unsetRelation('menus');
+        \Illuminate\Support\Facades\Cache::forget("user_{$this->id}_menus");
     }
 
     /**
@@ -111,13 +138,11 @@ class User extends Authenticatable
             return true;
         }
 
-        // Modul Hasil Koin dan BKU dapat diakses oleh semua tingkatan (PC, MWC, Ranting)
-        if (in_array($routeNameOrPattern, ['pentasyarufan.hasil-koin.index', 'bku.index', 'bku-operasional.index'], true)) {
-            return true;
-        }
-
-        // 2. Cek apakah route_name atau url_pattern cocok dengan menu yang di-assign
+        // 2. Cek apakah route_name atau url_pattern cocok dengan menu yang di-assign dari database
         return $this->getAssignedMenus()->contains(function ($menu) use ($routeNameOrPattern) {
+            if (!$menu->is_active) {
+                return false;
+            }
             if ($menu->route_name === $routeNameOrPattern) {
                 return true;
             }
@@ -137,11 +162,6 @@ class User extends Authenticatable
     public function hasCategoryAccess(string $category): bool
     {
         if ($this->isSuperAdmin()) {
-            return true;
-        }
-
-        // Kategori Pentasyarufan & Penyaluran selalu terbuka untuk seluruh tingkatan (PC, MWC, Ranting)
-        if ($category === 'Pentasyarufan & Penyaluran') {
             return true;
         }
 

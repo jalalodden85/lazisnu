@@ -42,6 +42,23 @@ class Mustahiq extends Model
         'updated_at'            => 'datetime',
     ];
 
+    protected static function booted(): void
+    {
+        static::saving(function (Mustahiq $mustahiq) {
+            if (!empty($mustahiq->telepon)) {
+                $mustahiq->telepon = \App\Services\WhatsAppHelper::formatNumber($mustahiq->telepon);
+            }
+        });
+    }
+
+    /**
+     * Mutator untuk memastikan nomor telepon/WA mustahiq berformat standar 62...
+     */
+    public function setTeleponAttribute($value): void
+    {
+        $this->attributes['telepon'] = \App\Services\WhatsAppHelper::formatNumber($value);
+    }
+
     /**
      * Relasi ke Ranting NU (Tingkat Desa)
      */

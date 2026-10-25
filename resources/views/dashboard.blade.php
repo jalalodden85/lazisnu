@@ -217,7 +217,9 @@
                 </span>
                 <div class="d-flex justify-content-between align-items-center mt-1">
                     <small class="text-muted font-weight-bold">Tersedia untuk Amil</small>
-                    <a href="{{ route('bku-operasional.index') }}" class="small font-weight-bold text-info">Buka BKU <i class="fas fa-arrow-right ml-1"></i></a>
+                    @if(Auth::user()?->hasMenuAccess('bku-operasional.index'))
+                        <a href="{{ route('bku-operasional.index') }}" class="small font-weight-bold text-info">Buka BKU <i class="fas fa-arrow-right ml-1"></i></a>
+                    @endif
                 </div>
             </div>
         </div>

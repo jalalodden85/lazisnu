@@ -100,7 +100,16 @@
                                     <div class="small text-muted">NIK: {{ $don->nik }}</div>
                                 </td>
                                 <td>
-                                    <div><a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $don->phone) }}" target="_blank" class="text-success"><i class="fab fa-whatsapp mr-1"></i>{{ $don->phone }}</a></div>
+                                    @php
+                                        $reportWa = \App\Services\WhatsAppHelper::generateKoinNuThankYouLink($don->phone, $don->name, $don->box_number);
+                                    @endphp
+                                    @if($reportWa)
+                                        <div><a href="{{ $reportWa }}" target="_blank" class="text-success font-weight-bold" title="Kirim WA Ucapan Terima Kasih"><i class="fab fa-whatsapp mr-1"></i>{{ $don->phone }}</a></div>
+                                    @elseif($don->phone)
+                                        <div class="text-muted small"><i class="fas fa-phone mr-1"></i>{{ $don->phone }}</div>
+                                    @else
+                                        <div class="text-muted small fst-italic"><i class="fas fa-phone-slash mr-1"></i>-</div>
+                                    @endif
                                     <small class="text-muted">{{ Str::limit($don->address, 45) }}</small>
                                 </td>
                                 <td>

@@ -52,6 +52,20 @@ class OnlineDonation extends Model
                 $donation->donation_code = 'DON-' . date('Ymd') . '-' . strtoupper(Str::random(5));
             }
         });
+
+        static::saving(function (OnlineDonation $donation) {
+            if (!empty($donation->donor_phone)) {
+                $donation->donor_phone = \App\Services\WhatsAppHelper::formatNumber($donation->donor_phone);
+            }
+        });
+    }
+
+    /**
+     * Mutator untuk memastikan nomor WhatsApp selalu dalam format 62...
+     */
+    public function setDonorPhoneAttribute($value): void
+    {
+        $this->attributes['donor_phone'] = \App\Services\WhatsAppHelper::formatNumber($value);
     }
 
     public function campaign(): BelongsTo
