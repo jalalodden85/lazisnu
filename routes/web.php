@@ -181,6 +181,8 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('campaigns', CampaignController::class);
 
         // 3. Donasi Online Masuk & Verifikasi
+        Route::get('online-donations/export/excel', [OnlineDonationAdminController::class, 'exportExcel'])->name('online-donations.export.excel');
+        Route::get('online-donations/export/pdf', [OnlineDonationAdminController::class, 'exportPdf'])->name('online-donations.export.pdf');
         Route::get('online-donations', [OnlineDonationAdminController::class, 'index'])->name('online-donations.index');
         Route::get('online-donations/{donation}', [OnlineDonationAdminController::class, 'show'])->name('online-donations.show');
         Route::post('online-donations/{donation}/verify', [OnlineDonationAdminController::class, 'verify'])->name('online-donations.verify');
