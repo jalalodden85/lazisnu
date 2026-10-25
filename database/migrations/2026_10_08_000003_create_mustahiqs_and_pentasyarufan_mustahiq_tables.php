@@ -91,7 +91,7 @@ return new class extends Migration
 
         // Recreate view vw_saldo_pentasyarufan
         \Illuminate\Support\Facades\DB::statement("
-            CREATE OR REPLACE VIEW vw_saldo_pentasyarufan AS
+            CREATE VIEW vw_saldo_pentasyarufan AS
             SELECT 
                 p.penthong_id,
                 pt.nama_periode,
@@ -133,7 +133,7 @@ return new class extends Migration
         });
 
         \Illuminate\Support\Facades\DB::statement("
-            CREATE OR REPLACE VIEW vw_saldo_pentasyarufan AS
+            CREATE VIEW vw_saldo_pentasyarufan AS
             SELECT 
                 p.penthong_id,
                 pt.nama_periode,

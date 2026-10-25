@@ -12,7 +12,7 @@ return new class extends Migration
     {
         DB::statement("DROP VIEW IF EXISTS vw_saldo_pentasyarufan");
         DB::statement("
-            CREATE OR REPLACE VIEW vw_saldo_pentasyarufan AS
+            CREATE VIEW vw_saldo_pentasyarufan AS
             SELECT 
                 p.penthong_id,
                 pt.nama_periode,

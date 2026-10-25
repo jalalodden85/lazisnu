@@ -112,10 +112,77 @@ class AdminPortalTest extends TestCase
         $response->assertSee('Distribusi Kotak Koin');
     }
 
-    public function test_admin_can_access_report_print(): void
+    public function test_admin_can_paginate_online_donations_with_10_50_and_all(): void
     {
-        $response = $this->actingAs($this->adminUser)->get('/laporan/cetak');
+        $campaign = \App\Models\Campaign::first();
+        for ($i = 1; $i <= 15; $i++) {
+            \App\Models\OnlineDonation::create([
+                'donation_code' => 'DON-TEST-' . $i,
+                'campaign_id' => $campaign?->id ?? 1,
+                'donor_name' => 'Donatur Test ' . $i,
+                'donor_phone' => '0812345678' . $i,
+                'amount' => 50000,
+                'total_amount' => 50000,
+                'payment_method' => 'qris',
+                'payment_status' => 'verified',
+            ]);
+        }
+
+        $response10 = $this->actingAs($this->adminUser)->get('/admin/online-donations?per_page=10');
+        $response10->assertStatus(200);
+        $response10->assertSee('10 baris');
+        $response10->assertSee('pagination');
+        $response10->assertSee('page-item');
+
+        $responsePage2 = $this->actingAs($this->adminUser)->get('/admin/online-donations?per_page=10&page=2');
+        $responsePage2->assertStatus(200);
+        $responsePage2->assertSee('pagination');
+        $responsePage2->assertSee('page-item');
+
+        $response50 = $this->actingAs($this->adminUser)->get('/admin/online-donations?per_page=50');
+        $response50->assertStatus(200);
+        $response50->assertSee('50 baris');
+
+        $responseAll = $this->actingAs($this->adminUser)->get('/admin/online-donations?per_page=all');
+        $responseAll->assertStatus(200);
+        $responseAll->assertSee('Seluruh baris');
+    }
+
+    public function test_admin_can_filter_online_donations_by_kategori_and_month(): void
+    {
+        $response = $this->actingAs($this->adminUser)->get('/admin/online-donations?kategori=zakat&month=2026-10');
         $response->assertStatus(200);
-        $response->assertSee('NU CARE - LAZISNU PCNU LAMONGAN');
+        $response->assertSee('Donasi Online Masuk');
+    }
+
+    public function test_admin_can_export_online_donations_to_excel_and_pdf(): void
+    {
+        // 1. Export Excel dengan filter
+        $excelResponse = $this->actingAs($this->adminUser)->get('/admin/online-donations/export/excel?kategori=zakat&month=2026-10');
+        $excelResponse->assertStatus(200);
+        $this->assertTrue(
+            str_contains($excelResponse->headers->get('content-disposition', ''), '.xlsx'),
+            'Response header Content-Disposition harus menyertakan file .xlsx'
+        );
+
+        // 2. Export PDF dengan filter
+        $pdfResponse = $this->actingAs($this->adminUser)->get('/admin/online-donations/export/pdf?kategori=zakat&month=2026-10');
+        $pdfResponse->assertStatus(200);
+        $pdfResponse->assertSee('LAPORAN DATA PENERIMAAN DONASI ONLINE');
+        $pdfResponse->assertSee('Zakat');
+
+        // 3. Export Semua Data tanpa filter (Excel)
+        $allExcelResponse = $this->actingAs($this->adminUser)->get('/admin/online-donations/export/excel');
+        $allExcelResponse->assertStatus(200);
+        $this->assertTrue(
+            str_contains($allExcelResponse->headers->get('content-disposition', ''), '.xlsx')
+        );
+
+        // 4. Export Semua Data tanpa filter (PDF)
+        $allPdfResponse = $this->actingAs($this->adminUser)->get('/admin/online-donations/export/pdf');
+        $allPdfResponse->assertStatus(200);
+        $allPdfResponse->assertSee('LAPORAN DATA PENERIMAAN DONASI ONLINE');
+        $allPdfResponse->assertSee('Semua Bulan');
     }
 }
+

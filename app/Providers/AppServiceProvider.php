@@ -22,6 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        \Illuminate\Pagination\Paginator::useBootstrapFour();
+
         // Gate Hak Akses Memproses & Membagikan Hasil Koin (PC dan MWC)
         Gate::define('proses-hasil-koin', function (User $user) {
             return $user->isSuperAdmin() || $user->isPc() || $user->isMwc();
