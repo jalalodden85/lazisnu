@@ -292,22 +292,41 @@
                                 </td>
                                 <td><small class="text-muted">{{ $don->created_at ? $don->created_at->format('d/m/Y H:i') : '-' }}</small></td>
                                 <td class="text-center">
+                                    @php
+                                        // 1. Cek Hak Akses Super Admin (Mendukung Spatie hasRole & Custom Helper)
+                                        $user = auth()->user();
+                                        $isSuperAdmin = $user && ($user->isSuperAdmin() || (method_exists($user, 'hasRole') && $user->hasRole('Super Admin')));
+
+                                        // 2. Evaluasi Status & Selisih Waktu Verifikasi (24 jam)
+                                        $isVerified = ($don->payment_status === 'verified');
+                                        $verifiedTime = $don->verified_at ?? $don->updated_at;
+                                        $isLocked = $isVerified && $verifiedTime && ($verifiedTime->diffInHours(now()) >= 24);
+
+                                        // 3. User Super Admin mengabaikan batasan (Override), user biasa terkunci jika >= 24 jam
+                                        $canAction = $isSuperAdmin || !$isLocked;
+                                    @endphp
+
                                     <div class="btn-group btn-group-sm">
-                                        @if($don->payment_status !== 'verified')
-                                            <form action="{{ route('admin.online-donations.verify', $don->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Verifikasi donasi sah dari {{ $don->display_name }} senilai Rp {{ number_format($don->total_amount, 0, ',', '.') }}?')">
-                                                @csrf
-                                                <button type="submit" class="btn btn-success" title="Verifikasi Lunas (1-Klik)">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                            </form>
-                                        @else
-                                            <form action="{{ route('admin.online-donations.cancel', $don->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Batalkan verifikasi donasi ini?')">
-                                                @csrf
-                                                <button type="submit" class="btn btn-warning" title="Batalkan Verifikasi">
-                                                    <i class="fas fa-undo"></i>
-                                                </button>
-                                            </form>
+                                        {{-- Tombol Verifikasi / Batal Verifikasi --}}
+                                        @if($canAction)
+                                            @if(!$isVerified)
+                                                <form action="{{ route('admin.online-donations.verify', $don->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Verifikasi donasi sah dari {{ $don->display_name }} senilai Rp {{ number_format($don->total_amount, 0, ',', '.') }}?')">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-success" title="Verifikasi Lunas (1-Klik)">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <form action="{{ route('admin.online-donations.cancel', $don->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Batalkan verifikasi donasi ini?')">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-warning" title="Batalkan Verifikasi">
+                                                        <i class="fas fa-undo"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
                                         @endif
+
+                                        {{-- Tombol Kirim WhatsApp Terima Kasih --}}
                                         @if($waLink)
                                             <a href="{{ $waLink }}" target="_blank" class="btn btn-success" title="Kirim WA Ucapan Terima Kasih">
                                                 <i class="fab fa-whatsapp"></i>
@@ -317,16 +336,32 @@
                                                 <i class="fab fa-whatsapp"></i>
                                             </button>
                                         @endif
+
+                                        {{-- Tombol Lihat Detail --}}
                                         <a href="{{ route('admin.online-donations.show', $don->id) }}" class="btn btn-info" title="Detail">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <form action="{{ route('admin.online-donations.destroy', $don->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus donasi {{ $don->donation_code }}?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger" title="Hapus">
-                                                <i class="fas fa-trash"></i>
+
+                                        {{-- Tombol Hapus ATAU Ikon Gembok Terkunci --}}
+                                        @if($canAction)
+                                            <form action="{{ route('admin.online-donations.destroy', $don->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus donasi {{ $don->donation_code }}?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger" title="Hapus">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <button type="button" 
+                                                    class="btn btn-secondary shadow-none" 
+                                                    disabled 
+                                                    title="Data terkunci permanen setelah 24 jam diverifikasi" 
+                                                    data-toggle="tooltip" 
+                                                    data-placement="top"
+                                                    style="cursor: not-allowed; background-color: #6c757d; border-color: #6c757d; opacity: 0.95;">
+                                                <i class="fas fa-lock text-warning" style="font-size: 0.95rem; color: #ffc107 !important;"></i>
                                             </button>
-                                        </form>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

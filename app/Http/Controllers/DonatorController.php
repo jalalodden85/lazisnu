@@ -89,7 +89,11 @@ class DonatorController extends Controller
         $assignedDonators = (clone $baseKpiQuery)->whereNotNull('relawan_id')->count();
         $unassignedDonators = (clone $baseKpiQuery)->whereNull('relawan_id')->count();
 
-        $donators = $query->latest('id')->paginate(15)->withQueryString();
+        // Pengurutan daftar donatur berdasarkan No Kotak dari terkecil ke terbesar (default: asc)
+        $sortDirection = $request->input('sort_box', 'asc');
+        $sortDirection = in_array(strtolower($sortDirection), ['asc', 'desc']) ? strtolower($sortDirection) : 'asc';
+
+        $donators = $query->orderByBoxNumber($sortDirection)->paginate(15)->withQueryString();
 
         return view('donators.index', compact(
             'donators',
@@ -134,7 +138,7 @@ class DonatorController extends Controller
         }
 
         $relawans = $relawanQuery->orderBy('ranting_id')->orderBy('area_tugas')->get();
-        $unassignedDonators = $unassignedQuery->latest('id')->get();
+        $unassignedDonators = $unassignedQuery->orderByBoxNumber('asc')->get();
 
         return view('donators.distribution', compact('relawans', 'unassignedDonators', 'rantings'));
     }
@@ -606,24 +610,7 @@ class DonatorController extends Controller
 
         // 6. LOGIKA NATURAL SORTING PADA KODE KALENG (CRITICAL REQUIREMENT)
         // Menangani '1, 2, 3, 10, 11' serta 'KLG-1, KLG-2, KLG-10' dan 'KLG-M09R17-0101-001'
-        $driver = \Illuminate\Support\Facades\DB::getDriverName();
-
-        if ($driver === 'mysql') {
-            $query->orderByRaw("
-                CASE 
-                    WHEN box_number REGEXP '^[0-9]+$' THEN CAST(box_number AS UNSIGNED)
-                    WHEN box_number REGEXP '[0-9]+$' THEN CAST(REGEXP_SUBSTR(box_number, '[0-9]+$') AS UNSIGNED)
-                    ELSE CAST(box_number AS UNSIGNED)
-                END ASC
-            ")
-            ->orderByRaw("LENGTH(box_number) ASC")
-            ->orderBy("box_number", "asc");
-        } else {
-            // SQLite / Database Driver Lain
-            $query->orderByRaw("CAST(box_number AS INTEGER) ASC")
-                  ->orderByRaw("LENGTH(box_number) ASC")
-                  ->orderBy("box_number", "asc");
-        }
+        $query->orderByBoxNumber('asc');
 
         // Eksekusi Query
         $rawDonators = $query->get();

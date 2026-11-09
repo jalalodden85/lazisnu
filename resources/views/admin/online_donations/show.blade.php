@@ -140,20 +140,36 @@
                 <!-- Tombol Aksi Verifikasi -->
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        @if($donation->payment_status !== 'verified')
-                            <form action="{{ route('admin.online-donations.verify', $donation->id) }}" method="POST" onsubmit="return confirm('Verifikasi donasi ini?')">
-                                @csrf
-                                <button type="submit" class="btn btn-success btn-block font-weight-bold mb-2 py-2">
-                                    <i class="fas fa-check-double mr-1"></i> Verifikasi Donasi Sah
-                                </button>
-                            </form>
+                        @php
+                            $user = auth()->user();
+                            $isSuperAdmin = $user && ($user->isSuperAdmin() || (method_exists($user, 'hasRole') && $user->hasRole('Super Admin')));
+                            $isVerified = ($donation->payment_status === 'verified');
+                            $verifiedTime = $donation->verified_at ?? $donation->updated_at;
+                            $isLocked = $isVerified && $verifiedTime && ($verifiedTime->diffInHours(now()) >= 24);
+                            $canAction = $isSuperAdmin || !$isLocked;
+                        @endphp
+
+                        @if($canAction)
+                            @if(!$isVerified)
+                                <form action="{{ route('admin.online-donations.verify', $donation->id) }}" method="POST" onsubmit="return confirm('Verifikasi donasi ini?')">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success btn-block font-weight-bold mb-2 py-2">
+                                        <i class="fas fa-check-double mr-1"></i> Verifikasi Donasi Sah
+                                    </button>
+                                </form>
+                            @else
+                                <form action="{{ route('admin.online-donations.cancel', $donation->id) }}" method="POST" onsubmit="return confirm('Batalkan verifikasi donasi?')">
+                                    @csrf
+                                    <button type="submit" class="btn btn-warning btn-block font-weight-bold mb-2">
+                                        <i class="fas fa-undo mr-1"></i> Batalkan Status Verifikasi
+                                    </button>
+                                </form>
+                            @endif
                         @else
-                            <form action="{{ route('admin.online-donations.cancel', $donation->id) }}" method="POST" onsubmit="return confirm('Batalkan verifikasi donasi?')">
-                                @csrf
-                                <button type="submit" class="btn btn-warning btn-block font-weight-bold mb-2">
-                                    <i class="fas fa-undo mr-1"></i> Batalkan Status Verifikasi
-                                </button>
-                            </form>
+                            <div class="alert alert-secondary text-center py-2 mb-2 border shadow-none" style="background-color: #f4f6f9; border-color: #d2d6de !important;">
+                                <i class="fas fa-lock mr-2 text-warning fa-lg" style="color: #ffc107 !important;"></i>
+                                <span class="small font-weight-bold text-dark">Data terkunci permanen setelah 24 jam diverifikasi.<br>Perubahan status hanya dapat dilakukan oleh Super Admin.</span>
+                            </div>
                         @endif
 
                         @if($waShowLink)

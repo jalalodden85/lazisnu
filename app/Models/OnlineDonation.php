@@ -151,4 +151,38 @@ class OnlineDonation extends Model
     {
         return $query->where('donation_code', $code);
     }
+
+    /**
+     * Memeriksa apakah transaksi donasi sudah terkunci setelah 24 jam diverifikasi.
+     * Syarat: status = 'verified' dan selisih waktu verifikasi (verified_at / updated_at) >= 24 jam.
+     */
+    public function isVerificationLocked(): bool
+    {
+        if ($this->payment_status !== 'verified') {
+            return false;
+        }
+
+        $verifiedTime = $this->verified_at ?? $this->updated_at;
+        if (!$verifiedTime) {
+            return false;
+        }
+
+        return $verifiedTime->diffInHours(now()) >= 24;
+    }
+
+    /**
+     * Memeriksa apakah donasi terkunci untuk user tertentu.
+     * Super Admin memiliki hak akses penuh (Override / Bypass) sehingga tidak pernah terkunci.
+     */
+    public function isLockedForUser(?User $user = null): bool
+    {
+        $user = $user ?? \Illuminate\Support\Facades\Auth::user();
+
+        // Super Admin memiliki akses penuh (Override)
+        if ($user && ($user->isSuperAdmin() || $user->hasRole('Super Admin'))) {
+            return false;
+        }
+
+        return $this->isVerificationLocked();
+    }
 }

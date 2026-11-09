@@ -294,4 +294,41 @@ class Donator extends Model
               ->orWhere('address', 'like', "%{$keyword}%");
         });
     }
+
+    /**
+     * Scope untuk mengurutkan donatur berdasarkan No Kotak secara alami (natural sorting: terkecil ke terbesar)
+     */
+    public function scopeOrderByBoxNumber(Builder $query, string $direction = 'asc'): Builder
+    {
+        $dir = strtolower($direction) === 'desc' ? 'DESC' : 'ASC';
+        $driver = \Illuminate\Support\Facades\DB::getDriverName();
+
+        if ($driver === 'mysql') {
+            return $query->orderByRaw("
+                CASE 
+                    WHEN box_number REGEXP '^[0-9]+$' THEN 1
+                    WHEN box_number REGEXP '[0-9]+$' THEN 2
+                    ELSE 3
+                END {$dir}
+            ")
+            ->orderByRaw("
+                CASE 
+                    WHEN box_number REGEXP '[0-9]+$' THEN REGEXP_REPLACE(box_number, '[0-9]+$', '')
+                    ELSE box_number
+                END {$dir}
+            ")
+            ->orderByRaw("
+                CASE 
+                    WHEN box_number REGEXP '[0-9]+$' THEN CAST(REGEXP_SUBSTR(box_number, '[0-9]+$') AS UNSIGNED)
+                    ELSE 0
+                END {$dir}
+            ")
+            ->orderBy('box_number', $dir);
+        }
+
+        // SQLite / Database Driver Lain
+        return $query->orderByRaw("CAST(box_number AS INTEGER) {$dir}")
+                     ->orderByRaw("LENGTH(box_number) {$dir}")
+                     ->orderBy('box_number', $dir);
+    }
 }

@@ -191,6 +191,33 @@ class User extends Authenticatable
         return in_array($this->role?->name, [Role::PC_SUPERADMIN, Role::PC, 'superadmin'], true);
     }
 
+    /**
+     * Memeriksa apakah user memiliki role tertentu (kompatibel dengan Spatie Permission & Custom Roles)
+     *
+     * @param string|array $roles
+     * @return bool
+     */
+    public function hasRole(string|array $roles): bool
+    {
+        $roles = (array) $roles;
+        $currentRole = strtolower((string) ($this->role?->name ?? ''));
+        $currentLabel = strtolower((string) ($this->role?->label ?? ''));
+
+        foreach ($roles as $role) {
+            $r = strtolower(trim((string) $role));
+            if (in_array($r, ['super admin', 'superadmin', 'pc_superadmin', 'pc superadmin', 'admin pc'], true)) {
+                if ($this->isSuperAdmin()) {
+                    return true;
+                }
+            }
+            if ($currentRole === $r || $currentLabel === $r) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function isKetua(): bool
     {
         return $this->role?->name === Role::PC_KETUA;

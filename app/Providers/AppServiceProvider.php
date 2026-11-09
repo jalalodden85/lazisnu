@@ -44,6 +44,11 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasMenuAccess('pentasyarufan.hasil-koin.index');
         });
 
+        // Directive Blade @role(...) kompatibel dengan sintaks Spatie Permission & Custom Roles
+        \Illuminate\Support\Facades\Blade::if('role', function ($roles) {
+            return auth()->check() && auth()->user()->hasRole($roles);
+        });
+
         if (app()->environment('production') || str_starts_with((string) config('app.url'), 'https://')) {
             URL::forceScheme('https');
         }

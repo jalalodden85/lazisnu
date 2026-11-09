@@ -278,6 +278,17 @@ class OnlineDonationAdminController extends Controller
 
     public function verify(Request $request, OnlineDonation $donation, \App\Services\DonationVerificationService $service)
     {
+        // Proteksi Backend: Cek penguncian 24 jam untuk user non-Super Admin
+        if ($donation->isLockedForUser(Auth::user())) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Akses Ditolak: Data donasi ini sudah terkunci secara permanen dan hanya bisa diubah oleh Super Admin.',
+                ], 403);
+            }
+            abort(403, 'Akses Ditolak: Data donasi ini sudah terkunci secara permanen dan hanya bisa diubah oleh Super Admin.');
+        }
+
         $nominal = $request->filled('nominal_terverifikasi')
             ? (float) $request->nominal_terverifikasi
             : null;
@@ -310,6 +321,17 @@ class OnlineDonationAdminController extends Controller
 
     public function cancel(Request $request, OnlineDonation $donation, \App\Services\DonationVerificationService $service)
     {
+        // Proteksi Backend: Cek penguncian 24 jam untuk user non-Super Admin
+        if ($donation->isLockedForUser(Auth::user())) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Akses Ditolak: Data donasi ini sudah terkunci secara permanen dan hanya bisa diubah oleh Super Admin.',
+                ], 403);
+            }
+            abort(403, 'Akses Ditolak: Data donasi ini sudah terkunci secara permanen dan hanya bisa diubah oleh Super Admin.');
+        }
+
         try {
             $result = $service->cancelByCode($donation->donation_code);
 
@@ -335,8 +357,19 @@ class OnlineDonationAdminController extends Controller
         }
     }
 
-    public function destroy(OnlineDonation $donation)
+    public function destroy(Request $request, OnlineDonation $donation)
     {
+        // Proteksi Backend: Cek penguncian 24 jam untuk user non-Super Admin
+        if ($donation->isLockedForUser(Auth::user())) {
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Akses Ditolak: Data donasi ini sudah terkunci secara permanen dan hanya bisa diubah oleh Super Admin.',
+                ], 403);
+            }
+            abort(403, 'Akses Ditolak: Data donasi ini sudah terkunci secara permanen dan hanya bisa diubah oleh Super Admin.');
+        }
+
         if ($donation->payment_status === 'verified') {
             $donation->campaign->decrement('collected_amount', $donation->amount);
         }

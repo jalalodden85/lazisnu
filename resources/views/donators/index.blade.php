@@ -185,14 +185,28 @@
         <h3 class="card-title font-weight-bold">
             <i class="fas fa-boxes text-success mr-2"></i> Daftar Donatur & Petugas Pengampu Wilayah
         </h3>
-        <span class="badge badge-light border">Menampilkan {{ $donators->total() }} data kotak</span>
+        <div>
+            <span class="badge badge-success mr-1" title="Tabel diurutkan berdasarkan No. Kotak dari terkecil ke terbesar">
+                <i class="fas fa-sort-amount-down-alt mr-1"></i>Urut: No. Kotak ({{ request('sort_box') === 'desc' ? 'Terbesar ke Terkecil' : 'Terkecil ke Terbesar' }})
+            </span>
+            <span class="badge badge-light border">Menampilkan {{ $donators->total() }} data kotak</span>
+        </div>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-striped table-hover m-0 align-middle">
                 <thead class="thead-light">
                     <tr>
-                        <th style="width: 130px;">No. Kotak</th>
+                        <th style="width: 140px;">
+                            <a href="{{ request()->fullUrlWithQuery(['sort_box' => request('sort_box') === 'desc' ? 'asc' : 'desc']) }}" class="text-dark d-inline-flex align-items-center font-weight-bold" title="Klik untuk membalik urutan nomor kotak">
+                                No. Kotak
+                                @if(request('sort_box') === 'desc')
+                                    <i class="fas fa-sort-numeric-up-alt ml-1 text-success" title="Urutan: Terbesar ke Terkecil (Klik untuk mengubah)"></i>
+                                @else
+                                    <i class="fas fa-sort-numeric-down ml-1 text-success" title="Urutan: Terkecil ke Terbesar (Klik untuk mengubah)"></i>
+                                @endif
+                            </a>
+                        </th>
                         <th>Donatur / Penerima</th>
                         <th>Wilayah & Alamat</th>
                         <th>Petugas Pengampu (Relawan)</th>
